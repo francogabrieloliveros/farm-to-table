@@ -17,32 +17,15 @@ Ensure you have the following installed on your machine:
 Before running the application, you must set up your environment variables.
 
 ### 1. Backend Environment (`backend/.env`)
-Create a `.env` file in the `backend/` directory with the following content:
-```env
-PORT=5000
-NODE_ENV=development
-
-# MongoDB Connection
-MONGO_URI=your_mongodb_atlas_connection_string
-
-# JWT Configuration
-JWT_SECRET=your_secret_key
-JWT_EXPIRES_IN=30d
-
-# Admin Credentials (for initial seeding)
-ADMIN_EMAIL=admin@da.gov.ph
-ADMIN_PASSWORD=adminpassword123
-
-# Cloudinary Config
-CLOUDINARY_CLOUD_NAME=your_cloud_name
-CLOUDINARY_API_KEY=your_api_key
-CLOUDINARY_API_SECRET=your_api_secret
+Copy the example file and fill in your credentials:
+```bash
+cp backend/.env.example backend/.env
 ```
 
 ### 2. Frontend Environment (`frontend/.env`)
-Create a `.env` file in the `frontend/` directory:
-```env
-VITE_API_BASE_URL=http://localhost:5000/api
+Copy the example file:
+```bash
+cp frontend/.env.example frontend/.env
 ```
 
 ---
