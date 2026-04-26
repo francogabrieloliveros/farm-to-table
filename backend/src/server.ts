@@ -4,13 +4,14 @@ import cors from 'cors';
 import { connectDB } from './config/db.js';
 import { errorHandler } from './middlewares/errorHandler.js';
 
+
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Connect to database
-connectDB();
+connectDB()
 
 // Middleware
 app.use(cors());
