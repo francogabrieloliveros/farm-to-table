@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 import cors from 'cors';
 import { connectDB } from './config/db.js';
 import { errorHandler } from './middlewares/errorHandler.js';
-import { seedAdmin } from './utils/seedAdmin.js';
+
 
 dotenv.config();
 
@@ -11,9 +11,7 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Connect to database
-connectDB().then(() => {
-  seedAdmin();
-});
+connectDB()
 
 // Middleware
 app.use(cors());
