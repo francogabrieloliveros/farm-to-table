@@ -4,6 +4,7 @@ import cors from 'cors';
 import { connectDB } from './config/db.js';
 import authRoutes from './routes/auth.routes.js';
 import { errorHandler } from './middlewares/errorHandler.js';
+import userRoutes from './routes/user.routes.js';
 
 
 
@@ -22,6 +23,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // Routes
 app.use('/api/auth', authRoutes);
+app.use('/api/user', userRoutes);
 
 app.get('/', (req: Request, res: Response) => {
   res.send('API is running...');
