@@ -3,4 +3,3 @@ node_modules
 src/utils/seedAdmin.ts
 dist
 docs
-src/tests
