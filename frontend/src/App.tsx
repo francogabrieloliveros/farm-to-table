@@ -2,8 +2,10 @@ import { BrowserRouter as Router, Routes, Route } from "react-router";
 import { Toaster } from "react-hot-toast";
 import SignupPage from "@/pages/SignupPage";
 import LoginPage from "@/pages/LoginPage";
+import ConsumerLayout from "@/components/ConsumerLayout";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { AuthProvider } from "@/context/AuthContext";
+import HomePage from "./pages/consumer/HomePage";
 
 // Layout
 const Layout = ({ children }: { children: React.ReactNode }) => (
@@ -17,7 +19,8 @@ const Layout = ({ children }: { children: React.ReactNode }) => (
 );
 
 // Pages placeholders
-const Home = () => <div>Welcome to Farm-to-Table E-Commerce Platform</div>;
+const Home = () => <HomePage />;
+const Profile = () => <div>This is the profile page</div>;
 const Login = () => <LoginPage />;
 const Signup = () => <SignupPage />;
 const AdminDashboard = () => <div>Admin Dashboard</div>;
@@ -37,9 +40,22 @@ function App() {
               <ProtectedRoute
                 type="Consumer"
                 element={
-                  <Layout>
+                  <ConsumerLayout>
                     <Home />
-                  </Layout>
+                  </ConsumerLayout>
+                }
+              />
+            }
+          />
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute
+                type="Consumer"
+                element={
+                  <ConsumerLayout>
+                    <Profile />
+                  </ConsumerLayout>
                 }
               />
             }

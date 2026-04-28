@@ -1,0 +1,49 @@
+import { Egg, Leaf, ShoppingCart } from "lucide-react";
+import { type Product } from "@/types/Product";
+
+const ProductDisplay = ({
+  ind,
+  product,
+}: {
+  ind: number;
+  product: Product;
+}) => {
+  return (
+    <div key={ind} className="sm:max-w-[373px] mb-10 sm:mb-0">
+      <div className="relative h-[466px] mb-5">
+        <div className="absolute bg-[#D2E6C9] inter px-3 py-1 font-semibold text-xs text-[#55684F] rounded-xl top-4 left-4 flex gap-1">
+          {product.productType === 1 ? <Leaf size={15} /> : <Egg size={15} />}
+          {product.productType === 1 ? "CROP" : "POULTRY"}
+        </div>
+        <img
+          src={product.image}
+          className="w-full h-full object-cover sm:rounded-xl"
+        />
+      </div>
+
+      <div className="flex flex-col px-2 gap-5">
+        <div className="flex justify-between">
+          <h4 className="manrope text-2xl font-bold text-[#1C4419] line-clamp-1">
+            {product.productName}
+          </h4>
+          <h4 className="inter text-2xl text-[#1A1C1A]">
+            &#8369;{`${product.price}`}
+          </h4>
+        </div>
+
+        <p className="inter text-[#42493E] text-sm">
+          QTY {product.productQuantity}
+        </p>
+        <p className="inter text-[#42493E] text-sm line-clamp-2">
+          {product.productDescription}
+        </p>
+        <button className="bg-[#7E2700] rounded-sm inter text-white flex py-3 justify-center gap-3 mt-3">
+          <ShoppingCart />
+          Add to Cart
+        </button>
+      </div>
+    </div>
+  );
+};
+
+export default ProductDisplay;

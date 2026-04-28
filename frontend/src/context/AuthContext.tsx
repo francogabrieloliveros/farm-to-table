@@ -3,7 +3,7 @@ import {
   type AuthUser,
   type AuthContextValue,
 } from "@/types/AuthenticationTypes";
-import { authService } from "@/services/auth.service";
+import { authService } from "@/services/auth.service.ts";
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
