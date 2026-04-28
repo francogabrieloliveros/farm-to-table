@@ -94,7 +94,7 @@ export class ProductService {
       updateData.imageUrl = await this.uploadImage(imageBuffer);
     }
 
-    return Product.findByIdAndUpdate(id, updateData, { new: true, runValidators: true }).exec();
+    return Product.findByIdAndUpdate(id, updateData, { returnDocument: 'after', runValidators: true }).exec();
   }
 
   // delete a product by id
