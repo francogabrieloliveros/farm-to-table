@@ -1,12 +1,40 @@
 import { Button } from "@/components/ui/button";
 import InputField from "@/components/InputField";
+import useAuth from "@/hooks/useAuth";
+import toast from "react-hot-toast";
+import { useNavigate } from "react-router";
 
 const SignupPage = () => {
+  const { signup, userType } = useAuth();
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const formData = new FormData(e.currentTarget);
+    const fname = formData.get("fnameInput") as string;
+    const mname = formData.get("mnameInput") as string;
+    const lname = formData.get("lnameInput") as string;
+    const email = formData.get("emailInput") as string;
+    const password = formData.get("passwordInput") as string;
+
+    try {
+      await signup({ fname, mname, lname, email, password });
+      toast.success("Logged in successfully");
+      navigate(userType === "Admin" ? "/admin" : "/");
+    } catch (err) {
+      toast.error(err?.response?.data?.message ?? "Something went wrong.");
+    }
+  };
+
   return (
     <main className="w-dvw sm:h-dvh flex justify-center items-center">
       <div className="bg-[#FAF9F6] fixed w-screen h-screen -z-10"></div>
 
-      <div className="bg-white shadow-xl flex flex-col justify-between px-10 py-13 w-dvw items-center sm:max-w-[500px] sm:max-h-[800px] min-h-[800px] sm:rounded-lg sm:h-dvh">
+      <form
+        className="bg-white shadow-xl flex flex-col justify-between px-10 py-13 w-dvw items-center sm:max-w-[500px] sm:max-h-[800px] min-h-[800px] sm:rounded-lg sm:h-dvh"
+        onSubmit={handleSubmit}
+      >
         <h1 className="manrope text-[#294E27] text-3xl font-bold mb-7">
           Farm-to-table
         </h1>
@@ -66,7 +94,7 @@ const SignupPage = () => {
             <a href="/login">Log in</a>
           </span>
         </p>
-      </div>
+      </form>
     </main>
   );
 };

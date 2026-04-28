@@ -2,6 +2,8 @@ import { BrowserRouter as Router, Routes, Route } from "react-router";
 import { Toaster } from "react-hot-toast";
 import SignupPage from "@/pages/SignupPage";
 import LoginPage from "@/pages/LoginPage";
+import ProtectedRoute from "@/components/ProtectedRoute";
+import { AuthProvider } from "@/context/AuthContext";
 
 // Layout
 const Layout = ({ children }: { children: React.ReactNode }) => (
@@ -23,28 +25,41 @@ const AdminDashboard = () => <div>Admin Dashboard</div>;
 function App() {
   return (
     <Router>
-      <Routes>
-        {/* Login and signup will have a different layout */}
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
-        <Route
-          path="/"
-          element={
-            <Layout>
-              <Home />
-            </Layout>
-          }
-        />
-        <Route
-          path="/admin/*"
-          element={
-            <Layout>
-              <AdminDashboard />
-            </Layout>
-          }
-        />
-      </Routes>
-      <Toaster />
+      <AuthProvider>
+        <Routes>
+          {/* Login and signup will have a different layout */}
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+
+          <Route
+            path="/"
+            element={
+              <ProtectedRoute
+                type="Consumer"
+                element={
+                  <Layout>
+                    <Home />
+                  </Layout>
+                }
+              />
+            }
+          />
+          <Route
+            path="/admin/*"
+            element={
+              <ProtectedRoute
+                type="Admin"
+                element={
+                  <Layout>
+                    <AdminDashboard />
+                  </Layout>
+                }
+              />
+            }
+          />
+        </Routes>
+        <Toaster position="bottom-right" />
+      </AuthProvider>
     </Router>
   );
 }

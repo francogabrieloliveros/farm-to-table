@@ -1,12 +1,10 @@
-import express, { type Request, type Response } from 'express';
-import dotenv from 'dotenv';
-import cors from 'cors';
-import { connectDB } from './config/db.js';
-import authRoutes from './routes/auth.routes.js';
-import { errorHandler } from './middlewares/errorHandler.js';
-import userRoutes from './routes/user.routes.js';
-
-
+import express, { type Request, type Response } from "express";
+import dotenv from "dotenv";
+import cors from "cors";
+import { connectDB } from "./config/db.js";
+import authRoutes from "./routes/auth.routes.js";
+import { errorHandler } from "./middlewares/errorHandler.js";
+import userRoutes from "./routes/user.routes.js";
 
 dotenv.config();
 
@@ -14,21 +12,20 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // connect to database
-connectDB()
+connectDB();
 
 // middleware
-app.use(cors());
+app.use(cors({ origin: ["http://localhost:5173"] }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Routes
-app.use('/api/auth', authRoutes);
-app.use('/api/user', userRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api/user", userRoutes);
 
-app.get('/', (req: Request, res: Response) => {
-  res.send('API is running...');
+app.get("/", (req: Request, res: Response) => {
+  res.send("API is running...");
 });
-
 
 // Error Handler
 app.use(errorHandler);
