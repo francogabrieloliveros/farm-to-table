@@ -22,7 +22,7 @@ const HomePage = () => {
   }, [sortBy, productType]);
 
   const productsDisplay = products.map((product, ind) => (
-    <ProductDisplay product={product} ind={ind} />
+    <ProductDisplay product={product} key={ind} />
   ));
 
   return (
