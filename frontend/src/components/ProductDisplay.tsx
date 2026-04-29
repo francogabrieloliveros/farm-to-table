@@ -1,5 +1,6 @@
 import { Egg, Leaf, ShoppingCart } from "lucide-react";
 import { type Product } from "@/types/Product";
+import { Button } from "./ui/button";
 
 const ProductDisplay = ({
   ind,
@@ -37,10 +38,10 @@ const ProductDisplay = ({
         <p className="inter text-[#42493E] text-sm line-clamp-2">
           {product.productDescription}
         </p>
-        <button className="bg-[#7E2700] rounded-sm inter text-white flex py-3 justify-center gap-3 mt-3">
+        <Button className="bg-[#7E2700] rounded-sm inter text-white flex py-6 justify-center gap-3 mt-3">
           <ShoppingCart />
           Add to Cart
-        </button>
+        </Button>
       </div>
     </div>
   );

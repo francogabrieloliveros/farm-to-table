@@ -88,7 +88,7 @@ const DUMMY_PRODUCTS: Product[] = [
     productType: 1,
     productQuantity: 400,
     price: 35.0,
-    image: "https://images.unsplash.com/photo-1596097635121-14b63b7a0c19?w=400",
+    image: "https://images.unsplash.com/photo-1730815048561-45df6f7f331d",
   },
   {
     productId: "PROD-010",
