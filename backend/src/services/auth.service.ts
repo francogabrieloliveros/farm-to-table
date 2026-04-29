@@ -29,7 +29,7 @@ export class AuthService {
             firstName: user.firstName,
             email: user.email,
             userType: user.userType,
-            token: this.generateToken(user._id.toString()),
+            token: this.generateToken(user._id.toString(), user.userType),
         };
     }
 
@@ -45,7 +45,7 @@ export class AuthService {
                 firstName: user.firstName,
                 email: user.email,
                 userType: user.userType,
-                token: this.generateToken(user._id.toString()),
+                token: this.generateToken(user._id.toString(), user.userType),
             };
         } else {
             throw new Error('Invalid email or password');
@@ -53,11 +53,11 @@ export class AuthService {
     }
 
     // generate jwt token
-    private static generateToken(id: string): string {
+    private static generateToken(id: string, userType: string): string {
         const secret = process.env.JWT_SECRET || 'secret';
         const expiresIn = (process.env.JWT_EXPIRES_IN as any) || '3h';
 
-        return jwt.sign({ id }, secret, {
+        return jwt.sign({ id, userType }, secret, {
             expiresIn,
         });
     }
