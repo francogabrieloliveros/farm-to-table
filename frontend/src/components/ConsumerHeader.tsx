@@ -101,22 +101,43 @@ const ConsumerHeader = () => {
             </h3>
             <X onClick={() => setShowCart(false)} />
           </div>
-          <div className="overflow-y-scroll h-[calc(100%-270px)] p-5 flex flex-col gap-5">
-            {cartItemsDisplay}
-          </div>
-          <div className="bg-[#F4F3F1] h-[270px] p-8 flex flex-col">
-            <div className="flex justify-between mb-12">
-              <h4 className="manrope text-[#1C4419] font-bold text-xl">
-                Total
-              </h4>
-              <h4 className="manrope text-[#1C4419] font-bold text-xl">
-                &#8369;{total}
-              </h4>
+          {Object.values(cartItems).length > 0 ? (
+            <>
+              <div className="overflow-y-scroll h-[calc(100%-270px)] p-5 flex flex-col gap-5">
+                {cartItemsDisplay}
+              </div>
+              <div className="bg-[#F4F3F1] h-[270px] p-8 flex flex-col">
+                <div className="flex justify-between mb-12">
+                  <h4 className="manrope text-[#1C4419] font-bold text-xl">
+                    Total
+                  </h4>
+                  <h4 className="manrope text-[#1C4419] font-bold text-xl">
+                    &#8369;{total}
+                  </h4>
+                </div>
+                <Button className="w-full rounded-sm manrope font-bold text-lg py-7 bg-[#7E2706] cursor-pointer">
+                  Checkout
+                </Button>
+              </div>
+            </>
+          ) : (
+            <div className="h-full px-10 justify-center flex flex-col items-center gap-5">
+              <p className="manrope text-[#1C4419] font-bold text-xl mb-5">
+                Your basket is empty
+              </p>
+              <p className="inter text-sm text-[#42493E] text-center">
+                Looks like you haven't added anything to your basket.
+              </p>
+              <Link to="/">
+                <Button
+                  className="w-full rounded-sm manrope font-bold text-lg py-7 px-20 bg-[#7E2706] cursor-pointer"
+                  onClick={() => setShowCart(false)}
+                >
+                  Start Shopping
+                </Button>
+              </Link>
             </div>
-            <Button className="w-full rounded-sm manrope font-bold text-lg py-7 bg-[#7E2706] cursor-pointer">
-              Checkout
-            </Button>
-          </div>
+          )}
         </aside>
       </div>
     </>
