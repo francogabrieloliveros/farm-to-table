@@ -5,7 +5,8 @@ import LoginPage from "@/pages/LoginPage";
 import ConsumerLayout from "@/components/ConsumerLayout";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { AuthProvider } from "@/context/AuthContext";
-import HomePage from "./pages/consumer/HomePage";
+import HomePage from "@/pages/consumer/HomePage";
+import ProfilePage from "@/pages/consumer/ProfilePage";
 
 // Layout
 const Layout = ({ children }: { children: React.ReactNode }) => (
@@ -20,7 +21,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => (
 
 // Pages placeholders
 const Home = () => <HomePage />;
-const Profile = () => <div>This is the profile page</div>;
+const Profile = () => <ProfilePage />;
 const Login = () => <LoginPage />;
 const Signup = () => <SignupPage />;
 const AdminDashboard = () => <div>Admin Dashboard</div>;
