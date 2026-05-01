@@ -15,86 +15,77 @@ type Page = "dashboard" | "users" | "inventory" | "orders" | "reports";
 export default function AdminLayout({ children }: { children: ReactElement }) {
   const [page, setPage] = useState<Page>("dashboard");
 
+  const buttonStyling = (buttonPage: string) =>
+    `flex items-center gap-2.5 w-full px-3 py-2 rounded-md text-sm font-medium text-left transition-colors ${
+      page === buttonPage ? "bg-white text-[#1C4419] shadow-sm" : ""
+    }`;
+
   return (
-    <div className="flex h-screen w-screen bg-[#E2E1DF] font-sans">
-      <aside className="w-44 shrink-0 flex flex-col bg-white border-r border-[#E2E1DF]">
-        <div className="px-5 pt-6 pb-4">
-          <p className="text-sm font-bold text-[#1C4419] leading-tight">
+    <div className="flex h-screen w-screen bg-[#FAF9F6] font-sans inter text-[#42493E]">
+      <aside className="w-12 md:w-64 shrink-0 flex flex-col bg-[#F5F5F4] border-r border-[#ecebe9]">
+        <div className="px-5 pt-6 pb-4 max-md:hidden">
+          <p className="text-lg font-bold text-[#1C4419] leading-tight manrope">
             Farm-to-table
           </p>
-          <p className="text-xs text-gray-400 mt-0.5">Management Portal</p>
+          <p className="text-xs mt-0.5">Management Portal</p>
         </div>
 
-        <nav className="flex-1 px-3 mt-2 flex flex-col gap-1">
+        <nav className="flex-1 px-1 md:px-3 mt-2 flex flex-col gap-1">
           <Link to="/admin/dashboard">
             <button
               onClick={() => setPage("dashboard")}
-              className={`flex items-center gap-2.5 w-full px-3 py-2 rounded-md text-sm font-medium text-left transition-colors ${
-                page === "dashboard"
-                  ? "bg-[#1C4419] text-white"
-                  : "text-gray-600"
-              }`}
+              className={buttonStyling("dashboard")}
             >
               <LayoutDashboard size={18} />
-              Dashboard
+              <p className="hidden md:block">Dashboard</p>
             </button>
           </Link>
 
           <Link to="/admin/users">
             <button
               onClick={() => setPage("users")}
-              className={`flex items-center gap-2.5 w-full px-3 py-2 rounded-md text-sm font-medium text-left transition-colors ${
-                page === "users" ? "bg-[#1C4419] text-white" : "text-gray-600"
-              }`}
+              className={buttonStyling("users")}
             >
               <Users size={18} />
-              Users
+              <p className="hidden md:block">Users</p>
             </button>
           </Link>
 
           <Link to="/admin/inventory">
             <button
               onClick={() => setPage("inventory")}
-              className={`flex items-center gap-2.5 w-full px-3 py-2 rounded-md text-sm font-medium text-left transition-colors ${
-                page === "inventory"
-                  ? "bg-[#1C4419] text-white"
-                  : "text-gray-600"
-              }`}
+              className={buttonStyling("inventory")}
             >
               <Package size={18} />
-              Inventory
+              <p className="hidden md:block">Inventory</p>
             </button>
           </Link>
 
           <Link to="/admin/orders">
             <button
               onClick={() => setPage("orders")}
-              className={`flex items-center gap-2.5 w-full px-3 py-2 rounded-md text-sm font-medium text-left transition-colors ${
-                page === "orders" ? "bg-[#1C4419] text-white" : "text-gray-600"
-              }`}
+              className={buttonStyling("orders")}
             >
               <ShoppingCart size={18} />
-              Orders
+              <p className="hidden md:block">Orders</p>
             </button>
           </Link>
 
           <Link to="/admin/reports">
             <button
               onClick={() => setPage("reports")}
-              className={`flex items-center gap-2.5 w-full px-3 py-2 rounded-md text-sm font-medium text-left transition-colors ${
-                page === "reports" ? "bg-[#1C4419] text-white" : "text-gray-600"
-              }`}
+              className={buttonStyling("reports")}
             >
               <BarChart2 size={18} />
-              Reports
+              <p className="hidden md:block">Reports</p>
             </button>
           </Link>
         </nav>
 
-        <div className="px-3 pb-6">
-          <button className="flex items-center gap-2.5 w-full px-3 py-2 rounded-md text-sm font-medium text-gray-500">
+        <div className="px-1 md:px-3 pb-6">
+          <button className={buttonStyling("")}>
             <LogOut size={18} />
-            Logout
+            <p className="hidden md:block">Logout</p>
           </button>
         </div>
       </aside>
