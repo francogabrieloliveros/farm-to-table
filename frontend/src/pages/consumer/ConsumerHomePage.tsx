@@ -10,7 +10,7 @@ import { productService } from "@/services/product.service";
 import { type Product } from "@/types/Product";
 import ProductDisplay from "@/components/ProductDisplay";
 
-const HomePage = () => {
+const ConsumerHomePage = () => {
   const [sortBy, setSortBy] = useState("price_asc");
   const [productType, setProductType] = useState(null);
   const [products, setProducts] = useState<Product[]>([]);
@@ -66,4 +66,4 @@ const HomePage = () => {
   );
 };
 
-export default HomePage;
+export default ConsumerHomePage;

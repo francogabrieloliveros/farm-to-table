@@ -1,4 +1,4 @@
-import { ShoppingCart, CircleUserRound, X, Trash } from "lucide-react";
+import { Search, ShoppingCart, CircleUserRound, X, Trash } from "lucide-react";
 import { Link } from "react-router";
 import { Button } from "./ui/button";
 import useCart from "@/hooks/useCart";
@@ -79,8 +79,10 @@ const ConsumerHeader = () => {
           </h2>
         </Link>
         <div className="flex gap-6">
+          <Search color="#1C4419" className="hover:cursor-pointer" />
           <ShoppingCart
             color="#1C4419"
+            className="hover:cursor-pointer"
             onClick={() => setShowCart(!showCart)}
           />
           <Link to={"/profile"}>
