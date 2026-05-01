@@ -1,16 +1,13 @@
 import { Egg, Leaf, ShoppingCart } from "lucide-react";
 import { type Product } from "@/types/Product";
 import { Button } from "./ui/button";
+import useCart from "@/hooks/useCart";
 
-const ProductDisplay = ({
-  ind,
-  product,
-}: {
-  ind: number;
-  product: Product;
-}) => {
+const ProductDisplay = ({ product }: { product: Product }) => {
+  const { addItem, setShowCart } = useCart();
+
   return (
-    <div key={ind} className="sm:max-w-[373px] mb-10 sm:mb-0">
+    <div className="sm:max-w-[373px] mb-10 sm:mb-0">
       <div className="relative h-[466px] mb-5">
         <div className="absolute bg-[#D2E6C9] inter px-3 py-1 font-semibold text-xs text-[#55684F] rounded-xl top-4 left-4 flex gap-1">
           {product.productType === 1 ? <Leaf size={15} /> : <Egg size={15} />}
@@ -38,7 +35,13 @@ const ProductDisplay = ({
         <p className="inter text-[#42493E] text-sm line-clamp-2">
           {product.productDescription}
         </p>
-        <Button className="bg-[#7E2700] rounded-sm inter text-white flex py-6 justify-center gap-3 mt-3">
+        <Button
+          className="bg-[#7E2700] rounded-sm inter text-white flex py-6 justify-center gap-3 mt-3 cursor-pointer"
+          onClick={() => {
+            addItem(product);
+            setShowCart(true);
+          }}
+        >
           <ShoppingCart />
           Add to Cart
         </Button>
