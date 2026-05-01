@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { verifyToken, verifyAdmin, type AuthRequest } from "../middlewares/auth.middleware.js";
+import { updateProfile } from "../controllers/user.controller.js";
 
 const router = Router();
 
@@ -10,6 +11,8 @@ router.get('/profile', verifyToken, (req: AuthRequest, res) => {
         data: req.user
     });
 });
+
+router.put('/profile', verifyToken, updateProfile);
 
 
 router.get('/admin-only', verifyToken, verifyAdmin, (req: AuthRequest, res) => {
