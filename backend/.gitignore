@@ -1,6 +1,5 @@
 node_modules
 .env
-src/utils/seedAdmin.ts
 dist
 docs
 src/tests/
