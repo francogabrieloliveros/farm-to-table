@@ -15,10 +15,10 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // connect to database
-connectDB()
+connectDB();
 
 // middleware
-app.use(cors());
+app.use(cors({ origin: ["http://localhost:5173"] }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -27,10 +27,9 @@ app.use('/api/auth', authRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/products', productRoutes);
 
-app.get('/', (req: Request, res: Response) => {
-  res.send('API is running...');
+app.get("/", (req: Request, res: Response) => {
+  res.send("API is running...");
 });
-
 
 // Error Handler
 app.use(errorHandler);
