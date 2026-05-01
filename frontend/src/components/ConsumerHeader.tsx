@@ -1,0 +1,147 @@
+import { ShoppingCart, CircleUserRound, X, Trash } from "lucide-react";
+import { Link } from "react-router";
+import { Button } from "./ui/button";
+import useCart from "@/hooks/useCart";
+
+const ConsumerHeader = () => {
+  const {
+    cartItems,
+    showCart,
+    setShowCart,
+    addItem,
+    subItem,
+    changeItemQuantity,
+    total,
+    deleteItem,
+  } = useCart();
+
+  const cartItemsDisplay = Object.values(cartItems).map(
+    ({ product, quantity }, ind) => (
+      <div className="flex justify-between gap-5" key={ind}>
+        <div className="h-24 w-24 shadow-lg">
+          <img
+            src={product.image}
+            className="object-cover w-full h-full rounded-sm"
+          />
+        </div>
+        <div className="flex flex-col flex-1 h-24 justify-between">
+          <div className="flex justify-between items-start">
+            <p className="manrope text-[#1C4419] font-semibold text-lg line-clamp-1">
+              {product.productName}
+            </p>
+            <Trash
+              size={20}
+              color="#42493E"
+              onClick={() => deleteItem(product)}
+            />
+          </div>
+          <p className="inter text-sm text-[#42493E]">
+            QTY {product.productQuantity}
+          </p>
+          <div className="flex justify-between">
+            <div className="bg-[#E8E7E4] flex w-24 justify-between rounded-xl px-4 inter items-center text-[#1A1C1A]">
+              <p
+                className="text-xl cursor-pointer select-none"
+                onClick={() => subItem(product)}
+              >
+                -
+              </p>
+              <input
+                className="text-center w-8"
+                type="text"
+                value={quantity}
+                onChange={(e) =>
+                  changeItemQuantity(product, Number(e.target.value))
+                }
+              />
+              <p
+                className="text-xl cursor-pointer select-none"
+                onClick={() => addItem(product)}
+              >
+                +
+              </p>
+            </div>
+            <p className="manrope text-[#1C4419] font-bold">
+              &#8369;{product.price}
+            </p>
+          </div>
+        </div>
+      </div>
+    ),
+  );
+
+  return (
+    <>
+      <header className="h-12 sm:h-18 bg-white shadow-lg flex justify-between items-center px-4 sm:px-7 fixed w-dvw z-10">
+        <Link to={"/"}>
+          <h2 className="text-[#1C4419] font-extrabold text-2xl manrope">
+            Farm-to-table
+          </h2>
+        </Link>
+        <div className="flex gap-6">
+          <ShoppingCart
+            color="#1C4419"
+            onClick={() => setShowCart(!showCart)}
+          />
+          <Link to={"/profile"}>
+            <CircleUserRound color="#1C4419" />
+          </Link>
+        </div>
+      </header>
+
+      <div
+        className={`inset-0 z-20 fixed transition-all ${showCart ? "bg-black/50 pointer-events-auto backdrop-blur-[2px]" : "bg-black/0 pointer-events-none backdrop-blur-none"}`}
+      >
+        <aside
+          className={`w-full sm:w-100 bg-white h-dvh transition-all absolute right-0 ${showCart ? "translate-x-0" : "translate-x-full"}`}
+        >
+          <div className="flex justify-between items-center sm:p-5 p-3 border-b">
+            <h3 className="text-[#1C4419] font-extrabold text-2xl manrope">
+              Your Basket
+            </h3>
+            <X onClick={() => setShowCart(false)} />
+          </div>
+          {Object.values(cartItems).length > 0 ? (
+            <>
+              <div className="overflow-y-scroll h-[calc(100%-270px)] p-5 flex flex-col gap-5">
+                {cartItemsDisplay}
+              </div>
+              <div className="bg-[#F4F3F1] h-[270px] p-8 flex flex-col">
+                <div className="flex justify-between mb-12">
+                  <h4 className="manrope text-[#1C4419] font-bold text-xl">
+                    Total
+                  </h4>
+                  <h4 className="manrope text-[#1C4419] font-bold text-xl">
+                    &#8369;{total}
+                  </h4>
+                </div>
+                <Button className="w-full rounded-sm manrope font-bold text-lg py-7 bg-[#7E2706] cursor-pointer">
+                  Checkout
+                </Button>
+              </div>
+            </>
+          ) : (
+            <div className="h-full px-10 justify-center flex flex-col items-center gap-5">
+              <p className="manrope text-[#1C4419] font-bold text-xl mb-5">
+                Your basket is empty
+              </p>
+              <p className="inter text-sm text-[#42493E] text-center">
+                Looks like you haven't added anything to your basket.
+              </p>
+              <Link to="/">
+                <Button
+                  className="w-full rounded-sm manrope font-bold text-lg py-7 px-20 bg-[#7E2706] cursor-pointer"
+                  onClick={() => setShowCart(false)}
+                >
+                  Start Shopping
+                </Button>
+              </Link>
+            </div>
+          )}
+        </aside>
+      </div>
+    </>
+  );
+};
+
+export default ConsumerHeader;
