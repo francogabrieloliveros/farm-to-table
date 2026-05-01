@@ -1,5 +1,5 @@
 import { Egg, Leaf, ShoppingCart } from "lucide-react";
-import { Button } from "./ui/button";
+import { Button } from "../ui/button";
 import { type Product } from "@/types/Product";
 import useCart from "@/hooks/useCart";
 

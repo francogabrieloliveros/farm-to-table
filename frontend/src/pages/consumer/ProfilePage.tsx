@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { User, ClipboardList } from "lucide-react";
-import AccountSettings from "@/components/AccountSettings";
-import OrderHistory from "@/components/OrderHistory";
+import AccountSettings from "@/components/consumer/AccountSettings";
+import OrderHistory from "@/components/consumer/OrderHistory";
 
 const ProfilePage = () => {
   const [activeTab, setActiveTab] = useState("profile");

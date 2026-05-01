@@ -1,6 +1,6 @@
 import { Search, ShoppingCart, CircleUserRound, X, Trash } from "lucide-react";
 import { Link } from "react-router";
-import { Button } from "./ui/button";
+import { Button } from "../ui/button";
 import useCart from "@/hooks/useCart";
 
 const ConsumerHeader = () => {

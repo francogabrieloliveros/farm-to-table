@@ -1,6 +1,6 @@
 import { CartProvider } from "@/context/CartContext";
 import type { ReactElement } from "react";
-import ConsumerHeader from "@/components/ConsumerHeader";
+import ConsumerHeader from "@/components/consumer/ConsumerHeader";
 
 const ConsumerLayout = ({ children }: { children: ReactElement }) => {
   return (

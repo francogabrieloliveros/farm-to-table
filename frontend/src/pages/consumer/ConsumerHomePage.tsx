@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/select";
 import { productService } from "@/services/product.service";
 import { type Product } from "@/types/Product";
-import ProductDisplay from "@/components/ProductDisplay";
+import ProductDisplay from "@/components/consumer/ProductDisplay";
 
 const ConsumerHomePage = () => {
   const [sortBy, setSortBy] = useState("price_asc");
