@@ -1,8 +1,8 @@
 import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router";
 import InputField from "@/components/InputField";
 import useAuth from "@/hooks/useAuth";
 import toast from "react-hot-toast";
-import { useNavigate } from "react-router";
 
 const LoginPage = () => {
   const { login, userType } = useAuth();
@@ -18,7 +18,7 @@ const LoginPage = () => {
     try {
       await login({ email, password });
       toast.success("Logged in successfully");
-      navigate(userType === "Admin" ? "/admin" : "/");
+      navigate(userType === "Admin" ? "/admin/dashboard" : "/");
     } catch (err) {
       toast.error(err?.response?.data?.message ?? "Something went wrong.");
     }
@@ -60,7 +60,10 @@ const LoginPage = () => {
           >
             Log In
           </Button>
-          <Button className="rounded-sm bg-white text-[#8C2A00] py-8 manrope text-lg font-semibold border-black">
+          <Button
+            className="rounded-sm bg-white text-[#8C2A00] py-8 manrope text-lg font-semibold border-black"
+            type="button"
+          >
             Continue with Google
           </Button>
         </div>

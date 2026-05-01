@@ -1,8 +1,8 @@
 import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router";
 import InputField from "@/components/InputField";
 import useAuth from "@/hooks/useAuth";
 import toast from "react-hot-toast";
-import { useNavigate } from "react-router";
 
 const SignupPage = () => {
   const { signup, userType } = useAuth();
@@ -21,7 +21,7 @@ const SignupPage = () => {
     try {
       await signup({ fname, mname, lname, email, password });
       toast.success("Logged in successfully");
-      navigate(userType === "Admin" ? "/admin" : "/");
+      navigate(userType === "Admin" ? "/admin/dashboard" : "/");
     } catch (err) {
       toast.error(err?.response?.data?.message ?? "Something went wrong.");
     }
