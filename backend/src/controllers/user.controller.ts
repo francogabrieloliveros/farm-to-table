@@ -1,0 +1,34 @@
+import { type Response } from 'express';
+import { updateUserProfile } from '../services/user.service.js';
+import { type AuthRequest } from '../middlewares/auth.middleware.js';
+
+export const updateProfile = async (req: AuthRequest, res: Response) => {
+    try {
+        const userId = req.user?.id;
+
+        if (!userId) {
+            return res.status(401).json({ success: false, message: 'Unauthorized' });
+        }
+
+        const { firstName, lastName, middleName, password } = req.body;
+
+        const updatedUser = await updateUserProfile(userId, { firstName, lastName, middleName, password });
+
+        if (!updatedUser) {
+            return res.status(404).json({ success: false, message: 'User not found' });
+        }
+
+        const responseData = {
+            _id: updatedUser._id,
+            firstName: updatedUser.firstName,
+            middleName: updatedUser.middleName,
+            lastName: updatedUser.lastName,
+            email: updatedUser.email,
+            userType: updatedUser.userType
+        };
+
+        return res.status(200).json(responseData);
+    } catch (error: any) {
+        return res.status(400).json({ success: false, message: error.message || 'Error updating user profile' });
+    }
+};
