@@ -1,131 +1,105 @@
-import { Search, SlidersHorizontal, Pencil, Trash2 } from "lucide-react";
-import { useState } from "react";
-
-const DUMMY_INVENTORY = [
-  {
-    name: "Heirloom Tomatoes",
-    category: "Produce",
-    price: "$4.50",
-    stock: 124,
-  },
-  {
-    name: "Wild Yeast Sourdough",
-    category: "Bakery",
-    price: "$8.00",
-    stock: 124,
-  },
-  {
-    name: "Raw Wildflower Honey",
-    category: "Pantry",
-    price: "$14.00",
-    stock: 85,
-  },
-];
-
-const categoryStyles: Record<string, string> = {
-  Produce: "bg-[#e8f5e2] text-[#1C4419]",
-  Bakery: "bg-amber-50 text-amber-700",
-  Pantry: "bg-blue-50 text-blue-600",
-};
+import {
+  Search,
+  SlidersHorizontal,
+  Pencil,
+  Trash2,
+  Leaf,
+  Egg,
+} from "lucide-react";
+import { useState, useEffect } from "react";
+import { productService } from "@/services/product.service";
 
 export default function InventoryPage() {
   const [search, setSearch] = useState("");
+  const [products, setProducts] = useState([]);
 
-  const filtered = DUMMY_INVENTORY.filter((i) =>
-    i.name.toLowerCase().includes(search.toLowerCase()),
-  );
+  useEffect(() => {
+    productService
+      .getProducts({ sortBy: "price_asc", productType: null })
+      .then((data) => setProducts(data));
+  }, []);
+
+  const productsDisplay = products.map((item) => (
+    <>
+      <div className="border-t flex items-center max-md:pt-5">
+        <div className="md:w-8 md:h-8 w-full aspect-square">
+          <img
+            src={item.image}
+            className="w-full h-full object-cover rounded-sm"
+          />
+        </div>
+      </div>
+      <p className="font-semibold py-3 md:border-t text-[#1C4419]">
+        {item.productName}
+      </p>
+      <div className="md:border-t flex items-center">
+        <div className="bg-[#D2E6C9] px-3 py-1 h-6 w-20 font-semibold text-[0.6rem] text-[#55684F] rounded-xl flex gap-1 items-center justify-center">
+          {item.productType === 1 ? <Leaf size={10} /> : <Egg size={10} />}
+          {item.productType === 1 ? "CROP" : "POULTRY"}
+        </div>
+      </div>
+      <div className="flex items-center md:border-t">
+        <p className="font-semibold text-sm py-3">&#8369;{item.price}</p>
+      </div>
+      <div className="flex items-center gap-1 md:border-t">
+        <div className="w-2 h-2 bg-[#1C4419] rounded-2xl"></div>
+        <p className="font-semibold text-xs py-3">{item.productQuantity}</p>
+      </div>
+      <div className="flex items-center gap-3 md:border-t max-md:pb-5">
+        <button className="text-[#42493E]">
+          <Pencil size={16} />
+        </button>
+        <button className="text-[#42493E]">
+          <Trash2 size={16} />
+        </button>
+      </div>
+    </>
+  ));
 
   return (
-    <div className="p-10">
-      <div className="flex items-start justify-between mb-8">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-800 mb-1">Inventory</h1>
-          <p className="text-sm text-gray-400">
-            Manage, curate, and update your product offerings.
-          </p>
-        </div>
-        <button className="flex items-center gap-2 bg-[#7E2700] text-white text-sm font-medium px-4 py-2 rounded-lg">
+    <div className="py-10 md:p-10 inter text-[#42493E]">
+      <div className="flex items-start justify-between mb-8 flex-wrap gap-8 max-md:px-2">
+        <h1 className="text-3xl font-extrabold text-[#1C4419] mb-1 manrope">
+          Inventory
+        </h1>
+        <button className="flex items-center gap-2 bg-[#7E2700] text-white text-sm font-medium px-4 py-2 rounded-sm">
           + Add New Product
         </button>
       </div>
 
-      {/* Search & Filter */}
-      <div className="flex items-center gap-3 mb-6">
+      <div className="flex items-center gap-3 mb-6 max-md:px-2 flex-wrap">
         <div className="relative w-72">
           <Search
             size={15}
-            className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-[#42493E]"
           />
           <input
             type="text"
             placeholder="Search inventory..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-9 pr-4 py-2 text-sm border border-[#E2E1DF] rounded-lg bg-white text-gray-700 placeholder-gray-400 outline-none"
+            className="w-full pl-9 pr-4 py-2 text-sm border border-[#42493E] rounded-sm bg-white text-[#42493E] placeholder-[#42493E] outline-none"
           />
         </div>
-        <button className="flex items-center gap-2 border border-[#E2E1DF] bg-white text-sm text-gray-600 px-4 py-2 rounded-lg">
+        <button className="flex items-center gap-2 border border-[#42493E] bg-white text-sm text-[#42493E] px-4 py-2 rounded-sm">
           <SlidersHorizontal size={15} />
           Filters
         </button>
       </div>
 
-      {/* Table */}
-      <div className="bg-white rounded-xl overflow-hidden">
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="text-xs uppercase tracking-wider text-gray-400 border-b border-[#E2E1DF]">
-              <th className="text-left px-6 py-3 w-12">Item</th>
-              <th className="text-left px-6 py-3">Name</th>
-              <th className="text-left px-6 py-3">Category</th>
-              <th className="text-left px-6 py-3">Price</th>
-              <th className="text-left px-6 py-3">Stock</th>
-              <th className="text-left px-6 py-3">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filtered.map((item) => (
-              <tr
-                key={item.name}
-                className="border-b border-[#E2E1DF] last:border-0"
-              >
-                <td className="px-6 py-4">
-                  <div className="w-8 h-8 bg-[#E2E1DF] rounded-md" />
-                </td>
-                <td className="px-6 py-4 text-gray-700 font-medium">
-                  {item.name}
-                </td>
-                <td className="px-6 py-4">
-                  <span
-                    className={`text-xs px-3 py-1 rounded-full font-medium ${categoryStyles[item.category]}`}
-                  >
-                    {item.category}
-                  </span>
-                </td>
-                <td className="px-6 py-4 text-gray-700">{item.price}</td>
-                <td className="px-6 py-4">
-                  <span className="flex items-center gap-1.5 text-gray-700">
-                    <span className="w-2 h-2 rounded-full bg-[#1C4419] inline-block" />
-                    {item.stock}
-                  </span>
-                </td>
-                <td className="px-6 py-4">
-                  <div className="flex items-center gap-3">
-                    <button className="text-gray-400">
-                      <Pencil size={16} />
-                    </button>
-                    <button className="text-gray-400">
-                      <Trash2 size={16} />
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      <div className="bg-white md:rounded-sm">
+        <div className="grid-cols-[1fr_3fr_1fr_1fr_1fr_1fr] md:grid p-5">
+          <p className="font-semibold text-xs py-3 max-md:hidden">Item</p>
+          <p className="font-semibold text-xs py-3 max-md:hidden">Name</p>
+          <p className="font-semibold text-xs py-3 max-md:hidden">Category</p>
+          <p className="font-semibold text-xs py-3 max-md:hidden">Price</p>
+          <p className="font-semibold text-xs py-3 max-md:hidden">Stock</p>
+          <p className="font-semibold text-xs py-3 max-md:hidden">Actions</p>
+          {productsDisplay}
+        </div>
 
         <div className="flex items-center justify-between px-6 py-3 border-t border-[#E2E1DF]">
-          <p className="text-xs text-gray-400">Showing 1 to 3 of 45 entries</p>
+          <p className="text-xs text-gray-400">{`Showing 1 to 3 of ${products.length} entries`}</p>
           <div className="flex items-center gap-1">
             <button className="w-7 h-7 flex items-center justify-center rounded border border-[#E2E1DF] text-gray-400 text-sm">
               ‹
