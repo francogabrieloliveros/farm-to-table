@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import { Order, OrderStatus } from '../models/order.model.js';
+import { ProductType } from '../types/product.types.js';
 
 export enum ReportInterval {
   Weekly = 'weekly',
@@ -105,5 +106,79 @@ export class ReportService {
     ];
 
     return await Order.aggregate(pipeline).exec();
+  }
+
+  // Generates a CSV formatted string for all completed sales
+  static async exportSalesData(): Promise<string> {
+    const pipeline: mongoose.PipelineStage[] = [
+      {
+        $match: {
+          status: OrderStatus.Completed,
+        },
+      },
+      {
+        $addFields: {
+          productObjId: { $toObjectId: '$productId' },
+        },
+      },
+      {
+        $lookup: {
+          from: 'products',
+          localField: 'productObjId',
+          foreignField: '_id',
+          as: 'productDetails',
+        },
+      },
+      {
+        $unwind: '$productDetails',
+      },
+      {
+        $project: {
+          productName: '$productDetails.name',
+          productType: {
+            $cond: {
+              if: { $eq: ['$productDetails.type', ProductType.Crop] },
+              then: 'Crop',
+              else: 'Poultry'
+            }
+          },
+          quantitySold: '$quantity',
+          income: { $multiply: ['$quantity', '$productDetails.price'] },
+          date: { $dateToString: { format: '%Y-%m-%d', date: '$dateOrdered' } }
+        }
+      },
+      {
+        $sort: { date: -1 }
+      }
+    ];
+
+    const results = await Order.aggregate(pipeline).exec();
+
+    const headers = ['Product Name', 'Product Type', 'Quantity Sold', 'Income per Product', 'Date'];
+    
+    if (!results || results.length === 0) {
+      return headers.join(',');
+    }
+
+    const rows = results.map((row: any) => {
+      const escapeCSV = (val: any) => {
+        if (val == null) return '';
+        const str = String(val);
+        if (str.includes(',') || str.includes('"') || str.includes('\n')) {
+          return `"${str.replace(/"/g, '""')}"`;
+        }
+        return str;
+      };
+
+      return [
+        escapeCSV(row.productName),
+        escapeCSV(row.productType),
+        escapeCSV(row.quantitySold),
+        escapeCSV(row.income),
+        escapeCSV(row.date)
+      ].join(',');
+    });
+
+    return [headers.join(','), ...rows].join('\n');
   }
 }
