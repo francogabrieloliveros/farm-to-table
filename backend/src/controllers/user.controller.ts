@@ -1,5 +1,5 @@
 import { type Response } from 'express';
-import { updateUserProfile } from '../services/user.service.js';
+import { getConsumerUsers, updateUserProfile } from '../services/user.service.js';
 import { type AuthRequest } from '../middlewares/auth.middleware.js';
 
 export const updateProfile = async (req: AuthRequest, res: Response) => {
@@ -30,5 +30,22 @@ export const updateProfile = async (req: AuthRequest, res: Response) => {
         return res.status(200).json(responseData);
     } catch (error: any) {
         return res.status(400).json({ success: false, message: error.message || 'Error updating user profile' });
+    }
+};
+
+export const getRegisteredConsumers = async (_req: AuthRequest, res: Response) => {
+    try {
+        const users = await getConsumerUsers();
+
+        return res.status(200).json({
+            success: true,
+            total: users.length,
+            data: users,
+        });
+    } catch (error: any) {
+        return res.status(500).json({
+            success: false,
+            message: error.message || 'Error retrieving registered users',
+        });
     }
 };
