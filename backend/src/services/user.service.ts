@@ -23,3 +23,10 @@ export const updateUserProfile = async (userId: string, updateData: UpdateUserDa
 
     return user;
 };
+
+// get all registered consumer users
+export const getConsumerUsers = async (): Promise<IUser[]> => {
+    return User.find({ userType: 'Consumer' })
+        .select('-password')
+        .sort({ createdAt: -1 });
+};

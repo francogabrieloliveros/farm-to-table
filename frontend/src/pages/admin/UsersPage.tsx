@@ -1,21 +1,31 @@
 import { Search, Users } from "lucide-react";
 import { useState } from "react";
-
-const DUMMY_USERS = [
-  { name: "Eleanor Vance", email: "eleanor.v@example.com" },
-  { name: "Julian Morrow", email: "j.morrow@example.com" },
-  { name: "Silvia Thorne", email: "silvia.t@example.com" },
-  { name: "Marcus Reed", email: "mreed88@example.com" },
-];
+import { useQuery } from "@tanstack/react-query";
+import { userService } from "@/services/user.service";
 
 export default function UsersPage() {
   const [search, setSearch] = useState("");
 
-  const filtered = DUMMY_USERS.filter(
-    (u) =>
-      u.name.toLowerCase().includes(search.toLowerCase()) ||
-      u.email.toLowerCase().includes(search.toLowerCase()),
-  );
+  // fetch registered customer users from the backend
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ["registered-customers"],
+    queryFn: userService.getRegisteredCustomers,
+  });
+
+  const users = data?.data ?? [];
+  const total = data?.total ?? 0;
+
+  // filter users by name, email, or role
+  const filtered = users.filter((user) => {
+    const searchValue = search.toLowerCase();
+
+    return (
+      user.firstName.toLowerCase().includes(searchValue) ||
+      user.lastName.toLowerCase().includes(searchValue) ||
+      user.email.toLowerCase().includes(searchValue) ||
+      user.userType.toLowerCase().includes(searchValue)
+    );
+  });
 
   return (
     <div className="p-10">
@@ -24,7 +34,7 @@ export default function UsersPage() {
         Overview and control of registered citizens.
       </p>
 
-      {/* Stat card */}
+      {/* stat card */}
       <div className="bg-white rounded-xl p-5 flex items-center gap-4 mb-6 w-fit">
         <div className="bg-[#1C4419] p-3 rounded-xl">
           <Users size={22} className="text-white" />
@@ -33,11 +43,11 @@ export default function UsersPage() {
           <p className="text-xs uppercase tracking-wider text-gray-400">
             Total Registered Users
           </p>
-          <p className="text-2xl font-bold text-gray-800">12,480</p>
+          <p className="text-2xl font-bold text-gray-800">{total}</p>
         </div>
       </div>
 
-      {/* Search */}
+      {/* search */}
       <div className="relative w-72 mb-6">
         <Search
           size={15}
@@ -52,25 +62,57 @@ export default function UsersPage() {
         />
       </div>
 
-      {/* Table */}
+      {/* table */}
       <div className="bg-white rounded-xl overflow-hidden">
         <table className="w-full text-sm">
           <thead>
             <tr className="text-xs uppercase tracking-wider text-gray-400 border-b border-[#E2E1DF]">
-              <th className="text-left px-6 py-3">Name</th>
+              <th className="text-left px-6 py-3">First Name</th>
+              <th className="text-left px-6 py-3">Last Name</th>
               <th className="text-left px-6 py-3">Email</th>
+              <th className="text-left px-6 py-3">Role</th>
             </tr>
           </thead>
           <tbody>
-            {filtered.map((user) => (
-              <tr
-                key={user.email}
-                className="border-b border-[#E2E1DF] last:border-0"
-              >
-                <td className="px-6 py-4 text-gray-700">{user.name}</td>
-                <td className="px-6 py-4 text-gray-500">{user.email}</td>
+            {isLoading && (
+              <tr>
+                <td colSpan={4} className="px-6 py-4 text-gray-500">
+                  Loading users...
+                </td>
               </tr>
-            ))}
+            )}
+
+            {isError && (
+              <tr>
+                <td colSpan={4} className="px-6 py-4 text-red-500">
+                  Failed to load registered users.
+                </td>
+              </tr>
+            )}
+
+            {!isLoading && !isError && filtered.length === 0 && (
+              <tr>
+                <td colSpan={4} className="px-6 py-4 text-gray-500">
+                  No registered users found.
+                </td>
+              </tr>
+            )}
+
+            {!isLoading &&
+              !isError &&
+              filtered.map((user) => (
+                <tr
+                  key={user.email}
+                  className="border-b border-[#E2E1DF] last:border-0"
+                >
+                  <td className="px-6 py-4 text-gray-700">
+                    {user.firstName}
+                  </td>
+                  <td className="px-6 py-4 text-gray-700">{user.lastName}</td>
+                  <td className="px-6 py-4 text-gray-500">{user.email}</td>
+                  <td className="px-6 py-4 text-gray-500">{user.userType}</td>
+                </tr>
+              ))}
           </tbody>
         </table>
       </div>
