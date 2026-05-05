@@ -6,14 +6,12 @@ import {
   BarChart2,
   LogOut,
 } from "lucide-react";
-import { useState } from "react";
-import { Link } from "react-router";
+import { Link, useLocation } from "react-router";
 import type { ReactElement } from "react";
 
-type Page = "dashboard" | "users" | "inventory" | "orders" | "reports";
-
 export default function AdminLayout({ children }: { children: ReactElement }) {
-  const [page, setPage] = useState<Page>("dashboard");
+  const { pathname } = useLocation();
+  const page = pathname.split("/")[2] ?? "dashboard";
 
   const buttonStyling = (buttonPage: string) =>
     `flex items-center gap-2.5 w-full px-3 py-2 rounded-md text-sm font-medium text-left transition-colors ${
@@ -32,50 +30,35 @@ export default function AdminLayout({ children }: { children: ReactElement }) {
 
         <nav className="flex-1 px-1 md:px-3 mt-2 flex flex-col gap-1">
           <Link to="/admin/dashboard">
-            <button
-              onClick={() => setPage("dashboard")}
-              className={buttonStyling("dashboard")}
-            >
+            <button className={buttonStyling("dashboard")}>
               <LayoutDashboard size={18} />
               <p className="hidden md:block">Dashboard</p>
             </button>
           </Link>
 
           <Link to="/admin/users">
-            <button
-              onClick={() => setPage("users")}
-              className={buttonStyling("users")}
-            >
+            <button className={buttonStyling("users")}>
               <Users size={18} />
               <p className="hidden md:block">Users</p>
             </button>
           </Link>
 
           <Link to="/admin/inventory">
-            <button
-              onClick={() => setPage("inventory")}
-              className={buttonStyling("inventory")}
-            >
+            <button className={buttonStyling("inventory")}>
               <Package size={18} />
               <p className="hidden md:block">Inventory</p>
             </button>
           </Link>
 
           <Link to="/admin/orders">
-            <button
-              onClick={() => setPage("orders")}
-              className={buttonStyling("orders")}
-            >
+            <button className={buttonStyling("orders")}>
               <ShoppingCart size={18} />
               <p className="hidden md:block">Orders</p>
             </button>
           </Link>
 
           <Link to="/admin/reports">
-            <button
-              onClick={() => setPage("reports")}
-              className={buttonStyling("reports")}
-            >
+            <button className={buttonStyling("reports")}>
               <BarChart2 size={18} />
               <p className="hidden md:block">Reports</p>
             </button>
