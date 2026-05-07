@@ -54,11 +54,15 @@ export class AuthService {
 
     // generate jwt token
     private static generateToken(id: string, userType: string): string {
-        const secret = process.env.JWT_SECRET || 'secret';
-        const expiresIn = (process.env.JWT_EXPIRES_IN as any) || '3h';
+        const secret = process.env.JWT_SECRET;
+        const expiresIn = process.env.JWT_EXPIRES_IN || '3h';
+
+        if (!secret) {
+            throw new Error('JWT_SECRET is not defined in environment variables');
+        }
 
         return jwt.sign({ id, userType }, secret, {
-            expiresIn,
+            expiresIn: expiresIn as any,
         });
     }
 }
