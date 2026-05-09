@@ -1,32 +1,40 @@
-import { Search, SlidersHorizontal } from "lucide-react";
+import { Search } from "lucide-react";
 import { useState, useEffect } from "react";
 import { productService } from "@/services/product.service";
 import InventoryProduct from "@/components/admin/InventoryProduct";
 import ProductModal from "@/components/admin/ProductModal";
+import { searchInventory } from "@/utils/searchInventory";
 
-export default function InventoryPage() {
+function InventoryPage() {
+  const [dummy, setDummy] = useState(true);
   const [search, setSearch] = useState("");
   const [products, setProducts] = useState([]);
-  const [showAddModal, setShowAddModal] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [modalItem, setModalItem] = useState(null);
+  const [offset, setOffset] = useState(0);
 
   useEffect(() => {
     productService
-      .getProducts({ sortBy: "price_asc", productType: null })
-      .then((data) => setProducts(data));
-  }, []);
+      .getProducts({ sortBy: "price_asc", productType: null, offset })
+      .then((data) => setProducts(searchInventory(search, data.data)));
+  }, [showModal, dummy, search, offset]);
 
   const productsDisplay = products.map((item, ind) => (
-    <InventoryProduct item={item} key={ind} />
+    <InventoryProduct
+      item={item}
+      key={ind}
+      setDummy={setDummy}
+      setModalItem={setModalItem}
+      setShowModal={setShowModal}
+    />
   ));
+
+  console.log(offset);
 
   return (
     <>
-      {showAddModal ? (
-        <ProductModal
-          open={showAddModal}
-          onClose={() => setShowAddModal(false)}
-          onSave={() => {}}
-        />
+      {showModal ? (
+        <ProductModal onClose={() => setShowModal(false)} item={modalItem} />
       ) : undefined}
       <div className="py-10 md:p-10 inter text-[#42493E]">
         <div className="flex items-start justify-between mb-8 flex-wrap gap-8 max-md:px-2">
@@ -35,7 +43,10 @@ export default function InventoryPage() {
           </h1>
           <button
             className="flex items-center gap-2 bg-[#7E2700] text-white text-sm font-medium px-4 py-2 rounded-sm"
-            onClick={() => setShowAddModal(true)}
+            onClick={() => {
+              setModalItem(null);
+              setShowModal(true);
+            }}
           >
             + Add New Product
           </button>
@@ -55,10 +66,6 @@ export default function InventoryPage() {
               className="w-full pl-9 pr-4 py-2 text-sm border border-[#42493E] rounded-sm bg-white text-[#42493E] placeholder-[#42493E] outline-none"
             />
           </div>
-          <button className="flex items-center gap-2 border border-[#42493E] bg-white text-sm text-[#42493E] px-4 py-2 rounded-sm">
-            <SlidersHorizontal size={15} />
-            Filters
-          </button>
         </div>
 
         <div className="bg-white md:rounded-sm">
@@ -73,12 +80,22 @@ export default function InventoryPage() {
           </div>
 
           <div className="flex items-center justify-between px-6 py-3 border-t border-[#E2E1DF]">
-            <p className="text-xs text-gray-400">{`Showing 1 to 3 of ${products.length} entries`}</p>
+            <p className="text-xs text-gray-400">{`Showing products ${offset + 1} to ${offset + products.length}`}</p>
             <div className="flex items-center gap-1">
-              <button className="w-7 h-7 flex items-center justify-center rounded border border-[#E2E1DF] text-gray-400 text-sm">
+              <button
+                className="w-7 h-7 flex items-center justify-center rounded border border-[#E2E1DF] text-gray-400 text-sm"
+                onClick={() =>
+                  setOffset((prev) => (prev === 0 ? prev : prev - 10))
+                }
+              >
                 ‹
               </button>
-              <button className="w-7 h-7 flex items-center justify-center rounded border border-[#E2E1DF] text-gray-400 text-sm">
+              <button
+                className="w-7 h-7 flex items-center justify-center rounded border border-[#E2E1DF] text-gray-400 text-sm"
+                onClick={() =>
+                  setOffset((prev) => (products.length < 10 ? prev : prev + 10))
+                }
+              >
                 ›
               </button>
             </div>
@@ -88,3 +105,5 @@ export default function InventoryPage() {
     </>
   );
 }
+
+export default InventoryPage;

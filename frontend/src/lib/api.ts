@@ -22,7 +22,7 @@ api.interceptors.request.use(
   },
   (error) => {
     return Promise.reject(error);
-  }
+  },
 );
 
 api.interceptors.response.use(
@@ -32,7 +32,7 @@ api.interceptors.response.use(
       localStorage.removeItem("auth_user");
     }
     return Promise.reject(error);
-  }
+  },
 );
 
 export default api;

@@ -1,39 +1,25 @@
 import { X, CloudUpload } from "lucide-react";
 import { useState, useRef } from "react";
-
-interface AddProductModalProps {
-  open: boolean;
-  onClose: () => void;
-  onSave: (product: ProductForm) => void;
-}
-
-interface ProductForm {
-  productName: string;
-  productType: "1" | "2" | "";
-  productDescription: string;
-  productQuantity: number;
-  price: number;
-  image: File | null;
-}
+import {
+  type AddProductFormData,
+  type EditProductFormData,
+  addProductSchema,
+  editProductSchema,
+  type Product,
+} from "@/types/Product";
+import toast from "react-hot-toast";
+import { productService } from "@/services/product.service";
 
 export default function ProductModal({
-  open,
   onClose,
-  onSave,
-}: AddProductModalProps) {
-  const [form, setForm] = useState<ProductForm>({
-    productName: "",
-    productType: "",
-    productDescription: "",
-    price: 0,
-    productQuantity: 0,
-    image: null,
-  });
-  const [preview, setPreview] = useState<string | null>(null);
+  item,
+}: {
+  onClose: () => void;
+  item: Product;
+}) {
+  const [preview, setPreview] = useState<string | null>(item?.imageUrl ?? null);
   const [dragging, setDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
-
-  if (!open) return null;
 
   const handleImageFile = (file: File) => {
     setForm((f) => ({ ...f, image: file }));
@@ -47,8 +33,45 @@ export default function ProductModal({
     if (file && file.type.startsWith("image/")) handleImageFile(file);
   };
 
-  const handleSubmit = () => {
-    onSave(form);
+  const [form, setForm] = useState<AddProductFormData | EditProductFormData>({
+    name: item?.name ?? "",
+    description: item?.description ?? "",
+    type: item?.type ?? 1,
+    price: item?.price ?? 0,
+    quantity: item?.quantity ?? 0,
+    image: null,
+  });
+
+  const handleSubmit = async () => {
+    if (!item) {
+      const result = addProductSchema.safeParse(form);
+
+      if (!result.success) {
+        toast.error(result.error.issues[0].message);
+        return;
+      }
+
+      try {
+        await productService.addProduct(result.data);
+        toast.success("Product successfully added.");
+      } catch (err) {
+        toast.error(err?.response?.data?.message ?? "Something went wrong.");
+      }
+    } else {
+      const result = editProductSchema.safeParse(form);
+
+      if (!result.success) {
+        toast.error(result.error.issues[0].message);
+        return;
+      }
+
+      try {
+        await productService.editProduct(result.data, item._id);
+        toast.success("Product successfully edited.");
+      } catch (err) {
+        toast.error(err?.response?.data?.message ?? "Something went wrong.");
+      }
+    }
     onClose();
   };
 
@@ -59,11 +82,11 @@ export default function ProductModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-[2px]">
-      <div className="relative max-md:h-full w-full md:max-w-lg md:mx-4 bg-white md:rounded-sm border border-[#E8E7E3] overflow-hidden inter">
+      <div className="relative max-md:h-dvh w-full md:max-w-lg md:mx-4 bg-white md:rounded-sm border border-[#E8E7E3] overflow-hidden inter">
         <div className="px-7 pt-7 pb-5 border-b border-[#EDECE8]">
           <div className="flex items-start justify-between">
             <h2 className="text-xl font-bold text-[#1C4419] manrope">
-              Add New Product
+              {item ? "Edit" : "Add"} New Product
             </h2>
             <button
               onClick={onClose}
@@ -74,7 +97,7 @@ export default function ProductModal({
           </div>
         </div>
 
-        <div className="overflow-y-auto md:max-h-[70vh] px-7 py-6 space-y-7">
+        <div className="overflow-y-scroll h-full md:max-h-[70vh] px-7 py-6 space-y-7 pb-40 md:pb-20">
           <section>
             <h3 className="font-bold text-[#1C4419] manrope mb-4">
               Basic Details
@@ -86,9 +109,9 @@ export default function ProductModal({
                   type="text"
                   className={inputClass}
                   placeholder="e.g. Cherokee Purple Tomatoes"
-                  value={form.productName}
+                  value={form.name}
                   onChange={(e) =>
-                    setForm((f) => ({ ...f, productName: e.target.value }))
+                    setForm((f) => ({ ...f, name: e.target.value }))
                   }
                 />
               </div>
@@ -96,17 +119,14 @@ export default function ProductModal({
                 <label className={labelClass}>Type</label>
                 <select
                   className={inputClass}
-                  value={form.productType}
+                  value={form.type}
                   onChange={(e) =>
                     setForm((f) => ({
                       ...f,
-                      productType: e.target.value as "1" | "2" | "",
+                      type: parseInt(e.target.value),
                     }))
                   }
                 >
-                  <option value="" disabled>
-                    Select category...
-                  </option>
                   <option value="1">Crop</option>
                   <option value="2">Poultry</option>
                 </select>
@@ -117,9 +137,9 @@ export default function ProductModal({
               <textarea
                 className={`${inputClass} resize-none h-24`}
                 placeholder="Describe the origin, flavor profile, and handling instructions..."
-                value={form.productDescription}
+                value={form.description}
                 onChange={(e) =>
-                  setForm((f) => ({ ...f, productDescription: e.target.value }))
+                  setForm((f) => ({ ...f, description: e.target.value }))
                 }
               />
             </div>
@@ -159,11 +179,11 @@ export default function ProductModal({
                   min={0}
                   className={inputClass}
                   placeholder="0"
-                  value={form.productQuantity || ""}
+                  value={form.quantity || ""}
                   onChange={(e) =>
                     setForm((f) => ({
                       ...f,
-                      productQuantity: parseInt(e.target.value) || 0,
+                      quantity: parseInt(e.target.value) || 0,
                     }))
                   }
                 />
@@ -238,7 +258,7 @@ export default function ProductModal({
           </section>
         </div>
 
-        <div className="px-7 py-4 border-t border-[#EDECE8] flex items-center justify-end gap-3 bg-[#FAFAF8]">
+        <div className="absolute bottom-0 w-full px-7 py-4 border-t border-[#EDECE8] flex items-center justify-end gap-3 bg-[#FAFAF8]">
           <button
             onClick={onClose}
             className="px-4 py-2 text-sm font-medium text-[#42493E] hover:bg-[#EDECE8] rounded-lg transition-colors"
@@ -249,7 +269,7 @@ export default function ProductModal({
             onClick={handleSubmit}
             className="px-5 py-2 text-sm font-semibold text-white bg-[#8B2215] rounded-sm transition-colors shadow-sm"
           >
-            Save Product
+            Save {item ? "Changes" : "Product"}
           </button>
         </div>
       </div>

@@ -1,5 +1,10 @@
-import { type Product } from "@/types/Product";
-import axios from "axios";
+import {
+  type EditProductFormData,
+  type AddProductFormData,
+  type ProductResponse,
+  type Product,
+} from "@/types/Product";
+import api from "@/lib/api";
 
 export const productService = {
   getProducts: async ({
@@ -39,29 +44,54 @@ export const productService = {
 
     if (productType !== null) params.type = productType;
 
-    const response = await axios.get("/api/products", { params });
-    return response.data;
+    const {
+      data: { data },
+    } = await api.get("/api/products", { params });
+    return { data, total: data.length };
   },
 
-  addProduct: async (
-    newProduct: Omit<Product, "id">,
-    image: File,
-  ): Promise<Product> => {
-    const formattedProduct: Product = {
-      name: "",
-      description: "",
-      type: null,
-      quantity: null,
-      price: null,
-      imageUrl: "",
-    };
-    formattedProduct.name = newProduct.name;
-    formattedProduct.description = newProduct.description;
-    formattedProduct.type = Number(newProduct.type) as 1 | 2;
-    formattedProduct.quantity = Number(newProduct.quantity);
-    formattedProduct.price = Number(newProduct.name);
+  addProduct: async (data: AddProductFormData): Promise<ProductResponse> => {
+    const form = new FormData();
+    form.append("name", data.name);
+    form.append("description", data.description);
+    form.append("type", String(data.type));
+    form.append("quantity", String(data.quantity));
+    form.append("price", String(data.price));
+    form.append("image", data.image);
 
-    const response = await axios.post("/api/products", formattedProduct);
-    return response.data.data;
+    const { data: res } = await api.post<ProductResponse>(
+      "/api/products",
+      form,
+    );
+
+    return res;
+  },
+
+  editProduct: async (
+    data: EditProductFormData,
+    id: string,
+  ): Promise<ProductResponse> => {
+    const form = new FormData();
+    form.append("name", data.name);
+    form.append("description", data.description);
+    form.append("type", String(data.type));
+    form.append("quantity", String(data.quantity));
+    form.append("price", String(data.price));
+    if (data.image) {
+      form.append("image", data.image);
+    }
+
+    const { data: res } = await api.put<ProductResponse>(
+      `/api/products/${id}`,
+      form,
+    );
+
+    return res;
+  },
+
+  deleteProduct: async (id: string): Promise<ProductResponse> => {
+    const { data: res } = await api.delete(`/api/products/${id}`);
+
+    return res;
   },
 };
