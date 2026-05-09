@@ -11,7 +11,12 @@ export const postSignUp = async (req: Request, res: Response) => {
     }
 
     try {
-        const user = await AuthService.registerUser(req.body);
+        const user = await AuthService.registerUser({
+            firstName,
+            lastName,
+            email,
+            password
+        });
         res.status(201).json(user);
     } catch (error: any) {
         // If user already exists, it's a Bad Request (400)

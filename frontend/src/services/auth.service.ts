@@ -1,8 +1,8 @@
-import axios from "axios";
+import api from "@/lib/api";
 
 export const authService = {
   login: async ({ email, password }: { email: string; password: string }) => {
-    const { data } = await axios.post("/api/auth/login", { email, password });
+    const { data } = await api.post("/api/auth/login", { email, password });
     return data;
   },
 
@@ -14,12 +14,12 @@ export const authService = {
     password,
   }: {
     fname: string;
-    mname: string;
+    mname: string | null;
     lname: string;
     email: string;
     password: string;
   }) => {
-    const { data } = await axios.post("/api/auth/signup", {
+    const { data } = await api.post("/api/auth/signup", {
       firstName: fname,
       mname,
       lastName: lname,

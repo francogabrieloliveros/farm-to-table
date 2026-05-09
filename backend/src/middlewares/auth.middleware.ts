@@ -26,7 +26,10 @@ export const verifyToken = (req: AuthRequest, res: Response, next: NextFunction)
     }
 
     try {
-        const secret = process.env.JWT_SECRET || 'secret';
+        const secret = process.env.JWT_SECRET;
+        if (!secret) {
+            throw new Error('JWT_SECRET is not defined');
+        }
         const decoded = jwt.verify(token, secret) as { id: string; userType: string };
 
         // attach user info to the request object
