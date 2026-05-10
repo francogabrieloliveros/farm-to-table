@@ -1,28 +1,36 @@
-import { useState, useEffect } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import toast from "react-hot-toast";
 import { orderService } from "@/services/order.service";
-import { type Order } from "@/types/Order";
 import OrderCard from "./OrderCard";
 
 const OrderHistory = () => {
-  const [orders, setOrders] = useState<Order[]>([]);
+  const queryClient = useQueryClient();
 
-  const handleCancel = (transactionId: string) => {
-    setOrders((prev) =>
-      prev.map((o) =>
-        o.transactionId === transactionId ? { ...o, orderStatus: 2 } : o,
-      ),
-    );
-  };
+  // fetch orders for the logged-in customer
+  const {
+    data,
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ["my-orders"],
+    queryFn: orderService.getMyOrders,
+  });
 
-  const ordersDisplay = orders.map((order, ind) => (
-    <OrderCard key={ind} order={order} onCancel={handleCancel} />
-  ));
+  // cancel a pending order and refresh the order list
+  const cancelMutation = useMutation({
+    mutationFn: orderService.cancelOrder,
+    onSuccess: () => {
+      toast.success("Order canceled successfully.");
+      queryClient.invalidateQueries({ queryKey: ["my-orders"] });
+    },
+    onError: (error: any) => {
+      const message =
+        error.response?.data?.message || "Failed to cancel order.";
+      toast.error(message);
+    },
+  });
 
-  useEffect(() => {
-    orderService
-      .getOrders({ orderStatus: null, email: null })
-      .then((data) => setOrders(data));
-  }, []);
+  const orders = data?.data ?? [];
 
   return (
     <div className="w-full">
@@ -33,12 +41,33 @@ const OrderHistory = () => {
         </p>
       </div>
 
-      {orders.length === 0 ? (
+      {isLoading && (
+        <div className="text-center py-16 text-[#42493E] inter text-sm">
+          Loading orders...
+        </div>
+      )}
+
+      {isError && (
+        <div className="text-center py-16 text-[#7E2700] inter text-sm">
+          Failed to load your orders.
+        </div>
+      )}
+
+      {!isLoading && !isError && orders.length === 0 ? (
         <div className="text-center py-16 text-[#42493E] inter text-sm">
           No orders yet.
         </div>
       ) : (
-        <div className="flex flex-col gap-4">{ordersDisplay}</div>
+        <div className="flex flex-col gap-4">
+          {orders.map((order) => (
+            <OrderCard
+              key={order._id}
+              order={order}
+              onCancel={(id) => cancelMutation.mutate(id)}
+              isCanceling={cancelMutation.isPending}
+            />
+          ))}
+        </div>
       )}
     </div>
   );
