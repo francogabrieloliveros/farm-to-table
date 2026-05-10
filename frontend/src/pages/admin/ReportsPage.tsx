@@ -1,43 +1,71 @@
-import { useState } from "react";
-import { ChevronDown } from "lucide-react";
+import { useMemo, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import {
+  reportService,
+  type ReportInterval,
+  type ReportProduct,
+} from "@/services/report.service";
 
-type Period = "Weekly" | "Monthly" | "Annual";
+type Period = {
+  label: "Weekly" | "Monthly" | "Annual";
+  value: ReportInterval;
+};
 
-const PRODUCT_PERFORMANCE = [
-  {
-    name: "Heirloom Tomatoes",
-    category: "Nightshades",
-    itemsSold: 1200,
-    price: "$4.50",
-    totalIncome: "$5,400.00",
-  },
-  {
-    name: "Honeycrisp Apples",
-    category: "Orchard",
-    itemsSold: 3400,
-    price: "$2.20",
-    totalIncome: "$7,480.00",
-  },
-  {
-    name: "Organic Kale",
-    category: "Leafy Greens",
-    itemsSold: 850,
-    price: "$3.00",
-    totalIncome: "$2,550.00",
-  },
-  {
-    name: "Root Veg Box",
-    category: "Market Box",
-    itemsSold: 450,
-    price: "$25.00",
-    totalIncome: "$11,250.00",
-  },
+type ProductBreakdown = ReportProduct & {
+  productName: string;
+};
+
+const PERIODS: Period[] = [
+  { label: "Weekly", value: "weekly" },
+  { label: "Monthly", value: "monthly" },
+  { label: "Annual", value: "annual" },
 ];
 
+const formatCurrency = (value: number) =>
+  new Intl.NumberFormat("en-PH", {
+    style: "currency",
+    currency: "PHP",
+  }).format(value);
+
 export default function ReportsPage() {
-  const [period, setPeriod] = useState<Period>("Weekly");
-  const grandTotalItems = PRODUCT_PERFORMANCE.reduce(
-    (sum, p) => sum + p.itemsSold,
+  const [period, setPeriod] = useState<Period>(PERIODS[0]);
+
+  // fetch aggregated sales report data
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ["sales-report", period.value],
+    queryFn: () => reportService.getSalesReport(period.value),
+  });
+
+  const reportGroups = data?.data ?? [];
+  const totalPendingOrders = data?.totalPendingOrders ?? 0;
+
+  // combine product income across all returned intervals
+  const productBreakdown = useMemo(() => {
+    const products = new Map<string, ProductBreakdown>();
+
+    reportGroups.forEach((group) => {
+      group.products.forEach((product) => {
+        const existing = products.get(product.productId);
+
+        if (existing) {
+          existing.totalSales += product.totalSales;
+          existing.income += product.income;
+        } else {
+          products.set(product.productId, { ...product });
+        }
+      });
+    });
+
+    return Array.from(products.values());
+  }, [reportGroups]);
+
+  const totalSalesRevenue = reportGroups.reduce(
+    (sum, group) => sum + group.totalIntervalIncome,
+    0,
+  );
+
+  const totalItemsSold = productBreakdown.reduce(
+    (sum, product) => sum + product.totalSales,
     0,
   );
 
@@ -49,89 +77,124 @@ export default function ReportsPage() {
             Sales Reports
           </h1>
           <p className="text-sm text-gray-400">
-            Comprehensive review of market performance and volume.
+            Comprehensive review of market performance and revenue.
           </p>
         </div>
+
         <div className="flex items-center gap-1 bg-white border border-[#E2E1DF] rounded-lg p-1">
-          {(["Weekly", "Monthly", "Annual"] as Period[]).map((p) => (
+          {PERIODS.map((p) => (
             <button
-              key={p}
+              key={p.value}
               onClick={() => setPeriod(p)}
-              className={`px-4 py-1.5 text-sm rounded-md font-medium ${
-                period === p ? "bg-[#1C4419] text-white" : "text-gray-500"
-              }`}
+              className={`px-4 py-1.5 text-sm rounded-md font-medium ${period.value === p.value
+                ? "bg-[#1C4419] text-white"
+                : "text-gray-500"
+                }`}
             >
-              {p}
+              {p.label}
             </button>
           ))}
         </div>
       </div>
 
-      {/* Summary cards */}
-      <div className="grid grid-cols-2 gap-4 mb-8">
+      {/* summary cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
         <div className="bg-[#e8f5e2] rounded-xl p-6">
           <p className="text-xs uppercase tracking-wider text-gray-400 mb-2">
-            Total
+            Total Sales Revenue
           </p>
-          <p className="text-4xl font-bold text-gray-800">$124,500</p>
+          <p className="text-4xl font-bold text-gray-800">
+            {isLoading ? "Loading..." : formatCurrency(totalSalesRevenue)}
+          </p>
         </div>
+
         <div className="bg-white rounded-xl p-6">
           <p className="text-xs uppercase tracking-wider text-gray-400 mb-2">
-            Total Items Sold
+            Total Pending Orders
           </p>
-          <p className="text-4xl font-bold text-gray-800">8,420</p>
+          <p className="text-4xl font-bold text-gray-800">
+            {isLoading ? "Loading..." : totalPendingOrders.toLocaleString()}
+          </p>
         </div>
       </div>
 
-      {/* Product Performance */}
+      {/* product performance table */}
       <div className="bg-white rounded-xl overflow-hidden">
         <div className="flex items-center justify-between px-6 py-4 border-b border-[#E2E1DF]">
-          <h2 className="font-semibold text-gray-800">Product Performance</h2>
-          <button className="flex items-center gap-1 text-sm text-[#7E2700] font-medium">
-            Filter by Category <ChevronDown size={14} />
-          </button>
+          <h2 className="font-semibold text-gray-800">
+            Product Income Breakdown
+          </h2>
+          <p className="text-sm text-gray-400">{period.label} View</p>
         </div>
+
         <table className="w-full text-sm">
           <thead>
             <tr className="text-xs uppercase tracking-wider text-gray-400 border-b border-[#E2E1DF]">
               <th className="text-left px-6 py-3">Product Name</th>
-              <th className="text-left px-6 py-3">Category</th>
               <th className="text-right px-6 py-3">Items Sold</th>
-              <th className="text-right px-6 py-3">Price</th>
               <th className="text-right px-6 py-3">Total Income</th>
             </tr>
           </thead>
+
           <tbody>
-            {PRODUCT_PERFORMANCE.map((row) => (
-              <tr key={row.name} className="border-b border-[#E2E1DF]">
-                <td className="px-6 py-4 flex items-center gap-3">
-                  <div className="w-8 h-8 bg-[#E2E1DF] rounded-md shrink-0" />
-                  <span className="text-gray-700 font-medium">{row.name}</span>
-                </td>
-                <td className="px-6 py-4 text-gray-400">{row.category}</td>
-                <td className="px-6 py-4 text-right text-gray-700">
-                  {row.itemsSold.toLocaleString()}
-                </td>
-                <td className="px-6 py-4 text-right text-gray-700">
-                  {row.price}
-                </td>
-                <td className="px-6 py-4 text-right text-gray-700">
-                  {row.totalIncome}
+            {isLoading && (
+              <tr>
+                <td colSpan={3} className="px-6 py-6 text-gray-500">
+                  Loading report data...
                 </td>
               </tr>
-            ))}
-            {/* Grand Total */}
-            <tr className="bg-gray-50">
-              <td className="px-6 py-4 font-bold text-gray-800">Grand Total</td>
-              <td className="px-6 py-4" />
-              <td className="px-6 py-4 text-right font-semibold text-gray-700">
-                {grandTotalItems.toLocaleString()}
-              </td>
-              <td className="px-6 py-4 text-right text-gray-400">--</td>
-              <td className="px-6 py-4 text-right font-bold text-gray-800">
-                $26,680.00
-              </td>
-            </tr>
+            )}
+
+            {isError && (
+              <tr>
+                <td colSpan={3} className="px-6 py-6 text-[#7E2700]">
+                  Failed to load sales report.
+                </td>
+              </tr>
+            )}
+
+            {!isLoading && !isError && productBreakdown.length === 0 && (
+              <tr>
+                <td colSpan={3} className="px-6 py-6 text-gray-500">
+                  No completed sales found for this period.
+                </td>
+              </tr>
+            )}
+
+            {!isLoading &&
+              !isError &&
+              productBreakdown.map((row) => (
+                <tr key={row.productId} className="border-b border-[#E2E1DF]">
+                  <td className="px-6 py-4 flex items-center gap-3">
+                    <div className="w-8 h-8 bg-[#E2E1DF] rounded-md shrink-0" />
+                    <span className="text-gray-700 font-medium">
+                      {row.productName}
+                    </span>
+                  </td>
+
+                  <td className="px-6 py-4 text-right text-gray-700">
+                    {row.totalSales.toLocaleString()}
+                  </td>
+
+                  <td className="px-6 py-4 text-right text-gray-700">
+                    {formatCurrency(row.income)}
+                  </td>
+                </tr>
+              ))}
+
+            {!isLoading && !isError && productBreakdown.length > 0 && (
+              <tr className="bg-gray-50">
+                <td className="px-6 py-4 font-bold text-gray-800">
+                  Grand Total
+                </td>
+                <td className="px-6 py-4 text-right font-semibold text-gray-700">
+                  {totalItemsSold.toLocaleString()}
+                </td>
+                <td className="px-6 py-4 text-right font-bold text-gray-800">
+                  {formatCurrency(totalSalesRevenue)}
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>

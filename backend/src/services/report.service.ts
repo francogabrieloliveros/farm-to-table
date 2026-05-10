@@ -108,6 +108,11 @@ export class ReportService {
     return await Order.aggregate(pipeline).exec();
   }
 
+  // Counts all orders that are still pending
+  static async getTotalPendingOrders(): Promise<number> {
+    return Order.countDocuments({ status: OrderStatus.Pending }).exec();
+  }
+
   // Generates a CSV formatted string for all completed sales
   static async exportSalesData(): Promise<string> {
     const pipeline: mongoose.PipelineStage[] = [
@@ -155,7 +160,7 @@ export class ReportService {
     const results = await Order.aggregate(pipeline).exec();
 
     const headers = ['Product Name', 'Product Type', 'Quantity Sold', 'Income per Product', 'Date'];
-    
+
     if (!results || results.length === 0) {
       return headers.join(',');
     }
