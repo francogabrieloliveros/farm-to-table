@@ -1,12 +1,23 @@
-import { useState } from "react";
 import { Pencil, Lock, LogOut, Mail } from "lucide-react";
+import useAuth from "@/hooks/useAuth";
+import { useEffect, useState } from "react";
 
 const AccountSettings = () => {
-  const [firstName, setFirstName] = useState("Eleanor");
-  const [middleName, setMiddleName] = useState("");
-  const [lastName, setLastName] = useState("Vance");
-  const [email, setEmail] = useState("eleanor.vance@example.com");
+  const { user, logout } = useAuth();
+  const [firstName, setFirstName] = useState(user?.firstName || "");
+  const [middleName, setMiddleName] = useState(user?.middleName || "");
+  const [lastName, setLastName] = useState(user?.lastName || "");
+  const [email, setEmail] = useState(user?.email || "");
   const [isEditingInfo, setIsEditingInfo] = useState(false);
+
+  useEffect(() => {
+    if (user) {
+      setFirstName(user.firstName || "");
+      setMiddleName(user.middleName || "");
+      setLastName(user.lastName || "");
+      setEmail(user.email || "");
+    }
+  }, [user]);
 
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -192,7 +203,10 @@ const AccountSettings = () => {
         </div>
 
         <div className="flex justify-end max-sm:p-5">
-          <button className="flex items-center gap-2 bg-[#7E2700] text-white manrope font-semibold text-sm px-5 py-2.5 rounded-sm transition-colors">
+          <button
+            onClick={logout}
+            className="flex items-center gap-2 bg-[#7E2700] text-white manrope font-semibold text-sm px-5 py-2.5 rounded-sm transition-colors cursor-pointer"
+          >
             <LogOut size={16} />
             Logout
           </button>

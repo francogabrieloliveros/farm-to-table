@@ -3,7 +3,7 @@ import { AuthService } from '../services/auth.service.js';
 
 //    Register a new user
 export const postSignUp = async (req: Request, res: Response) => {
-    const { firstName, lastName, email, password } = req.body;
+    const { firstName, middleName, lastName, email, password } = req.body;
 
     // Simple validation
     if (!firstName || !lastName || !email || !password) {
@@ -13,6 +13,7 @@ export const postSignUp = async (req: Request, res: Response) => {
     try {
         const user = await AuthService.registerUser({
             firstName,
+            middleName,
             lastName,
             email,
             password

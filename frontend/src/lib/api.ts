@@ -25,11 +25,20 @@ api.interceptors.request.use(
   }
 );
 
+let logoutCallback: (() => void) | null = null;
+
+export const setLogoutCallback = (cb: () => void) => {
+  logoutCallback = cb;
+};
+
 api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
       localStorage.removeItem("auth_user");
+      if (logoutCallback) {
+        logoutCallback();
+      }
     }
     return Promise.reject(error);
   }

@@ -4,6 +4,8 @@ import jwt from 'jsonwebtoken';
 export interface AuthResponse {
     _id: string;
     firstName: string;
+    middleName?: string;
+    lastName: string;
     email: string;
     userType: string;
     token: string;
@@ -27,6 +29,8 @@ export class AuthService {
         return {
             _id: user._id.toString(),
             firstName: user.firstName,
+            middleName: user.middleName,
+            lastName: user.lastName,
             email: user.email,
             userType: user.userType,
             token: this.generateToken(user._id.toString(), user.userType),
@@ -43,6 +47,8 @@ export class AuthService {
             return {
                 _id: user._id.toString(),
                 firstName: user.firstName,
+                middleName: user.middleName,
+                lastName: user.lastName,
                 email: user.email,
                 userType: user.userType,
                 token: this.generateToken(user._id.toString(), user.userType),

@@ -2,7 +2,7 @@ import { Navigate } from "react-router";
 import type { ReactElement } from "react";
 import useAuth from "@/hooks/useAuth";
 
-const ProtectedRoute = ({ element }: { element: ReactElement }) => {
+const PublicRoute = ({ element }: { element: ReactElement }) => {
   const { isAuthenticated, userType } = useAuth();
 
   if (isAuthenticated) {
@@ -17,4 +17,4 @@ const ProtectedRoute = ({ element }: { element: ReactElement }) => {
   return element;
 };
 
-export default ProtectedRoute;
+export default PublicRoute;

@@ -16,9 +16,9 @@ const LoginPage = () => {
     const password = formData.get("passwordInput") as string;
 
     try {
-      await login({ email, password });
+      const data = await login({ email, password });
       toast.success("Logged in successfully");
-      navigate(userType === "Admin" ? "/admin/dashboard" : "/");
+      navigate(data.userType === "Admin" ? "/admin/dashboard" : "/");
     } catch (err) {
       toast.error(err?.response?.data?.message ?? "Something went wrong.");
     }

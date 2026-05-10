@@ -3,7 +3,7 @@ import api from "@/lib/api";
 export const authService = {
   login: async ({ email, password }: { email: string; password: string }) => {
     const { data } = await api.post("/api/auth/login", { email, password });
-    return data;
+    return { ...data, id: data._id };
   },
 
   signup: async ({
@@ -21,11 +21,11 @@ export const authService = {
   }) => {
     const { data } = await api.post("/api/auth/signup", {
       firstName: fname,
-      mname,
+      middleName: mname,
       lastName: lname,
       email,
       password,
     });
-    return data;
+    return { ...data, id: data._id };
   },
 };

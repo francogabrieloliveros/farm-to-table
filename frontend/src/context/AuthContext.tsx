@@ -1,5 +1,6 @@
-import { createContext, useState, type ReactNode } from "react";
+import { createContext, useState, type ReactNode, useEffect } from "react";
 import { authService } from "@/services/auth.service.ts";
+import { setLogoutCallback } from "@/lib/api";
 import {
   type AuthUser,
   type AuthContextValue,
@@ -18,12 +19,20 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       return null;
     }
   });
+  
+  useEffect(() => {
+    setLogoutCallback(() => {
+      setUser(null);
+      localStorage.removeItem("auth_user");
+    });
+  }, []);
 
   async function login(credentials: { email: string; password: string }) {
     try {
       const data = await authService.login(credentials);
       localStorage.setItem("auth_user", JSON.stringify(data));
       setUser(data);
+      return data;
     } catch (error: any) {
       const message = error.response?.data?.message || "Login failed. Please check your credentials.";
       toast.error(message);
@@ -42,6 +51,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       const data = await authService.signup(credentials);
       localStorage.setItem("auth_user", JSON.stringify(data));
       setUser(data);
+      return data;
     } catch (error: any) {
       const message = error.response?.data?.message || "Signup failed. Please try again.";
       toast.error(message);
