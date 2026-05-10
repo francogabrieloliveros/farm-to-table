@@ -1,52 +1,120 @@
-import { Pencil, Lock, LogOut, Mail } from "lucide-react";
-import useAuth from "@/hooks/useAuth";
+import { Lock, LogOut, Mail, Pencil } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useMutation } from "@tanstack/react-query";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import toast from "react-hot-toast";
+import useAuth from "@/hooks/useAuth";
+import { userService } from "@/services/user.service";
+
+const profileSchema = z.object({
+  firstName: z.string().trim().min(2, "First name must be at least 2 characters."),
+  middleName: z.string().trim().optional(),
+  lastName: z.string().trim().min(2, "Last name must be at least 2 characters."),
+});
+
+const passwordSchema = z
+  .object({
+    currentPassword: z.string().optional(),
+    password: z.string().min(6, "Password must be at least 6 characters."),
+    confirmPassword: z.string().min(6, "Confirm password must be at least 6 characters."),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords do not match.",
+    path: ["confirmPassword"],
+  });
+
+type ProfileFormValues = z.infer<typeof profileSchema>;
+type PasswordFormValues = z.infer<typeof passwordSchema>;
 
 const AccountSettings = () => {
-  const { user, logout } = useAuth();
-  const [firstName, setFirstName] = useState(user?.firstName || "");
-  const [middleName, setMiddleName] = useState(user?.middleName || "");
-  const [lastName, setLastName] = useState(user?.lastName || "");
-  const [email, setEmail] = useState(user?.email || "");
+  const { user, logout, updateStoredUser } = useAuth();
   const [isEditingInfo, setIsEditingInfo] = useState(false);
+
+  const profileForm = useForm<ProfileFormValues>({
+    resolver: zodResolver(profileSchema),
+    defaultValues: {
+      firstName: user?.firstName || "",
+      middleName: user?.middleName || "",
+      lastName: user?.lastName || "",
+    },
+  });
+
+  const passwordForm = useForm<PasswordFormValues>({
+    resolver: zodResolver(passwordSchema),
+    defaultValues: {
+      currentPassword: "",
+      password: "",
+      confirmPassword: "",
+    },
+  });
 
   useEffect(() => {
     if (user) {
-      setFirstName(user.firstName || "");
-      setMiddleName(user.middleName || "");
-      setLastName(user.lastName || "");
-      setEmail(user.email || "");
+      profileForm.reset({
+        firstName: user.firstName || "",
+        middleName: user.middleName || "",
+        lastName: user.lastName || "",
+      });
     }
-  }, [user]);
+  }, [user, profileForm]);
 
-  const [currentPassword, setCurrentPassword] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [passwordError, setPasswordError] = useState("");
+  const profileMutation = useMutation({
+    mutationFn: userService.updateProfile,
+    onSuccess: (updatedUser) => {
+      updateStoredUser({
+        firstName: updatedUser.firstName,
+        middleName: updatedUser.middleName,
+        lastName: updatedUser.lastName,
+        email: updatedUser.email,
+        userType: updatedUser.userType,
+      });
 
-  const handleUpdateInfo = () => {
-    setIsEditingInfo(false);
-    // Put request
+      setIsEditingInfo(false);
+      toast.success("Profile updated successfully.");
+    },
+    onError: (error: any) => {
+      const message =
+        error.response?.data?.message || "Failed to update profile.";
+      toast.error(message);
+    },
+  });
+
+  const passwordMutation = useMutation({
+    mutationFn: userService.updateProfile,
+    onSuccess: () => {
+      passwordForm.reset();
+      toast.success("Password updated successfully.");
+    },
+    onError: (error: any) => {
+      const message =
+        error.response?.data?.message || "Failed to update password.";
+      toast.error(message);
+    },
+  });
+
+  const handleUpdateInfo = (values: ProfileFormValues) => {
+    profileMutation.mutate({
+      firstName: values.firstName,
+      middleName: values.middleName || "",
+      lastName: values.lastName,
+    });
   };
 
-  const handleUpdatePassword = () => {
-    if (newPassword !== confirmPassword) {
-      setPasswordError("Passwords do not match.");
-      return;
-    }
-    if (newPassword.length < 6) {
-      setPasswordError("Password must be at least 6 characters.");
-      return;
-    }
-    setPasswordError("");
-    setCurrentPassword("");
-    setNewPassword("");
-    setConfirmPassword("");
-    // Put request
+  const handleUpdatePassword = (values: PasswordFormValues) => {
+    passwordMutation.mutate({
+      firstName: user?.firstName || "",
+      middleName: user?.middleName || "",
+      lastName: user?.lastName || "",
+      password: values.password,
+    });
   };
 
   const inputClass =
-    "w-full bg-[#e4e6e2] rounded-sm px-4 py-2.5 inter text-sm text-gray-700 outline-none";
+    "w-full bg-[#e4e6e2] rounded-sm px-4 py-2.5 inter text-sm text-gray-700 outline-none disabled:opacity-70";
+
+  const errorClass = "inter text-xs text-[#7E2700] mt-1";
 
   return (
     <div className="w-full">
@@ -60,12 +128,16 @@ const AccountSettings = () => {
       </div>
 
       <div className="flex flex-col gap-5">
-        <div className="bg-white sm:rounded-sm p-5 sm:p-6">
+        <form
+          onSubmit={profileForm.handleSubmit(handleUpdateInfo)}
+          className="bg-white sm:rounded-sm p-5 sm:p-6"
+        >
           <div className="flex justify-between items-center mb-5">
             <h3 className="manrope font-bold text-[#1C4419] text-lg">
               Personal Information
             </h3>
             <button
+              type="button"
               onClick={() => setIsEditingInfo((prev) => !prev)}
               className="text-gray-400 hover:text-[#1C4419] transition-colors"
             >
@@ -80,36 +152,46 @@ const AccountSettings = () => {
               </label>
               <input
                 className={inputClass}
-                value={firstName}
-                onChange={(e) => setFirstName(e.target.value)}
                 disabled={!isEditingInfo}
                 placeholder="Juan"
+                {...profileForm.register("firstName")}
               />
+              {profileForm.formState.errors.firstName && (
+                <p className={errorClass}>
+                  {profileForm.formState.errors.firstName.message}
+                </p>
+              )}
             </div>
+
             <div>
               <label className="inter text-xs text-[#42493E] mb-1 block">
                 Middle Name (Optional)
               </label>
               <input
                 className={inputClass}
-                value={middleName}
-                onChange={(e) => setMiddleName(e.target.value)}
                 disabled={!isEditingInfo}
                 placeholder="Optional"
+                {...profileForm.register("middleName")}
               />
             </div>
+
             <div className="sm:col-span-2">
               <label className="inter text-xs text-[#42493E] mb-1 block">
                 Last Name
               </label>
               <input
                 className={inputClass}
-                value={lastName}
-                onChange={(e) => setLastName(e.target.value)}
                 disabled={!isEditingInfo}
                 placeholder="Dela Cruz"
+                {...profileForm.register("lastName")}
               />
+              {profileForm.formState.errors.lastName && (
+                <p className={errorClass}>
+                  {profileForm.formState.errors.lastName.message}
+                </p>
+              )}
             </div>
+
             <div className="sm:col-span-2">
               <label className="inter text-xs text-[#42493E] mb-1 block">
                 Email Address
@@ -121,9 +203,8 @@ const AccountSettings = () => {
                 />
                 <input
                   className={`${inputClass} pl-9`}
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  disabled={!isEditingInfo}
+                  value={user?.email || ""}
+                  disabled
                 />
               </div>
             </div>
@@ -132,16 +213,22 @@ const AccountSettings = () => {
           {isEditingInfo && (
             <div className="flex justify-end mt-5">
               <button
-                onClick={handleUpdateInfo}
-                className="bg-[#1C4419] text-white manrope font-semibold text-sm px-5 py-2.5 rounded-sm hover:bg-[#1C4419] transition-colors"
+                type="submit"
+                disabled={profileMutation.isPending}
+                className="bg-[#1C4419] text-white manrope font-semibold text-sm px-5 py-2.5 rounded-sm transition-colors disabled:opacity-70"
               >
-                Update Information
+                {profileMutation.isPending
+                  ? "Updating..."
+                  : "Update Information"}
               </button>
             </div>
           )}
-        </div>
+        </form>
 
-        <div className="bg-white sm:rounded-sm p-5 sm:p-6">
+        <form
+          onSubmit={passwordForm.handleSubmit(handleUpdatePassword)}
+          className="bg-white sm:rounded-sm p-5 sm:p-6"
+        >
           <div className="flex justify-between items-center mb-5">
             <h3 className="manrope font-bold text-[#1C4419] text-lg">
               Security
@@ -157,11 +244,11 @@ const AccountSettings = () => {
               <input
                 className={inputClass}
                 type="password"
-                value={currentPassword}
-                onChange={(e) => setCurrentPassword(e.target.value)}
                 placeholder="••••••••"
+                {...passwordForm.register("currentPassword")}
               />
             </div>
+
             <div>
               <label className="inter text-xs text-[#42493E] mb-1 block">
                 New Password
@@ -169,11 +256,16 @@ const AccountSettings = () => {
               <input
                 className={inputClass}
                 type="password"
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
                 placeholder="Enter new password"
+                {...passwordForm.register("password")}
               />
+              {passwordForm.formState.errors.password && (
+                <p className={errorClass}>
+                  {passwordForm.formState.errors.password.message}
+                </p>
+              )}
             </div>
+
             <div>
               <label className="inter text-xs text-[#42493E] mb-1 block">
                 Confirm New Password
@@ -181,26 +273,29 @@ const AccountSettings = () => {
               <input
                 className={inputClass}
                 type="password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
                 placeholder="Confirm new password"
+                {...passwordForm.register("confirmPassword")}
               />
+              {passwordForm.formState.errors.confirmPassword && (
+                <p className={errorClass}>
+                  {passwordForm.formState.errors.confirmPassword.message}
+                </p>
+              )}
             </div>
-
-            {passwordError && (
-              <p className="inter text-xs text-[#7E2700]">{passwordError}</p>
-            )}
 
             <div className="flex justify-end">
               <button
-                onClick={handleUpdatePassword}
-                className="bg-[#1C4419] text-white manrope font-semibold text-sm px-5 py-2.5 rounded-sm transition-colors"
+                type="submit"
+                disabled={passwordMutation.isPending}
+                className="bg-[#1C4419] text-white manrope font-semibold text-sm px-5 py-2.5 rounded-sm transition-colors disabled:opacity-70"
               >
-                Update Password
+                {passwordMutation.isPending
+                  ? "Updating..."
+                  : "Update Password"}
               </button>
             </div>
           </div>
-        </div>
+        </form>
 
         <div className="flex justify-end max-sm:p-5">
           <button
