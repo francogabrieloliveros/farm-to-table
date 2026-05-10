@@ -2,6 +2,8 @@ import { Search, ShoppingCart, CircleUserRound, X, Trash } from "lucide-react";
 import { Link } from "react-router";
 import { Button } from "../ui/button";
 import useCart from "@/hooks/useCart";
+import toast from "react-hot-toast";
+import api from "@/lib/api";
 
 const ConsumerHeader = () => {
   const {
@@ -13,30 +15,61 @@ const ConsumerHeader = () => {
     changeItemQuantity,
     total,
     deleteItem,
+    clearCart,
   } = useCart();
+
+  const handleCheckout = async () => {
+    const items = Object.values(cartItems);
+    if (items.length === 0) return;
+
+    const loadingToast = toast.loading("Placing your orders...");
+
+    try {
+      // The current backend supports one product per order, so we loop
+      const promises = items.map((item) =>
+        api.post("/api/orders", {
+          productId: item.product._id,
+          quantity: item.quantity,
+        }),
+      );
+
+      await Promise.all(promises);
+
+      toast.success("Orders placed successfully!", { id: loadingToast });
+      clearCart();
+      setShowCart(false);
+    } catch (error: any) {
+      console.error("Checkout error:", error);
+      toast.error(
+        error.response?.data?.message || "Failed to place orders. Please try again.",
+        { id: loadingToast },
+      );
+    }
+  };
 
   const cartItemsDisplay = Object.values(cartItems).map(
     ({ product, quantity }, ind) => (
       <div className="flex justify-between gap-5" key={ind}>
         <div className="h-24 w-24 shadow-lg">
           <img
-            src={product.image}
+            src={product.imageUrl}
             className="object-cover w-full h-full rounded-sm"
           />
         </div>
         <div className="flex flex-col flex-1 h-24 justify-between">
           <div className="flex justify-between items-start">
             <p className="manrope text-[#1C4419] font-semibold text-lg line-clamp-1">
-              {product.productName}
+              {product.name}
             </p>
             <Trash
               size={20}
               color="#42493E"
+              className="cursor-pointer"
               onClick={() => deleteItem(product)}
             />
           </div>
           <p className="inter text-sm text-[#42493E]">
-            QTY {product.productQuantity}
+            QTY {quantity}
           </p>
           <div className="flex justify-between">
             <div className="bg-[#E8E7E4] flex w-24 justify-between rounded-xl px-4 inter items-center text-[#1A1C1A]">
@@ -47,7 +80,7 @@ const ConsumerHeader = () => {
                 -
               </p>
               <input
-                className="text-center w-8"
+                className="text-center w-8 bg-transparent border-none outline-none"
                 type="text"
                 value={quantity}
                 onChange={(e) =>
@@ -86,7 +119,7 @@ const ConsumerHeader = () => {
             onClick={() => setShowCart(!showCart)}
           />
           <Link to={"/profile"}>
-            <CircleUserRound color="#1C4419" />
+            <CircleUserRound color="#1C4419" className="hover:cursor-pointer" />
           </Link>
         </div>
       </header>
@@ -101,7 +134,7 @@ const ConsumerHeader = () => {
             <h3 className="text-[#1C4419] font-extrabold text-2xl manrope">
               Your Basket
             </h3>
-            <X onClick={() => setShowCart(false)} />
+            <X className="cursor-pointer" onClick={() => setShowCart(false)} />
           </div>
           {Object.values(cartItems).length > 0 ? (
             <>
@@ -117,7 +150,10 @@ const ConsumerHeader = () => {
                     &#8369;{total}
                   </h4>
                 </div>
-                <Button className="w-full rounded-sm manrope font-bold text-lg py-7 bg-[#7E2706] cursor-pointer">
+                <Button 
+                  className="w-full rounded-sm manrope font-bold text-lg py-7 bg-[#7E2706] cursor-pointer"
+                  onClick={handleCheckout}
+                >
                   Checkout
                 </Button>
               </div>

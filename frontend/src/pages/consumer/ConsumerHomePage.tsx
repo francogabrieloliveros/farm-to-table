@@ -11,14 +11,14 @@ import { type Product } from "@/types/Product";
 import ProductDisplay from "@/components/consumer/ProductDisplay";
 
 const ConsumerHomePage = () => {
-  const [sortBy, setSortBy] = useState("price_asc");
-  const [productType, setProductType] = useState(null);
+  const [sortBy, setSortBy] = useState<"price_asc" | "price_desc" | "name" | "quantity" | null>("price_asc");
+  const [productType, setProductType] = useState<"1" | "2" | null>(null);
   const [products, setProducts] = useState<Product[]>([]);
 
   useEffect(() => {
     productService
       .getProducts({ sortBy, productType })
-      .then((data) => setProducts(data));
+      .then((res) => setProducts(res.data));
   }, [sortBy, productType]);
 
   const productsDisplay = products.map((product, ind) => (
@@ -35,7 +35,7 @@ const ConsumerHomePage = () => {
         <div className="flex md:flex-nowrap gap-2 justify-start flex-wrap">
           <Select
             defaultValue="price_asc"
-            onValueChange={(value) => setSortBy(value)}
+            onValueChange={(value) => setSortBy(value as any)}
           >
             <SelectTrigger className="w-50 inter border-none bg-[#e8e7e4] rounded-sm">
               <SelectValue placeholder="Price (Ascending)" />
@@ -46,7 +46,7 @@ const ConsumerHomePage = () => {
             </SelectContent>
           </Select>
 
-          <Select onValueChange={(value) => setProductType(value)}>
+          <Select onValueChange={(value) => setProductType(value as any)}>
             <SelectTrigger className="w-50 inter border-none bg-[#e8e7e4] rounded-sm">
               <SelectValue placeholder="All types" />
             </SelectTrigger>
