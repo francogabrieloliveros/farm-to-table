@@ -94,4 +94,9 @@ export const productService = {
 
     return res;
   },
+
+  getProduct: async (id: string) => {
+    const { data: res } = await api.get(`/api/products/${id}`);
+    return res;
+  },
 };

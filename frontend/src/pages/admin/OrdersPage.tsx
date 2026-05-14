@@ -1,49 +1,12 @@
-import { Search, SlidersHorizontal } from "lucide-react";
+import { type fixedOrder, type Order } from "@/types/Order";
+import { Search } from "lucide-react";
+import { useEffect, useState } from "react";
+import { orderService } from "@/services/order.service";
+import { searchOrders } from "@/utils/searchOrders";
+import OrderModal from "@/components/admin/OrderModal";
+import toast from "react-hot-toast";
 
-const DUMMY_ORDERS = [
-  {
-    orderId: "#VH-4088",
-    customer: "Sarah Williams",
-    items: "Organic Microgreens, Cold-Pre...",
-    total: "$55.20",
-    status: "Pending",
-  },
-  {
-    orderId: "#VH-4088",
-    customer: "Sarah Williams",
-    items: "Organic Microgreens, Cold-Pre...",
-    total: "$55.20",
-    status: "Pending",
-  },
-  {
-    orderId: "#VH-4088",
-    customer: "Sarah Williams",
-    items: "Organic Microgreens, Cold-Pre...",
-    total: "$55.20",
-    status: "Pending",
-  },
-  {
-    orderId: "#VH-4088",
-    customer: "Sarah Williams",
-    items: "Organic Microgreens, Cold-Pre...",
-    total: "$55.20",
-    status: "Completed",
-  },
-  {
-    orderId: "#VH-4088",
-    customer: "Sarah Williams",
-    items: "Organic Microgreens, Cold-Pre...",
-    total: "$55.20",
-    status: "Completed",
-  },
-  {
-    orderId: "#VH-4092",
-    customer: "Elena Rostova",
-    items: "Organic Heirloom Tomatoes (2l...",
-    total: "$142.50",
-    status: "Cancelled",
-  },
-];
+type OrderWithProduct = Order & { productName: string; productPrice: number };
 
 const statusStyles: Record<string, string> = {
   Pending: "bg-[#e8f5e2] text-[#1C4419]",
@@ -51,86 +14,143 @@ const statusStyles: Record<string, string> = {
   Cancelled: "bg-red-100 text-red-500",
 };
 
-export default function OrdersPage() {
-  return (
-    <div className="p-10">
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <p className="text-xs uppercase tracking-widest text-gray-400 mb-1">
-            Queue
+function OrdersPage() {
+  const [orders, setOrders] = useState<OrderWithProduct[]>([]);
+  const [search, setSearch] = useState("");
+  const [modalItem, setModalItem] = useState<fixedOrder | null>(null);
+  const [showModal, setShowModal] = useState(false);
+  const [dummy, setDummy] = useState(false);
+
+  useEffect(() => {
+    orderService
+      .getOrders()
+      .then((data) => setOrders(searchOrders(search, data)));
+  }, [dummy, search]);
+
+  const orderItems = orders.map((order, idx) => {
+    const statusNum = {
+      0: "Pending",
+      1: "Completed",
+      2: "Cancelled",
+    };
+    const orderStatus = statusNum[order.status];
+
+    return (
+      <div
+        className="w-full text-sm grid-cols-[1fr_1fr_2fr_1fr_1fr_1fr] flex flex-col md:grid bg-white p-5 items-start gap-2"
+        style={{
+          opacity:
+            orderStatus === "Completed" || orderStatus === "Cancelled"
+              ? 0.5
+              : 1,
+        }}
+        key={idx}
+      >
+        <p className="font-semibold text-[#1C4419] max-md:mb-3 truncate">
+          {order._id}
+        </p>
+        <p className="font-semibold truncate">{order.userEmail}</p>
+        <p className="font-light text-[#1C4419] line-clamp-3 md:line-clamp-2">
+          {order.productName}
+        </p>
+        <p className="font-semibold">
+          &#8369;{(order.productPrice * order.quantity).toFixed(2)}
+        </p>
+        <div className="flex place-items-center">
+          <p
+            className={`font-light text-xs py px-2 rounded-sm ${statusStyles[orderStatus]}`}
+          >
+            {orderStatus}
           </p>
-          <h1 className="text-3xl font-bold text-gray-800">Orders</h1>
         </div>
-        <div className="flex items-center gap-3">
+        {orderStatus === "Pending" ? (
+          <div className="flex flex-col">
+            <button
+              className="text-[#1C4419] text-left max-md:mt-5"
+              onClick={async () => {
+                try {
+                  await orderService.confirmOrder(order._id);
+                  toast.success("Order confirmed.");
+                } catch (err) {
+                  toast.error(
+                    err?.response?.data?.message ?? "Something went wrong.",
+                  );
+                }
+                setDummy((prev) => !prev);
+              }}
+            >
+              Confirm
+            </button>
+            <button
+              className="text-[#8C2A00] text-left max-md:mt-5"
+              onClick={async () => {
+                try {
+                  await orderService.cancelOrder(order._id);
+                  toast.success("Order cancelled.");
+                } catch (err) {
+                  toast.error(
+                    err?.response?.data?.message ?? "Something went wrong.",
+                  );
+                }
+                setDummy((prev) => !prev);
+              }}
+            >
+              Cancel
+            </button>
+          </div>
+        ) : (
+          <button
+            className="text-[#1C4419] text-left max-md:mt-5"
+            onClick={() => {
+              setModalItem(order);
+              setShowModal(true);
+            }}
+          >
+            View Details
+          </button>
+        )}
+      </div>
+    );
+  });
+
+  return (
+    <>
+      {showModal ? (
+        <OrderModal onClose={() => setShowModal(false)} order={modalItem} />
+      ) : undefined}
+      <div className="md:px-10 py-10 inter text-[#42493E]">
+        <div className="flex items-center justify-between mb-8 max-md:px-2 flex-wrap gap-5">
+          <h1 className="text-3xl font-extrabold text-[#1C4419] manrope">
+            Orders
+          </h1>
           <div className="relative w-60">
             <Search
               size={15}
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-[#42493E]"
             />
             <input
               type="text"
               placeholder="Search orders..."
-              className="w-full pl-9 pr-4 py-2 text-sm border border-[#E2E1DF] rounded-lg bg-white text-gray-700 placeholder-gray-400 outline-none"
+              className="w-full pl-9 pr-4 py-2 text-sm border border-[#42493E] rounded-sm bg-white text-[#42493E] placeholder-gray-400 outline-none"
+              onChange={(e) => setSearch(e.target.value)}
             />
           </div>
-          <button className="border border-[#E2E1DF] bg-white p-2 rounded-lg text-gray-400">
-            <SlidersHorizontal size={16} />
-          </button>
+        </div>
+
+        <div className="flex flex-col gap-3">
+          <div className="w-full text-xs grid-cols-[1fr_1fr_2fr_1fr_1fr_1fr] hidden md:grid my-2 font-light px-5 gap-2">
+            <p>ORDER ID</p>
+            <p>CUSTOMER</p>
+            <p>ITEM SNAPSHOT</p>
+            <p>TOTAL</p>
+            <p>STATUS</p>
+            <p>ACTION</p>
+          </div>
+          {orderItems}
         </div>
       </div>
-
-      {/* Table */}
-      <div className="bg-white rounded-xl overflow-hidden">
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="text-xs uppercase tracking-wider text-gray-400 border-b border-[#E2E1DF]">
-              <th className="text-left px-6 py-3">Order ID</th>
-              <th className="text-left px-6 py-3">Customer</th>
-              <th className="text-left px-6 py-3">Items Snapshot</th>
-              <th className="text-left px-6 py-3">Total</th>
-              <th className="text-left px-6 py-3">Status</th>
-              <th className="text-left px-6 py-3">Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {DUMMY_ORDERS.map((order, idx) => (
-              <tr
-                key={idx}
-                className={`border-b border-[#E2E1DF] last:border-0 ${
-                  order.status !== "Pending" ? "opacity-60" : ""
-                }`}
-              >
-                <td className="px-6 py-4 font-medium text-gray-700">
-                  {order.orderId}
-                </td>
-                <td className="px-6 py-4 text-gray-700 font-medium">
-                  {order.customer}
-                </td>
-                <td className="px-6 py-4 text-gray-400">{order.items}</td>
-                <td className="px-6 py-4 text-gray-700">{order.total}</td>
-                <td className="px-6 py-4">
-                  <span
-                    className={`text-xs px-3 py-1 rounded-full font-medium ${statusStyles[order.status]}`}
-                  >
-                    {order.status}
-                  </span>
-                </td>
-                <td className="px-6 py-4">
-                  {order.status === "Pending" ? (
-                    <button className="text-sm font-medium text-gray-700 border border-[#E2E1DF] px-3 py-1 rounded-lg">
-                      Confirm
-                    </button>
-                  ) : (
-                    <button className="text-sm font-medium text-gray-500">
-                      View Details
-                    </button>
-                  )}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
+    </>
   );
 }
+
+export default OrdersPage;
