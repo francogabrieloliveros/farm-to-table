@@ -37,4 +37,9 @@ export const userService = {
     const { data } = await api.put("/api/users/profile", payload);
     return data;
   },
+
+  getUser: async (id: string) => {
+    const { data: res } = await api.get(`/api/users/${id}`);
+    return res;
+  },
 };

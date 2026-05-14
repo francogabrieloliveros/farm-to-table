@@ -1,11 +1,10 @@
-import { Order, OrderStatus, type IOrder } from '../models/order.model.js';
-import { Product } from '../models/product.model.js';
+import { Order, OrderStatus, type IOrder } from "../models/order.model.js";
+import { Product } from "../models/product.model.js";
 
 // Service layer for order-related logic
 export class OrderService {
-
   // create a new order (default: Pending)
-  static async createOrder(data: Omit<IOrder, 'status' | 'dateOrdered'>) {
+  static async createOrder(data: Omit<IOrder, "status" | "dateOrdered">) {
     const order = await Order.create({
       ...data,
       status: OrderStatus.Pending,
@@ -16,7 +15,7 @@ export class OrderService {
 
   // get all orders (for admin)
   static async getAllOrders() {
-    return Order.find().exec();
+    return Order.find().sort({ status: 1 }).exec();
   }
 
   // get orders for a specific user (by email)
@@ -29,23 +28,23 @@ export class OrderService {
     const order = await Order.findById(orderId);
 
     if (!order) {
-      throw new Error('Order not found');
+      throw new Error("Order not found");
     }
 
     if (order.status !== OrderStatus.Pending) {
-      throw new Error('Only pending orders can be confirmed');
+      throw new Error("Only pending orders can be confirmed");
     }
 
     // find the related product
     const product = await Product.findById(order.productId);
 
     if (!product) {
-      throw new Error('Product not found');
+      throw new Error("Product not found");
     }
 
     // check if enough stock exists
     if (product.quantity < order.quantity) {
-      throw new Error('Insufficient product quantity');
+      throw new Error("Insufficient product quantity");
     }
 
     // decrease product inventory
@@ -64,11 +63,11 @@ export class OrderService {
     const order = await Order.findById(orderId);
 
     if (!order) {
-      throw new Error('Order not found');
+      throw new Error("Order not found");
     }
 
     if (order.status !== OrderStatus.Pending) {
-      throw new Error('Only pending orders can be canceled');
+      throw new Error("Only pending orders can be canceled");
     }
 
     order.status = OrderStatus.Canceled;

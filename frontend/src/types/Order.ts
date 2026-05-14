@@ -1,6 +1,12 @@
-export type OrderStatus = 0 | 1 | 2;
+const OrderStatus = {
+  Pending: 0,
+  Completed: 1,
+  Cancelled: 2,
+} as const;
 
-export type Order = {
+type OrderStatus = (typeof OrderStatus)[keyof typeof OrderStatus];
+
+type Order = {
   _id: string;
   productId: string;
   quantity: number;
@@ -11,13 +17,34 @@ export type Order = {
   updatedAt?: string;
 };
 
-export type OrdersResponse = {
+type fixedOrder = Order & {
+  productName: string;
+  productPrice: number;
+};
+
+type OrderResponse = {
+  success: boolean;
+  message: string;
+  data: Order | Order[];
+};
+
+type OrdersResponse = {
   success: boolean;
   data: Order[];
 };
 
-export type CancelOrderResponse = {
+type CancelOrderResponse = {
   success: boolean;
   message: string;
   data: Order;
 };
+
+export {
+  type OrderResponse,
+  type Order,
+  type OrdersResponse,
+  type CancelOrderResponse,
+  OrderStatus,
+  type fixedOrder,
+};
+;

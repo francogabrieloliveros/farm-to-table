@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { verifyToken, verifyAdmin, type AuthRequest } from "../middlewares/auth.middleware.js";
-import { getRegisteredConsumers, updateProfile } from "../controllers/user.controller.js";
+import { getRegisteredConsumers, updateProfile, getUser } from "../controllers/user.controller.js";
 
 const router = Router();
 
@@ -23,4 +23,6 @@ router.get('/admin-only', verifyToken, verifyAdmin, (req: AuthRequest, res) => {
 });
 
 router.get('/customers', verifyToken, verifyAdmin, getRegisteredConsumers);
+
+router.get("/:id", verifyToken, verifyAdmin, getUser);
 export default router;
