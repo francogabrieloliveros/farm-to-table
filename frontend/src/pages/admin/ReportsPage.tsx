@@ -1,5 +1,7 @@
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import toast from "react-hot-toast";
+import { Download } from "lucide-react";
 import {
   reportService,
   type ReportInterval,
@@ -69,6 +71,29 @@ export default function ReportsPage() {
     0,
   );
 
+  const handleDownloadCsv = async () => {
+    try {
+      const blob = await reportService.downloadSalesReport();
+      const today = new Date().toISOString().split("T")[0];
+      const fileName = `sales_report_${today}.csv`;
+
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+
+      link.href = url;
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+
+      link.remove();
+      window.URL.revokeObjectURL(url);
+
+      toast.success("CSV report download started.");
+    } catch (error) {
+      toast.error("Failed to download CSV report.");
+    }
+  };
+
   return (
     <div className="p-10">
       <div className="flex items-start justify-between mb-8">
@@ -81,19 +106,29 @@ export default function ReportsPage() {
           </p>
         </div>
 
-        <div className="flex items-center gap-1 bg-white border border-[#E2E1DF] rounded-lg p-1">
-          {PERIODS.map((p) => (
-            <button
-              key={p.value}
-              onClick={() => setPeriod(p)}
-              className={`px-4 py-1.5 text-sm rounded-md font-medium ${period.value === p.value
-                ? "bg-[#1C4419] text-white"
-                : "text-gray-500"
-                }`}
-            >
-              {p.label}
-            </button>
-          ))}
+        <div className="flex items-center gap-3">
+          <button
+            onClick={handleDownloadCsv}
+            className="flex items-center gap-2 bg-[#7E2700] text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-[#9b3300] transition-colors"
+          >
+            <Download size={16} />
+            Download CSV
+          </button>
+
+          <div className="flex items-center gap-1 bg-white border border-[#E2E1DF] rounded-lg p-1">
+            {PERIODS.map((p) => (
+              <button
+                key={p.value}
+                onClick={() => setPeriod(p)}
+                className={`px-4 py-1.5 text-sm rounded-md font-medium ${period.value === p.value
+                    ? "bg-[#1C4419] text-white"
+                    : "text-gray-500"
+                  }`}
+              >
+                {p.label}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 

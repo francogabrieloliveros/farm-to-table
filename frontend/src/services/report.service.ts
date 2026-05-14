@@ -36,4 +36,13 @@ export const reportService = {
 
     return data;
   },
+
+  // download sales report as a CSV file
+  downloadSalesReport: async (): Promise<Blob> => {
+    const { data } = await api.get("/api/reports/export", {
+      responseType: "blob",
+    });
+
+    return data;
+  },
 };
