@@ -19,6 +19,7 @@ type AuthContextValue = {
     password: string;
   }) => Promise<AuthUser>;
   logout: () => void;
+  updateStoredUser: (updates: Partial<AuthUser>) => void;
   isAuthenticated: boolean;
   userType: string | undefined;
 };

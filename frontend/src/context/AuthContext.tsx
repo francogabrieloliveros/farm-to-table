@@ -19,7 +19,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       return null;
     }
   });
-  
+
   useEffect(() => {
     setLogoutCallback(() => {
       setUser(null);
@@ -59,6 +59,23 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   }
 
+  function updateStoredUser(updates: Partial<AuthUser>) {
+    setUser((currentUser) => {
+      if (!currentUser) {
+        return currentUser;
+      }
+
+      const updatedUser = {
+        ...currentUser,
+        ...updates,
+        token: currentUser.token,
+      };
+
+      localStorage.setItem("auth_user", JSON.stringify(updatedUser));
+      return updatedUser;
+    });
+  }
+
   function logout() {
     localStorage.removeItem("auth_user");
     setUser(null);
@@ -71,6 +88,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
         login,
         signup,
         logout,
+        updateStoredUser,
         isAuthenticated: !!user,
         userType: user?.userType,
       }}
