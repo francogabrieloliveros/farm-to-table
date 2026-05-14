@@ -1,42 +1,50 @@
-import { Package, CheckCircle, Clock, XCircle } from "lucide-react";
-import { type Order } from "@/types/Order";
+import { CheckCircle, Clock, Package, XCircle } from "lucide-react";
+import { type Order, type OrderStatus } from "@/types/Order";
 
-const OrderCard = ({
-  order,
-  onCancel,
-}: {
+type OrderCardProps = {
   order: Order;
   onCancel: (id: string) => void;
-}) => {
-  const statusValues = {
-    0: {
-      label: "Pending",
-      icon: <Clock size={14} />,
-      bg: "bg-gray-100",
-      text: "text-gray-600",
-    },
-    1: {
-      label: "Completed",
-      icon: <CheckCircle size={14} />,
-      bg: "bg-green-100",
-      text: "text-[#1C4419]",
-    },
-    2: {
-      label: "Canceled",
-      icon: <XCircle size={14} />,
-      bg: "bg-red-100",
-      text: "text-[#7E2700]",
-    },
-  };
+  isCanceling: boolean;
+};
 
-  const formatDate = (date: Date) =>
-    date.toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-    });
+const statusValues: Record<
+  OrderStatus,
+  {
+    label: string;
+    icon: React.ReactNode;
+    bg: string;
+    text: string;
+  }
+> = {
+  0: {
+    label: "Pending",
+    icon: <Clock size={14} />,
+    bg: "bg-gray-100",
+    text: "text-gray-600",
+  },
+  1: {
+    label: "Completed",
+    icon: <CheckCircle size={14} />,
+    bg: "bg-green-100",
+    text: "text-[#1C4419]",
+  },
+  2: {
+    label: "Canceled",
+    icon: <XCircle size={14} />,
+    bg: "bg-red-100",
+    text: "text-[#7E2700]",
+  },
+};
 
-  const status = statusValues[order.orderStatus];
+const formatDate = (date: string) =>
+  new Date(date).toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+
+const OrderCard = ({ order, onCancel, isCanceling }: OrderCardProps) => {
+  const status = statusValues[order.status];
 
   return (
     <div className="bg-white sm:rounded-sm p-4 sm:p-5">
@@ -47,9 +55,10 @@ const OrderCard = ({
               Order ID
             </p>
             <p className="manrope font-bold text-[#1C4419] text-sm">
-              #{order.transactionId}
+              #{order._id}
             </p>
           </div>
+
           <div>
             <p className="inter text-xs text-[#42493E] uppercase tracking-wide">
               Date
@@ -58,11 +67,14 @@ const OrderCard = ({
               {formatDate(order.dateOrdered)}
             </p>
           </div>
+
           <div>
             <p className="inter text-xs text-[#42493E] uppercase tracking-wide">
               Total
             </p>
-            <p className="manrope font-bold text-[#1C4419] text-sm">₱1000</p>
+            <p className="manrope font-bold text-[#1C4419] text-sm">
+              Not available
+            </p>
           </div>
         </div>
 
@@ -73,12 +85,14 @@ const OrderCard = ({
             {status.icon}
             {status.label}
           </span>
-          {order.orderStatus === 0 && (
+
+          {order.status === 0 && (
             <button
-              onClick={() => onCancel(order.transactionId)}
-              className="bg-[#7E2700] text-white text-xs px-3 py-1 rounded-sm manrope font-semibold hover:bg-[#9b3300] transition-colors"
+              onClick={() => onCancel(order._id)}
+              disabled={isCanceling}
+              className="bg-[#7E2700] text-white text-xs px-3 py-1 rounded-sm manrope font-semibold hover:bg-[#9b3300] transition-colors disabled:opacity-70"
             >
-              Cancel Order
+              {isCanceling ? "Canceling..." : "Cancel Order"}
             </button>
           )}
         </div>
@@ -87,9 +101,9 @@ const OrderCard = ({
       <div className="border-t border-[#E2E1DF] mt-4 pt-3">
         <div className="flex items-center gap-2 text-gray-500">
           <Package size={14} />
-          <p className="inter text-sm">{"Example product"}</p>
+          <p className="inter text-sm">Product ID: {order.productId}</p>
           <span className="inter text-xs text-gray-400">
-            x{order.orderQuantity}
+            x{order.quantity}
           </span>
         </div>
       </div>
