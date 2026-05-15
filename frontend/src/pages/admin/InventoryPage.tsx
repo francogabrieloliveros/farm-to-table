@@ -34,7 +34,7 @@ function InventoryPage() {
 
   return (
     <>
-      {showModal && modalItem ? (
+      {showModal ? (
         <ProductModal onClose={() => setShowModal(false)} item={modalItem} />
       ) : undefined}
       <div className="py-10 md:p-10 inter text-[#42493E]">
