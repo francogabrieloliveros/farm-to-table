@@ -1,11 +1,12 @@
-import { useMemo, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useMemo, useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import { Download } from "lucide-react";
 import {
   reportService,
   type ReportInterval,
   type ReportProduct,
+  type ReportGroup,
+  type SalesReportResponse,
 } from "@/services/report.service";
 
 type Period = {
@@ -31,12 +32,27 @@ const formatCurrency = (value: number) =>
 
 export default function ReportsPage() {
   const [period, setPeriod] = useState<Period>(PERIODS[0]);
+  const [data, setData] = useState<SalesReportResponse | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isError, setIsError] = useState(false);
 
-  // fetch aggregated sales report data
-  const { data, isLoading, isError } = useQuery({
-    queryKey: ["sales-report", period.value],
-    queryFn: () => reportService.getSalesReport(period.value),
-  });
+  useEffect(() => {
+    const fetchReport = async () => {
+      try {
+        setIsLoading(true);
+        const result = await reportService.getSalesReport(period.value);
+        setData(result);
+        setIsError(false);
+      } catch (error) {
+        console.error("Error fetching report:", error);
+        setIsError(true);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchReport();
+  }, [period.value]);
 
   const reportGroups = data?.data ?? [];
   const totalPendingOrders = data?.totalPendingOrders ?? 0;
@@ -45,15 +61,15 @@ export default function ReportsPage() {
   const productBreakdown = useMemo(() => {
     const products = new Map<string, ProductBreakdown>();
 
-    reportGroups.forEach((group) => {
-      group.products.forEach((product) => {
+    reportGroups.forEach((group: ReportGroup) => {
+      group.products.forEach((product: ReportProduct) => {
         const existing = products.get(product.productId);
 
         if (existing) {
           existing.totalSales += product.totalSales;
           existing.income += product.income;
         } else {
-          products.set(product.productId, { ...product });
+          products.set(product.productId, { ...product } as ProductBreakdown);
         }
       });
     });
@@ -62,12 +78,12 @@ export default function ReportsPage() {
   }, [reportGroups]);
 
   const totalSalesRevenue = reportGroups.reduce(
-    (sum, group) => sum + group.totalIntervalIncome,
+    (sum: number, group: ReportGroup) => sum + group.totalIntervalIncome,
     0,
   );
 
   const totalItemsSold = productBreakdown.reduce(
-    (sum, product) => sum + product.totalSales,
+    (sum: number, product: ProductBreakdown) => sum + product.totalSales,
     0,
   );
 

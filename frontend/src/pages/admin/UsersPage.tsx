@@ -1,22 +1,37 @@
 import { Search, Users } from "lucide-react";
-import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { userService } from "@/services/user.service";
+import { useEffect, useState } from "react";
+import { userService, type RegisteredUsersResponse } from "@/services/user.service";
+import { type User } from "@/types/User";
 
 export default function UsersPage() {
   const [search, setSearch] = useState("");
+  const [data, setData] = useState<RegisteredUsersResponse | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isError, setIsError] = useState(false);
 
-  // fetch registered customer users from the backend
-  const { data, isLoading, isError } = useQuery({
-    queryKey: ["registered-customers"],
-    queryFn: userService.getRegisteredCustomers,
-  });
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        setIsLoading(true);
+        const result = await userService.getRegisteredCustomers();
+        setData(result);
+        setIsError(false);
+      } catch (error) {
+        console.error("Error fetching users:", error);
+        setIsError(true);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchUsers();
+  }, []);
 
   const users = data?.data ?? [];
   const total = data?.total ?? 0;
 
   // filter users by name, email, or role
-  const filtered = users.filter((user) => {
+  const filtered = users.filter((user: User) => {
     const searchValue = search.toLowerCase();
 
     return (
@@ -100,7 +115,7 @@ export default function UsersPage() {
 
             {!isLoading &&
               !isError &&
-              filtered.map((user) => (
+              filtered.map((user: User) => (
                 <tr
                   key={user.email}
                   className="border-b border-[#E2E1DF] last:border-0"

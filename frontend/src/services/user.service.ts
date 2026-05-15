@@ -1,7 +1,7 @@
 import api from "@/lib/api";
 import { type User } from "@/types/User";
 
-type RegisteredUsersResponse = {
+export type RegisteredUsersResponse = {
   success: boolean;
   total: number;
   data: User[];

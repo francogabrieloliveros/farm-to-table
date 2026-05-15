@@ -4,13 +4,14 @@ import { productService } from "@/services/product.service";
 import InventoryProduct from "@/components/admin/InventoryProduct";
 import ProductModal from "@/components/admin/ProductModal";
 import { searchInventory } from "@/utils/searchInventory";
+import { type Product } from "@/types/Product";
 
 function InventoryPage() {
   const [dummy, setDummy] = useState(true);
   const [search, setSearch] = useState("");
-  const [products, setProducts] = useState([]);
+  const [products, setProducts] = useState<Product[]>([]);
   const [showModal, setShowModal] = useState(false);
-  const [modalItem, setModalItem] = useState(null);
+  const [modalItem, setModalItem] = useState<Product | null>(null);
   const [offset, setOffset] = useState(0);
 
   useEffect(() => {
@@ -33,7 +34,7 @@ function InventoryPage() {
 
   return (
     <>
-      {showModal ? (
+      {showModal && modalItem ? (
         <ProductModal onClose={() => setShowModal(false)} item={modalItem} />
       ) : undefined}
       <div className="py-10 md:p-10 inter text-[#42493E]">

@@ -1,6 +1,5 @@
 import { Lock, LogOut, Mail, Pencil } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -60,9 +59,18 @@ const AccountSettings = () => {
     }
   }, [user, profileForm]);
 
-  const profileMutation = useMutation({
-    mutationFn: userService.updateProfile,
-    onSuccess: (updatedUser) => {
+  const [isUpdatingProfile, setIsUpdatingProfile] = useState(false);
+  const [isUpdatingPassword, setIsUpdatingPassword] = useState(false);
+
+  const handleUpdateInfo = async (values: ProfileFormValues) => {
+    try {
+      setIsUpdatingProfile(true);
+      const updatedUser = await userService.updateProfile({
+        firstName: values.firstName,
+        middleName: values.middleName || "",
+        lastName: values.lastName,
+      });
+
       updateStoredUser({
         firstName: updatedUser.firstName,
         middleName: updatedUser.middleName,
@@ -73,42 +81,34 @@ const AccountSettings = () => {
 
       setIsEditingInfo(false);
       toast.success("Profile updated successfully.");
-    },
-    onError: (error: any) => {
+    } catch (error: any) {
       const message =
         error.response?.data?.message || "Failed to update profile.";
       toast.error(message);
-    },
-  });
+    } finally {
+      setIsUpdatingProfile(false);
+    }
+  };
 
-  const passwordMutation = useMutation({
-    mutationFn: userService.updateProfile,
-    onSuccess: () => {
+  const handleUpdatePassword = async (values: PasswordFormValues) => {
+    try {
+      setIsUpdatingPassword(true);
+      await userService.updateProfile({
+        firstName: user?.firstName || "",
+        middleName: user?.middleName || "",
+        lastName: user?.lastName || "",
+        password: values.password,
+      });
+
       passwordForm.reset();
       toast.success("Password updated successfully.");
-    },
-    onError: (error: any) => {
+    } catch (error: any) {
       const message =
         error.response?.data?.message || "Failed to update password.";
       toast.error(message);
-    },
-  });
-
-  const handleUpdateInfo = (values: ProfileFormValues) => {
-    profileMutation.mutate({
-      firstName: values.firstName,
-      middleName: values.middleName || "",
-      lastName: values.lastName,
-    });
-  };
-
-  const handleUpdatePassword = (values: PasswordFormValues) => {
-    passwordMutation.mutate({
-      firstName: user?.firstName || "",
-      middleName: user?.middleName || "",
-      lastName: user?.lastName || "",
-      password: values.password,
-    });
+    } finally {
+      setIsUpdatingPassword(false);
+    }
   };
 
   const inputClass =
@@ -214,10 +214,10 @@ const AccountSettings = () => {
             <div className="flex justify-end mt-5">
               <button
                 type="submit"
-                disabled={profileMutation.isPending}
+                disabled={isUpdatingProfile}
                 className="bg-[#1C4419] text-white manrope font-semibold text-sm px-5 py-2.5 rounded-sm transition-colors disabled:opacity-70"
               >
-                {profileMutation.isPending
+                {isUpdatingProfile
                   ? "Updating..."
                   : "Update Information"}
               </button>
@@ -286,10 +286,10 @@ const AccountSettings = () => {
             <div className="flex justify-end">
               <button
                 type="submit"
-                disabled={passwordMutation.isPending}
+                disabled={isUpdatingPassword}
                 className="bg-[#1C4419] text-white manrope font-semibold text-sm px-5 py-2.5 rounded-sm transition-colors disabled:opacity-70"
               >
-                {passwordMutation.isPending
+                {isUpdatingPassword
                   ? "Updating..."
                   : "Update Password"}
               </button>

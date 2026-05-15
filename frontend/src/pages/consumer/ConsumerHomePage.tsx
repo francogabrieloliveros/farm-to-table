@@ -11,13 +11,16 @@ import { type Product } from "@/types/Product";
 import ProductDisplay from "@/components/consumer/ProductDisplay";
 
 const ConsumerHomePage = () => {
-  const [sortBy, setSortBy] = useState<"price_asc" | "price_desc" | "name" | "quantity" | null>("price_asc");
-  const [productType, setProductType] = useState<"1" | "2" | null>(null);
+  const [sortBy, setSortBy] = useState<"price_asc" | "price_desc" | "name" | "quantity" | "">("price_asc");
+  const [productType, setProductType] = useState<"1" | "2" | "">("");
   const [products, setProducts] = useState<Product[]>([]);
 
   useEffect(() => {
     productService
-      .getProducts({ sortBy, productType })
+      .getProducts({ 
+        sortBy: sortBy === "" ? undefined : sortBy as any, 
+        productType: productType === "" ? undefined : productType as any 
+      })
       .then((res) => setProducts(res.data));
   }, [sortBy, productType]);
 
@@ -51,7 +54,7 @@ const ConsumerHomePage = () => {
               <SelectValue placeholder="All types" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value={null}>All Types</SelectItem>
+              <SelectItem value="">All Types</SelectItem>
               <SelectItem value="1">Crop</SelectItem>
               <SelectItem value="2">Poultry</SelectItem>
             </SelectContent>

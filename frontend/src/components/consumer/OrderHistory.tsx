@@ -1,34 +1,47 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useEffect, useState, useCallback } from "react";
 import toast from "react-hot-toast";
 import { orderService } from "@/services/order.service";
+import { type Order, type OrdersResponse } from "@/types/Order";
 import OrderCard from "./OrderCard";
 
 const OrderHistory = () => {
-  const queryClient = useQueryClient();
+  const [data, setData] = useState<OrdersResponse | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isError, setIsError] = useState(false);
+  const [isCanceling, setIsCanceling] = useState(false);
 
-  // fetch orders for the logged-in customer
-  const {
-    data,
-    isLoading,
-    isError,
-  } = useQuery({
-    queryKey: ["my-orders"],
-    queryFn: orderService.getMyOrders,
-  });
+  const fetchOrders = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      const result = await orderService.getMyOrders();
+      setData(result);
+      setIsError(false);
+    } catch (error) {
+      console.error("Error fetching orders:", error);
+      setIsError(true);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
 
-  // cancel a pending order and refresh the order list
-  const cancelMutation = useMutation({
-    mutationFn: orderService.cancelOrder,
-    onSuccess: () => {
+  useEffect(() => {
+    fetchOrders();
+  }, [fetchOrders]);
+
+  const handleCancelOrder = async (id: string) => {
+    try {
+      setIsCanceling(true);
+      await orderService.cancelOrder(id);
       toast.success("Order canceled successfully.");
-      queryClient.invalidateQueries({ queryKey: ["my-orders"] });
-    },
-    onError: (error: any) => {
+      await fetchOrders();
+    } catch (error: any) {
       const message =
         error.response?.data?.message || "Failed to cancel order.";
       toast.error(message);
-    },
-  });
+    } finally {
+      setIsCanceling(false);
+    }
+  };
 
   const orders = data?.data ?? [];
 
@@ -59,12 +72,12 @@ const OrderHistory = () => {
         </div>
       ) : (
         <div className="flex flex-col gap-4">
-          {orders.map((order) => (
+          {orders.map((order: Order) => (
             <OrderCard
               key={order._id}
               order={order}
-              onCancel={(id) => cancelMutation.mutate(id)}
-              isCanceling={cancelMutation.isPending}
+              onCancel={handleCancelOrder}
+              isCanceling={isCanceling}
             />
           ))}
         </div>

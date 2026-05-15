@@ -71,7 +71,7 @@ function OrdersPage() {
                 try {
                   await orderService.confirmOrder(order._id);
                   toast.success("Order confirmed.");
-                } catch (err) {
+                } catch (err: any) {
                   toast.error(
                     err?.response?.data?.message ?? "Something went wrong.",
                   );
@@ -87,7 +87,7 @@ function OrdersPage() {
                 try {
                   await orderService.cancelOrder(order._id);
                   toast.success("Order cancelled.");
-                } catch (err) {
+                } catch (err: any) {
                   toast.error(
                     err?.response?.data?.message ?? "Something went wrong.",
                   );
@@ -115,7 +115,7 @@ function OrdersPage() {
 
   return (
     <>
-      {showModal ? (
+      {showModal && modalItem ? (
         <OrderModal onClose={() => setShowModal(false)} order={modalItem} />
       ) : undefined}
       <div className="md:px-10 py-10 inter text-[#42493E]">

@@ -5,10 +5,10 @@ import useAuth from "@/hooks/useAuth";
 import toast from "react-hot-toast";
 
 const SignupPage = () => {
-  const { signup, userType } = useAuth();
+  const { signup } = useAuth();
   const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const formData = new FormData(e.currentTarget);
@@ -22,7 +22,7 @@ const SignupPage = () => {
       const data = await signup({ fname, mname, lname, email, password });
       toast.success("Logged in successfully");
       navigate(data.userType === "Admin" ? "/admin/dashboard" : "/");
-    } catch (err) {
+    } catch (err: any) {
       toast.error(err?.response?.data?.message ?? "Something went wrong.");
     }
   };

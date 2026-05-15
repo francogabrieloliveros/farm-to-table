@@ -54,7 +54,7 @@ export default function ProductModal({
       try {
         await productService.addProduct(result.data);
         toast.success("Product successfully added.");
-      } catch (err) {
+      } catch (err: any) {
         toast.error(err?.response?.data?.message ?? "Something went wrong.");
       }
     } else {
@@ -68,7 +68,7 @@ export default function ProductModal({
       try {
         await productService.editProduct(result.data, item._id);
         toast.success("Product successfully edited.");
-      } catch (err) {
+      } catch (err: any) {
         toast.error(err?.response?.data?.message ?? "Something went wrong.");
       }
     }

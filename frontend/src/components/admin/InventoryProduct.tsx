@@ -23,7 +23,7 @@ const InventoryProduct = ({
       toast.success(`Product ${item.name} successfully deleted.`);
       setDummy((prev) => !prev);
       setShowDelete(false);
-    } catch (err) {
+    } catch (err: any) {
       toast.error(err?.response?.data?.message ?? "Something went wrong.");
     }
   };
