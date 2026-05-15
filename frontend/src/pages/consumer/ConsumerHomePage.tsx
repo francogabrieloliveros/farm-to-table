@@ -11,15 +11,17 @@ import { type Product } from "@/types/Product";
 import ProductDisplay from "@/components/consumer/ProductDisplay";
 
 const ConsumerHomePage = () => {
-  const [sortBy, setSortBy] = useState<"price_asc" | "price_desc" | "name" | "quantity" | "">("price_asc");
-  const [productType, setProductType] = useState<"1" | "2" | "">("");
+  const [sortBy, setSortBy] = useState<
+    "price_asc" | "price_desc" | "name" | "quantity" | "0"
+  >("0");
+  const [productType, setProductType] = useState<"1" | "2" | "0">("0");
   const [products, setProducts] = useState<Product[]>([]);
 
   useEffect(() => {
     productService
-      .getProducts({ 
-        sortBy: sortBy === "" ? undefined : sortBy as any, 
-        productType: productType === "" ? undefined : productType as any 
+      .getProducts({
+        sortBy: sortBy === "0" ? "price_asc" : sortBy,
+        productType: productType === "0" ? null : productType,
       })
       .then((res) => setProducts(res.data));
   }, [sortBy, productType]);
@@ -37,24 +39,27 @@ const ConsumerHomePage = () => {
 
         <div className="flex md:flex-nowrap gap-2 justify-start flex-wrap">
           <Select
-            defaultValue="price_asc"
+            value={sortBy}
             onValueChange={(value) => setSortBy(value as any)}
           >
             <SelectTrigger className="w-50 inter border-none bg-[#e8e7e4] rounded-sm">
               <SelectValue placeholder="Price (Ascending)" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="price_asc">Price (Ascending)</SelectItem>
+              <SelectItem value="0">Price (Ascending)</SelectItem>
               <SelectItem value="price_desc">Price (Descending)</SelectItem>
             </SelectContent>
           </Select>
 
-          <Select onValueChange={(value) => setProductType(value as any)}>
+          <Select
+            value={productType}
+            onValueChange={(value) => setProductType(value as any)}
+          >
             <SelectTrigger className="w-50 inter border-none bg-[#e8e7e4] rounded-sm">
               <SelectValue placeholder="All types" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All Types</SelectItem>
+              <SelectItem value="0">All Types</SelectItem>
               <SelectItem value="1">Crop</SelectItem>
               <SelectItem value="2">Poultry</SelectItem>
             </SelectContent>

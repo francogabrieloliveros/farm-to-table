@@ -27,12 +27,6 @@ export const productService = {
     } else if (sortBy === "price_desc") {
       sortField = "price";
       sortOrder = "desc";
-    } else if (sortBy === "name") {
-      sortField = "name";
-      sortOrder = "asc";
-    } else if (sortBy === "quantity") {
-      sortField = "quantity";
-      sortOrder = "asc";
     }
 
     const params: Record<string, string | number> = {
@@ -42,11 +36,16 @@ export const productService = {
       sortOrder,
     };
 
-    if (productType !== null) params.type = productType;
-
     const {
       data: { data },
     } = await api.get("/api/products", { params });
+
+    if (productType !== null) {
+      const fixedData = data.filter(
+        (product) => product.type === parseInt(productType),
+      );
+      return { data: fixedData, total: data.length };
+    }
     return { data, total: data.length };
   },
 
