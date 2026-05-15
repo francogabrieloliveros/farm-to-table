@@ -83,9 +83,6 @@ const SignupPage = () => {
           <Button className="rounded-sm bg-[#8C2A00] py-8 manrope text-lg font-semibold">
             Sign up
           </Button>
-          <Button className="rounded-sm bg-white text-[#8C2A00] py-8 manrope text-lg font-semibold border-black">
-            Continue with Google
-          </Button>
         </div>
 
         <p className="inter text-sm text-justify mt-5">
