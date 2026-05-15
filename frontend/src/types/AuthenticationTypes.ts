@@ -10,7 +10,10 @@ type AuthUser = {
 
 type AuthContextValue = {
   user: AuthUser | null;
-  login: (credentials: { email: string; password: string }) => Promise<AuthUser>;
+  login: (credentials: {
+    email: string;
+    password: string;
+  }) => Promise<AuthUser>;
   signup: (credentials: {
     fname: string;
     mname: string | null;
@@ -21,7 +24,8 @@ type AuthContextValue = {
   logout: () => void;
   updateStoredUser: (updates: Partial<AuthUser>) => void;
   isAuthenticated: boolean;
-  userType: string | undefined;
+  userType: () => string | null;
+  isTokenExpired: () => boolean;
 };
 
 export { type AuthUser, type AuthContextValue };
