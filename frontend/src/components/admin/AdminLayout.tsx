@@ -8,8 +8,10 @@ import {
 } from "lucide-react";
 import { Link, useLocation } from "react-router";
 import type { ReactElement } from "react";
+import useAuth from "@/hooks/useAuth";
 
 export default function AdminLayout({ children }: { children: ReactElement }) {
+  const { logout } = useAuth();
   const { pathname } = useLocation();
   const page = pathname.split("/")[2] ?? "dashboard";
 
@@ -66,7 +68,7 @@ export default function AdminLayout({ children }: { children: ReactElement }) {
         </nav>
 
         <div className="px-1 md:px-3 pb-6">
-          <button className={buttonStyling("")}>
+          <button className={buttonStyling("")} onClick={logout}>
             <LogOut size={18} />
             <p className="hidden md:block">Logout</p>
           </button>
