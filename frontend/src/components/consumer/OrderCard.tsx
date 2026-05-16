@@ -20,20 +20,20 @@ const statusValues: Record<
   0: {
     label: "Pending",
     icon: <Clock size={14} />,
-    bg: "bg-gray-100",
-    text: "text-gray-600",
+    bg: "bg-muted",
+    text: "text-muted-foreground",
   },
   1: {
     label: "Completed",
     icon: <CheckCircle size={14} />,
-    bg: "bg-green-100",
-    text: "text-[#1C4419]",
+    bg: "bg-primary/10",
+    text: "text-primary",
   },
   2: {
     label: "Canceled",
     icon: <XCircle size={14} />,
-    bg: "bg-red-100",
-    text: "text-[#7E2700]",
+    bg: "bg-destructive/10",
+    text: "text-destructive",
   },
 };
 
@@ -54,23 +54,22 @@ const OrderCard = ({ order, onCancel, isCanceling }: OrderCardProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const status = statusValues[order.status];
   
-  const firstItem = order.items[0];
-  const moreItemsCount = order.items.length - 1;
+
 
   return (
-    <div className="bg-white sm:rounded-lg shadow-sm border border-[#E8E7E4] overflow-hidden transition-all">
-      <div className="p-4 sm:p-5">
+    <div className="bg-card rounded-3xl shadow-sm border border-border/50 overflow-hidden transition-all hover:shadow-md">
+      <div className="p-5 sm:p-6">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           {/* Summary Info */}
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-xl bg-[#F9FAFB] border border-[#E8E7E4] flex items-center justify-center shrink-0">
-              <Package size={20} className="text-[#1C4419]" />
+            <div className="w-12 h-12 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0">
+              <Package size={20} className="text-primary" />
             </div>
             <div>
-              <p className="manrope font-black text-[#1C4419] text-sm">
-                Order #{order._id.slice(-8).toUpperCase()}
+              <p className="manrope font-extrabold text-foreground text-sm uppercase tracking-wider">
+                Order #{order._id.slice(-8)}
               </p>
-              <p className="inter text-[10px] font-bold text-[#6B7280]">
+              <p className="inter text-xs font-medium text-muted-foreground mt-0.5">
                 {formatDate(order.dateOrdered)} • {order.items.length} {order.items.length === 1 ? 'item' : 'items'}
               </p>
             </div>
@@ -79,20 +78,20 @@ const OrderCard = ({ order, onCancel, isCanceling }: OrderCardProps) => {
           {/* Price and Status */}
           <div className="flex items-center gap-4 justify-between sm:justify-end">
             <div className="text-right">
-              <p className="manrope font-black text-[#1C4419] text-sm">
+              <p className="manrope font-black text-foreground text-lg">
                 {formatCurrency(order.totalAmount)}
               </p>
               <button 
                 onClick={() => setIsExpanded(!isExpanded)}
-                className="text-[10px] font-bold text-[#6B7280] flex items-center gap-1 hover:text-[#1C4419] transition-colors"
+                className="text-xs font-bold text-muted-foreground flex items-center gap-1 hover:text-primary transition-colors justify-end ml-auto mt-0.5"
               >
                 {isExpanded ? "Hide Details" : "View Details"}
-                {isExpanded ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
+                {isExpanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
               </button>
             </div>
             <div className="flex items-center gap-2">
               <span
-                className={`flex items-center gap-1 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider ${status.bg} ${status.text}`}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold tracking-wide ${status.bg} ${status.text}`}
               >
                 {status.icon}
                 {status.label}
@@ -102,7 +101,7 @@ const OrderCard = ({ order, onCancel, isCanceling }: OrderCardProps) => {
                 <button
                   onClick={() => onCancel(order._id)}
                   disabled={isCanceling}
-                  className="bg-[#7E2700] text-white text-[10px] px-3 py-1.5 rounded-lg manrope font-black uppercase tracking-wider hover:bg-[#9b3300] transition-all disabled:opacity-70 shadow-sm"
+                  className="bg-destructive/10 text-destructive text-xs px-4 py-1.5 rounded-full manrope font-bold hover:bg-destructive hover:text-destructive-foreground transition-all disabled:opacity-50"
                 >
                   {isCanceling ? "..." : "Cancel"}
                 </button>
@@ -113,21 +112,21 @@ const OrderCard = ({ order, onCancel, isCanceling }: OrderCardProps) => {
 
         {/* Expanded Details */}
         {isExpanded && (
-          <div className="mt-5 pt-5 border-t border-[#F4F3F1] space-y-4 animate-in fade-in slide-in-from-top-1">
+          <div className="mt-6 pt-6 border-t border-border/50 space-y-4 animate-in fade-in slide-in-from-top-1">
             {order.items.map((item, idx) => (
-              <div key={idx} className="flex items-center justify-between gap-4">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg overflow-hidden border border-[#E8E7E4] shrink-0">
+              <div key={idx} className="flex items-center justify-between gap-4 p-3 bg-muted/30 rounded-2xl border border-border/30">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-xl overflow-hidden shadow-sm shrink-0">
                     <img src={item.productId.imageUrl} alt={item.productId.name} className="w-full h-full object-cover" />
                   </div>
                   <div>
-                    <p className="inter font-bold text-[#1C4419] text-xs">{item.productId.name}</p>
-                    <p className="inter text-[10px] text-[#6B7280]">
-                      {item.quantity} &times; {formatCurrency(item.priceAtPurchase)}
+                    <p className="manrope font-bold text-foreground text-sm">{item.productId.name}</p>
+                    <p className="inter text-xs font-medium text-muted-foreground mt-0.5">
+                      Qty: {item.quantity} &times; {formatCurrency(item.priceAtPurchase)}
                     </p>
                   </div>
                 </div>
-                <p className="inter font-bold text-[#1C4419] text-xs">
+                <p className="manrope font-bold text-primary text-sm bg-primary/10 px-3 py-1.5 rounded-lg">
                   {formatCurrency(item.quantity * item.priceAtPurchase)}
                 </p>
               </div>

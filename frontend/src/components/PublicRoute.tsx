@@ -8,7 +8,7 @@ const PublicRoute = ({ element }: { element: ReactElement }) => {
   if (isAuthenticated) {
     return (
       <Navigate
-        to={userType === "Consumer" ? "/" : "/admin/dashboard"}
+        to={userType === "Consumer" ? "/shop" : "/admin/dashboard"}
         replace
       />
     );

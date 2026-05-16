@@ -1,7 +1,8 @@
-import { Search, ShoppingCart, User, X, Trash } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Search, ShoppingCart, User, X, Trash, Leaf } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "../ui/button";
 import useCart from "@/hooks/useCart";
+import useAuth from "@/hooks/useAuth";
 import toast from "react-hot-toast";
 import api from "@/lib/api";
 
@@ -18,6 +19,9 @@ const ConsumerHeader = () => {
     deleteItem,
     clearCart,
   } = useCart();
+
+  const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
 
   const handleCheckout = async () => {
     const items = Object.values(cartItems);
@@ -47,52 +51,47 @@ const ConsumerHeader = () => {
 
   const cartItemsDisplay = Object.values(cartItems).map(
     ({ product, quantity }, ind) => (
-      <div className="flex justify-between gap-5" key={ind}>
-        <div className="h-24 w-24 shadow-lg">
+      <div className="flex justify-between gap-4 p-4 bg-background border border-border/50 rounded-2xl shadow-sm group hover:border-primary/30 transition-all" key={ind}>
+        <div className="h-20 w-20 shrink-0 rounded-xl overflow-hidden shadow-sm">
           <img
             src={product.imageUrl}
-            className="object-cover w-full h-full rounded-sm"
+            className="object-cover w-full h-full group-hover:scale-110 transition-transform duration-500"
           />
         </div>
-        <div className="flex flex-col flex-1 h-24 justify-between">
-          <div className="flex justify-between items-start">
-            <p className="manrope text-[#1C4419] font-semibold text-lg line-clamp-1">
+        <div className="flex flex-col flex-1 justify-between py-1">
+          <div className="flex justify-between items-start gap-2">
+            <p className="manrope text-foreground font-bold text-sm line-clamp-2 leading-tight">
               {product.name}
             </p>
-            <Trash
-              size={20}
-              color="#42493E"
-              className="cursor-pointer"
-              onClick={() => deleteItem(product)}
-            />
+            <button onClick={() => deleteItem(product)} className="text-muted-foreground hover:text-destructive transition-colors bg-muted/50 p-1.5 rounded-lg shrink-0">
+              <Trash size={16} />
+            </button>
           </div>
-          <p className="inter text-sm text-[#42493E]">
-            QTY {quantity}
-          </p>
-          <div className="flex justify-between">
-            <div className="bg-[#E8E7E4] flex w-24 justify-between rounded-xl px-4 inter items-center text-[#1A1C1A]">
-              <p
-                className="text-xl cursor-pointer select-none"
+          
+          <div className="flex justify-between items-end mt-2">
+            <div className="bg-muted flex justify-between rounded-lg px-2 py-1 inter items-center text-foreground border border-border/50">
+              <button
+                className="w-6 h-6 flex items-center justify-center text-lg cursor-pointer hover:bg-background rounded-md transition-colors font-medium"
                 onClick={() => subItem(product)}
               >
                 -
-              </p>
+              </button>
               <input
-                className="text-center w-8 bg-transparent border-none outline-none"
+                className="text-center w-8 bg-transparent border-none outline-none text-sm font-semibold"
                 type="text"
                 value={quantity}
                 onChange={(e) =>
                   changeItemQuantity(product, Number(e.target.value))
                 }
               />
-              <p
-                className="text-xl cursor-pointer select-none"
+              <button
+                className="w-6 h-6 flex items-center justify-center text-lg cursor-pointer hover:bg-background rounded-md transition-colors font-medium"
                 onClick={() => addItem(product)}
               >
                 +
-              </p>
+              </button>
             </div>
-            <p className="manrope text-[#1C4419] font-bold">
+            <p className="inter text-primary font-bold">
               &#8369;{product.price}
             </p>
           </div>
@@ -103,80 +102,104 @@ const ConsumerHeader = () => {
 
   return (
     <>
-      <header className="h-12 sm:h-18 bg-white shadow-lg flex justify-between items-center px-4 sm:px-7 fixed w-dvw z-10">
-        <Link to={"/"}>
-          <h2 className="text-[#1C4419] font-extrabold text-2xl manrope">
-            Farm-to-table
+      <header className="h-16 sm:h-20 bg-background/80 backdrop-blur-md border-b border-border shadow-sm flex justify-between items-center px-6 sm:px-12 fixed w-full top-0 z-40">
+        <Link to={"/shop"} className="flex items-center gap-2 group">
+          <div className="bg-primary p-2 rounded-xl text-primary-foreground transition-transform group-hover:scale-105 shadow-sm">
+            <Leaf size={20} />
+          </div>
+          <h2 className="text-foreground font-extrabold text-xl sm:text-2xl manrope tracking-tight group-hover:text-primary transition-colors">
+            Farm-to-Table
           </h2>
         </Link>
-        <div className="flex gap-6">
-          <Search color="#1C4419" className="hover:cursor-pointer" />
-          <div className="relative">
-            <ShoppingCart
-              color="#1C4419"
-              className="hover:cursor-pointer"
-              onClick={() => setShowCart(!showCart)}
-            />
+        <div className="flex gap-4 sm:gap-6 items-center">
+          <button className="p-2 rounded-full hover:bg-muted text-muted-foreground hover:text-foreground transition-colors">
+            <Search size={22} />
+          </button>
+          <button className="relative p-2 rounded-full hover:bg-muted text-muted-foreground hover:text-foreground transition-colors" onClick={() => {
+            if (!isAuthenticated) {
+              toast.error("Please log in to view your cart.");
+              navigate("/login");
+              return;
+            }
+            setShowCart(!showCart);
+          }}>
+            <ShoppingCart size={22} />
             {cartCount > 0 && (
-              <span className="absolute -top-2 -right-2 bg-[#7E2700] text-white text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center">
+              <span className="absolute 0 right-0 bg-destructive text-destructive-foreground text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center animate-in zoom-in">
                 {cartCount > 9 ? '9+' : cartCount}
               </span>
             )}
-          </div>
-          <Link to={"/profile"}>
-            <User color="#1C4419" className="hover:cursor-pointer" />
+          </button>
+          <Link to={isAuthenticated ? "/profile" : "/login"} className="p-2 rounded-full hover:bg-muted text-muted-foreground hover:text-foreground transition-colors">
+            <User size={22} />
           </Link>
         </div>
       </header>
 
       <div
-        className={`inset-0 z-20 fixed transition-all ${showCart ? "bg-black/50 pointer-events-auto backdrop-blur-[2px]" : "bg-black/0 pointer-events-none backdrop-blur-none"}`}
+        className={`inset-0 z-50 fixed transition-all duration-300 ${showCart ? "bg-black/40 pointer-events-auto backdrop-blur-sm" : "bg-black/0 pointer-events-none backdrop-blur-none"}`}
+        onClick={() => setShowCart(false)}
       >
         <aside
-          className={`w-full sm:w-100 bg-white h-dvh transition-all absolute right-0 ${showCart ? "translate-x-0" : "translate-x-full"}`}
+          className={`w-full sm:w-[420px] bg-card h-dvh transition-transform duration-500 cubic-bezier(0.4, 0, 0.2, 1) absolute right-0 shadow-2xl flex flex-col ${showCart ? "translate-x-0" : "translate-x-full"}`}
+          onClick={(e) => e.stopPropagation()}
         >
-          <div className="flex justify-between items-center sm:p-5 p-3 border-b">
-            <h3 className="text-[#1C4419] font-extrabold text-2xl manrope">
-              Your Basket
-            </h3>
-            <X className="cursor-pointer" onClick={() => setShowCart(false)} />
+          <div className="flex justify-between items-center px-6 py-5 border-b border-border bg-muted/30">
+            <div className="flex items-center gap-2">
+              <ShoppingCart className="text-primary" size={24} />
+              <h3 className="text-foreground font-extrabold text-2xl manrope tracking-tight">
+                Your Basket
+              </h3>
+            </div>
+            <button className="p-2 hover:bg-muted rounded-full transition-colors text-muted-foreground hover:text-foreground" onClick={() => setShowCart(false)}>
+              <X size={20} />
+            </button>
           </div>
+          
           {Object.values(cartItems).length > 0 ? (
             <>
-              <div className="overflow-y-scroll h-[calc(100%-270px)] p-5 flex flex-col gap-5">
+              <div className="flex-1 overflow-y-auto p-6 flex flex-col gap-4 bg-muted/10">
                 {cartItemsDisplay}
               </div>
-              <div className="bg-[#F4F3F1] h-[270px] p-8 flex flex-col">
-                <div className="flex justify-between mb-4">
-                  <h4 className="manrope text-[#1C4419] font-bold text-xl">
-                    Total
+              <div className="border-t border-border bg-card p-6 flex flex-col gap-4 shadow-[0_-4px_24px_rgba(0,0,0,0.02)]">
+                <div className="flex justify-between items-center mb-2">
+                  <h4 className="inter text-muted-foreground font-semibold">
+                    Subtotal
                   </h4>
-                  <h4 className="manrope text-[#1C4419] font-bold text-xl">
+                  <h4 className="manrope text-foreground font-black text-2xl">
                     &#8369;{total.toFixed(2)}
                   </h4>
                 </div>
-                <p className="inter text-xs text-[#42493E] mb-8">
-                  Payment Method: <span className="font-semibold">Cash on Delivery (COD)</span>
-                </p>
+                <div className="bg-primary/10 rounded-xl p-3 border border-primary/20 flex items-center gap-3">
+                  <div className="bg-primary text-primary-foreground w-8 h-8 rounded-lg flex items-center justify-center shrink-0">
+                    <span className="font-bold text-xs">COD</span>
+                  </div>
+                  <p className="inter text-sm text-primary font-medium">
+                    Cash on Delivery active
+                  </p>
+                </div>
                 <Button 
-                  className="w-full rounded-sm manrope font-bold text-lg py-7 bg-[#7E2706] cursor-pointer"
+                  className="w-full rounded-xl manrope font-bold text-lg py-7 bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg hover:shadow-primary/25 hover:-translate-y-0.5 transition-all mt-2"
                   onClick={handleCheckout}
                 >
-                  Place Order (COD)
+                  Place Order
                 </Button>
               </div>
             </>
           ) : (
-            <div className="h-full px-10 justify-center flex flex-col items-center gap-5">
-              <p className="manrope text-[#1C4419] font-bold text-xl mb-5">
+            <div className="flex-1 px-8 justify-center flex flex-col items-center gap-4 text-center">
+              <div className="w-24 h-24 bg-muted rounded-full flex items-center justify-center text-muted-foreground mb-4">
+                <ShoppingCart size={40} />
+              </div>
+              <p className="manrope text-foreground font-bold text-2xl">
                 Your basket is empty
               </p>
-              <p className="inter text-sm text-[#42493E] text-center">
-                Looks like you haven't added anything to your basket.
+              <p className="inter text-base text-muted-foreground max-w-[250px]">
+                Looks like you haven't added any fresh produce to your basket yet.
               </p>
-              <Link to="/">
+              <Link to="/shop" className="mt-8 w-full">
                 <Button
-                  className="w-full rounded-sm manrope font-bold text-lg py-7 px-20 bg-[#7E2706] cursor-pointer"
+                  className="w-full rounded-xl manrope font-bold text-lg py-6 bg-primary hover:bg-primary/90 transition-all shadow-md"
                   onClick={() => setShowCart(false)}
                 >
                   Start Shopping

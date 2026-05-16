@@ -131,8 +131,12 @@ function OrdersPage() {
                         </td>
                         <td className="px-4 py-5">
                           <div className="flex flex-col">
-                            <span className="font-bold text-[#1C4419]">{order.userId.firstName} {order.userId.lastName}</span>
-                            <span className="text-[10px] text-[#6B7280]">{order.userId.email}</span>
+                            <span className="font-bold text-[#1C4419]">
+                              {order.userId ? `${order.userId.firstName} ${order.userId.lastName}` : 'Unknown User'}
+                            </span>
+                            <span className="text-[10px] text-[#6B7280]">
+                              {order.userId?.email || 'No email available'}
+                            </span>
                           </div>
                         </td>
                         <td className="px-4 py-5">
