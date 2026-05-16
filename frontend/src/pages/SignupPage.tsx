@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { useNavigate } from "react-router";
+import { useNavigate } from "react-router-dom";
 import InputField from "@/components/InputField";
 import useAuth from "@/hooks/useAuth";
 import toast from "react-hot-toast";
@@ -35,18 +35,25 @@ const SignupPage = () => {
         className="bg-white shadow-xl flex flex-col justify-between px-10 py-13 w-dvw items-center sm:max-w-[500px] sm:max-h-[800px] min-h-[800px] sm:rounded-lg sm:h-dvh"
         onSubmit={handleSubmit}
       >
-        <h1 className="manrope text-[#294E27] text-3xl font-bold mb-7">
-          Farm-to-table
+        <h1 className="manrope text-[#1C4419] text-3xl font-black tracking-tight">
+          Farm-to-Table
         </h1>
 
         <div className="flex flex-col gap-5 w-full">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+          <div className="flex flex-col sm:flex-row gap-3 w-full">
             <InputField
               id="fnameInput"
               type="text"
               placeholder="Juan"
               label="First Name"
               required={true}
+            />
+            <InputField
+              id="mnameInput"
+              type="text"
+              placeholder="D."
+              label="Middle Name"
+              required={false}
             />
             <InputField
               id="lnameInput"
@@ -57,16 +64,9 @@ const SignupPage = () => {
             />
           </div>
           <InputField
-            id="mnameInput"
-            type="text"
-            placeholder="Santos"
-            label="Middle Name"
-            required={false}
-          />
-          <InputField
             id="emailInput"
             type="email"
-            placeholder="farmer@verdant.com"
+            placeholder="user@3t.com"
             label="Email Address"
             required={true}
           />

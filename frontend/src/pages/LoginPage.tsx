@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { useNavigate } from "react-router";
+import { useNavigate } from "react-router-dom";
 import InputField from "@/components/InputField";
 import useAuth from "@/hooks/useAuth";
 import toast from "react-hot-toast";
@@ -32,15 +32,15 @@ const LoginPage = () => {
         className="bg-white shadow-xl flex flex-col justify-between px-10 py-13 h-dvh w-dvw items-center sm:max-w-[400px] min-h-[543px] sm:max-h-[586px] sm:rounded-lg"
         onSubmit={handleSubmit}
       >
-        <h1 className="manrope text-[#294E27] text-3xl font-bold">
-          Farm-to-table
+        <h1 className="manrope text-[#1C4419] text-3xl font-black tracking-tight">
+          Farm-to-Table
         </h1>
 
         <div className="flex flex-col gap-5 w-full">
           <InputField
             id="emailInput"
             type="email"
-            placeholder="farmer@verdant.com"
+            placeholder="admin@3t.com"
             label="Email Address"
             required={true}
           />

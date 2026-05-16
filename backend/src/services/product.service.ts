@@ -19,6 +19,7 @@ interface GetProductsOptions {
   offset: number;
   sortBy: SortField;
   sortOrder: SortOrder;
+  type?: number;
 }
 
 interface PaginatedResult {
@@ -60,18 +61,23 @@ export class ProductService {
 
   // get paginated + sorted product list
   static async getProducts(options: GetProductsOptions): Promise<PaginatedResult> {
-    const { limit, offset, sortBy, sortOrder } = options;
+    const { limit, offset, sortBy, sortOrder, type } = options;
 
     const sortKey = SORT_FIELD_MAP[sortBy];
     const sortDirection = sortOrder === 'asc' ? 1 : -1;
 
+    const query: any = {};
+    if (type) {
+      query.type = type;
+    }
+
     const [data, total] = await Promise.all([
-      Product.find()
+      Product.find(query)
         .sort({ [sortKey]: sortDirection })
         .skip(offset)
         .limit(limit)
         .exec(),
-      Product.countDocuments().exec(),
+      Product.countDocuments(query).exec(),
     ]);
 
     return { data, total, limit, offset };

@@ -45,9 +45,9 @@ export const productService = {
     if (productType !== null) params.type = productType;
 
     const {
-      data: { data },
+      data: { data, total },
     } = await api.get("/api/products", { params });
-    return { data, total: data.length };
+    return { data, total: total ?? data.length };
   },
 
   addProduct: async (data: AddProductFormData): Promise<ProductResponse> => {

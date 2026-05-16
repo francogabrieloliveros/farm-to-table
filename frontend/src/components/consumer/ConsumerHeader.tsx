@@ -1,5 +1,5 @@
-import { Search, ShoppingCart, CircleUserRound, X, Trash } from "lucide-react";
-import { Link } from "react-router";
+import { Search, ShoppingCart, User, X, Trash } from "lucide-react";
+import { Link } from "react-router-dom";
 import { Button } from "../ui/button";
 import useCart from "@/hooks/useCart";
 import toast from "react-hot-toast";
@@ -14,6 +14,7 @@ const ConsumerHeader = () => {
     subItem,
     changeItemQuantity,
     total,
+    cartCount,
     deleteItem,
     clearCart,
   } = useCart();
@@ -25,15 +26,12 @@ const ConsumerHeader = () => {
     const loadingToast = toast.loading("Placing your orders...");
 
     try {
-      // The current backend supports one product per order, so we loop
-      const promises = items.map((item) =>
-        api.post("/api/orders", {
+      await api.post("/api/orders", {
+        items: items.map((item) => ({
           productId: item.product._id,
           quantity: item.quantity,
-        }),
-      );
-
-      await Promise.all(promises);
+        })),
+      });
 
       toast.success("Orders placed successfully!", { id: loadingToast });
       clearCart();
@@ -113,13 +111,20 @@ const ConsumerHeader = () => {
         </Link>
         <div className="flex gap-6">
           <Search color="#1C4419" className="hover:cursor-pointer" />
-          <ShoppingCart
-            color="#1C4419"
-            className="hover:cursor-pointer"
-            onClick={() => setShowCart(!showCart)}
-          />
+          <div className="relative">
+            <ShoppingCart
+              color="#1C4419"
+              className="hover:cursor-pointer"
+              onClick={() => setShowCart(!showCart)}
+            />
+            {cartCount > 0 && (
+              <span className="absolute -top-2 -right-2 bg-[#7E2700] text-white text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center">
+                {cartCount > 9 ? '9+' : cartCount}
+              </span>
+            )}
+          </div>
           <Link to={"/profile"}>
-            <CircleUserRound color="#1C4419" className="hover:cursor-pointer" />
+            <User color="#1C4419" className="hover:cursor-pointer" />
           </Link>
         </div>
       </header>
@@ -142,19 +147,22 @@ const ConsumerHeader = () => {
                 {cartItemsDisplay}
               </div>
               <div className="bg-[#F4F3F1] h-[270px] p-8 flex flex-col">
-                <div className="flex justify-between mb-12">
+                <div className="flex justify-between mb-4">
                   <h4 className="manrope text-[#1C4419] font-bold text-xl">
                     Total
                   </h4>
                   <h4 className="manrope text-[#1C4419] font-bold text-xl">
-                    &#8369;{total}
+                    &#8369;{total.toFixed(2)}
                   </h4>
                 </div>
+                <p className="inter text-xs text-[#42493E] mb-8">
+                  Payment Method: <span className="font-semibold">Cash on Delivery (COD)</span>
+                </p>
                 <Button 
                   className="w-full rounded-sm manrope font-bold text-lg py-7 bg-[#7E2706] cursor-pointer"
                   onClick={handleCheckout}
                 >
-                  Checkout
+                  Place Order (COD)
                 </Button>
               </div>
             </>
