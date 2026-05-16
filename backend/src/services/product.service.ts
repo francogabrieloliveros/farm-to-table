@@ -20,6 +20,7 @@ interface GetProductsOptions {
   sortBy: SortField;
   sortOrder: SortOrder;
   type?: number;
+  search?: string;
 }
 
 interface PaginatedResult {
@@ -61,7 +62,7 @@ export class ProductService {
 
   // get paginated + sorted product list
   static async getProducts(options: GetProductsOptions): Promise<PaginatedResult> {
-    const { limit, offset, sortBy, sortOrder, type } = options;
+    const { limit, offset, sortBy, sortOrder, type, search } = options;
 
     const sortKey = SORT_FIELD_MAP[sortBy];
     const sortDirection = sortOrder === 'asc' ? 1 : -1;
@@ -69,6 +70,9 @@ export class ProductService {
     const query: any = {};
     if (type) {
       query.type = type;
+    }
+    if (search) {
+      query.name = { $regex: search, $options: 'i' };
     }
 
     const [data, total] = await Promise.all([

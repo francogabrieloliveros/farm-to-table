@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Search } from "lucide-react";
 import { productService } from "@/services/product.service";
 import { type Product } from "@/types/Product";
 import ProductDisplay from "@/components/consumer/ProductDisplay";
@@ -8,6 +9,7 @@ const ConsumerHomePage = () => {
     "price_asc" | "price_desc" | "name" | "quantity" | ""
   >("price_asc");
   const [productType, setProductType] = useState<"1" | "2" | "">("");
+  const [search, setSearch] = useState("");
   const [products, setProducts] = useState<Product[]>([]);
   const [page, setPage] = useState(0);
   const [total, setTotal] = useState(0);
@@ -22,6 +24,7 @@ const ConsumerHomePage = () => {
       .getProducts({
         sortBy: sortBy === "" ? null : (sortBy as any),
         productType: productType === "" ? null : (productType as any),
+        search,
         limit: ITEMS_PER_PAGE,
         offset: page * ITEMS_PER_PAGE,
       })
@@ -36,12 +39,12 @@ const ConsumerHomePage = () => {
       .finally(() => {
         setLoading(false);
       });
-  }, [sortBy, productType, page]);
+  }, [sortBy, productType, search, page]);
 
   // Reset to first page when filters change
   useEffect(() => {
     setPage(0);
-  }, [sortBy, productType]);
+  }, [sortBy, productType, search]);
 
   const totalPages = Math.ceil(total / ITEMS_PER_PAGE);
 
@@ -64,22 +67,34 @@ const ConsumerHomePage = () => {
           </p>
         </div>
 
-        <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
-          <div className="relative w-full sm:w-48">
-            <select 
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value as any)}
-              className="w-full pl-4 pr-10 py-3.5 inter bg-background border border-border rounded-xl outline-none text-foreground font-medium shadow-sm hover:border-primary/50 transition-colors focus:ring-2 focus:ring-primary/20 appearance-none cursor-pointer"
-            >
-              <option value="price_asc">Price (Ascending)</option>
-              <option value="price_desc">Price (Descending)</option>
-              <option value="name">Name (A–Z)</option>
-              <option value="quantity">Quantity (Low–High)</option>
-            </select>
-            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-muted-foreground">
-              <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
-            </div>
+        <div className="flex flex-col gap-4 w-full lg:w-auto">
+          <div className="relative w-full sm:w-[400px]">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground w-5 h-5" />
+            <input
+              type="text"
+              placeholder="Search products..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full pl-12 pr-4 py-3.5 inter bg-background border border-border rounded-xl outline-none text-foreground font-medium shadow-sm hover:border-primary/50 transition-colors focus:ring-2 focus:ring-primary/20"
+            />
           </div>
+
+          <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
+            <div className="relative w-full sm:w-48">
+              <select 
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value as any)}
+                className="w-full pl-4 pr-10 py-3.5 inter bg-background border border-border rounded-xl outline-none text-foreground font-medium shadow-sm hover:border-primary/50 transition-colors focus:ring-2 focus:ring-primary/20 appearance-none cursor-pointer"
+              >
+                <option value="price_asc">Price (Ascending)</option>
+                <option value="price_desc">Price (Descending)</option>
+                <option value="name">Name (A–Z)</option>
+                <option value="quantity">Quantity (Low–High)</option>
+              </select>
+              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-muted-foreground">
+                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+              </div>
+            </div>
 
           <div className="relative w-full sm:w-40">
             <select 
@@ -93,6 +108,7 @@ const ConsumerHomePage = () => {
             </select>
             <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-muted-foreground">
               <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+            </div>
             </div>
           </div>
         </div>

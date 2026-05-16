@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { User, ClipboardList } from "lucide-react";
+import { User, ClipboardList, ArrowLeft } from "lucide-react";
+import { Link } from "react-router-dom";
 import AccountSettings from "@/components/consumer/AccountSettings";
 import OrderHistory from "@/components/consumer/OrderHistory";
 
@@ -41,6 +42,12 @@ const ProfilePage = () => {
                 Order History
               </button>
             </nav>
+            <div className="mt-6 pt-6 border-t border-border/50">
+              <Link to="/shop" className="flex items-center justify-center gap-2 px-4 py-3 rounded-2xl text-sm inter font-bold transition-all w-full text-center bg-muted/50 hover:bg-muted text-muted-foreground hover:text-foreground">
+                <ArrowLeft size={16} />
+                Back to Shop
+              </Link>
+            </div>
           </div>
         </aside>
 
