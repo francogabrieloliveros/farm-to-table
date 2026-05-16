@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
-import { useNavigate } from "react-router-dom";
-import { Leaf } from "lucide-react";
+import { useNavigate, Link } from "react-router-dom";
+import { Leaf, ArrowLeft } from "lucide-react";
 import InputField from "@/components/InputField";
 import useAuth from "@/hooks/useAuth";
 import toast from "react-hot-toast";
@@ -31,6 +31,11 @@ const SignupPage = () => {
   return (
     <main className="w-dvw min-h-dvh flex justify-center items-center py-12 relative overflow-x-hidden">
       <div className="fixed inset-0 -z-10 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/10 via-background to-background"></div>
+
+      <Link to="/" className="absolute top-6 sm:top-10 left-6 sm:left-10 flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors font-medium inter bg-background/50 backdrop-blur-md px-4 py-2 rounded-full border border-border/50 shadow-sm z-20">
+        <ArrowLeft size={18} />
+        <span>Back to Home</span>
+      </Link>
 
       <form
         className="bg-card shadow-2xl flex flex-col px-8 sm:px-10 py-10 w-full max-w-[500px] sm:rounded-3xl border border-border/50 animate-in fade-in slide-in-from-bottom-4 duration-700 m-4 z-10"
