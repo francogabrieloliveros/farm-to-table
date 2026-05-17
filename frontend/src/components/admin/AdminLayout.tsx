@@ -14,6 +14,7 @@ import { useState, type ReactElement } from "react";
 import useAuth from "@/hooks/useAuth";
 
 export default function AdminLayout({ children }: { children: ReactElement }) {
+  const { logout } = useAuth();
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const { user, logout } = useAuth();
