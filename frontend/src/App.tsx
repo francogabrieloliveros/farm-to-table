@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import { AuthProvider } from "@/context/AuthContext";
 import SignupPage from "@/pages/SignupPage";
@@ -8,12 +8,14 @@ import ProtectedRoute from "@/components/ProtectedRoute";
 import PublicRoute from "@/components/PublicRoute";
 import ConsumerHomePage from "@/pages/consumer/ConsumerHomePage";
 import ProfilePage from "@/pages/consumer/ProfilePage";
+import LandingPage from "@/pages/LandingPage";
 import DashboardPage from "@/pages/admin/DashboardPage";
 import AdminLayout from "@/components/admin/AdminLayout";
 import UsersPage from "@/pages/admin/UsersPage";
 import InventoryPage from "@/pages/admin/InventoryPage";
 import OrdersPage from "@/pages/admin/OrdersPage";
 import ReportsPage from "@/pages/admin/ReportsPage";
+import NotFoundPage from "@/pages/NotFoundPage";
 
 function App() {
   return (
@@ -28,17 +30,13 @@ function App() {
             path="/signup"
             element={<PublicRoute element={<SignupPage />} />}
           />
+          <Route path="/" element={<LandingPage />} />
           <Route
-            path="/"
+            path="/shop"
             element={
-              <ProtectedRoute
-                type="Consumer"
-                element={
-                  <ConsumerLayout>
-                    <ConsumerHomePage />
-                  </ConsumerLayout>
-                }
-              />
+              <ConsumerLayout>
+                <ConsumerHomePage />
+              </ConsumerLayout>
             }
           />
           <Route
@@ -119,6 +117,7 @@ function App() {
               />
             }
           />
+          <Route path="*" element={<NotFoundPage />} />
         </Routes>
         <Toaster position="bottom-right" />
       </AuthProvider>

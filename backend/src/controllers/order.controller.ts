@@ -1,28 +1,29 @@
-import type { Request, Response } from 'express';
+import type { Response } from 'express';
 import { OrderService } from '../services/order.service.js';
 import type { AuthRequest } from '../middlewares/auth.middleware.js';
 
 // create order (customer)
 export const createOrder = async (req: AuthRequest, res: Response) => {
-  const { productId, quantity } = req.body;
+  const { items } = req.body;
 
-  if (!productId || !quantity) {
+  if (!items || !Array.isArray(items) || items.length === 0) {
     return res.status(400).json({
       success: false,
-      message: 'Product ID and quantity are required.',
+      message: 'At least one product item is required.',
     });
   }
 
   try {
-    const order = await OrderService.createOrder({
-      productId: String(productId),
-      quantity: Number(quantity),
-      userEmail: req.user?.id || 'unknown', // adjust if your user uses email
-    });
+    const userId = req.user?.id;
+    if (!userId) {
+      return res.status(401).json({ success: false, message: 'Unauthorized' });
+    }
+
+    const order = await OrderService.createOrder(userId, items);
 
     return res.status(201).json({
       success: true,
-      message: 'Order created successfully.',
+      message: 'Order placed successfully.',
       data: order,
     });
   } catch (error: any) {
@@ -35,7 +36,7 @@ export const createOrder = async (req: AuthRequest, res: Response) => {
 };
 
 // get all orders (admin)
-export const getAllOrders = async (_req: Request, res: Response) => {
+export const getAllOrders = async (_req: AuthRequest, res: Response) => {
   try {
     const orders = await OrderService.getAllOrders();
 
@@ -55,9 +56,12 @@ export const getAllOrders = async (_req: Request, res: Response) => {
 // get current user's orders
 export const getMyOrders = async (req: AuthRequest, res: Response) => {
   try {
-    const email = req.user?.id || ''; // adjust later if needed
+    const userId = req.user?.id;
+    if (!userId) {
+      return res.status(401).json({ success: false, message: 'Unauthorized' });
+    }
 
-    const orders = await OrderService.getOrdersByUser(email);
+    const orders = await OrderService.getOrdersByUser(userId);
 
     return res.status(200).json({
       success: true,
@@ -73,7 +77,7 @@ export const getMyOrders = async (req: AuthRequest, res: Response) => {
 };
 
 // confirm order (admin)
-export const confirmOrder = async (req: Request, res: Response) => {
+export const confirmOrder = async (req: AuthRequest, res: Response) => {
   try {
     const order = await OrderService.confirmOrder(String(req.params.id));
 
@@ -91,7 +95,7 @@ export const confirmOrder = async (req: Request, res: Response) => {
 };
 
 // cancel order (customer)
-export const cancelOrder = async (req: Request, res: Response) => {
+export const cancelOrder = async (req: AuthRequest, res: Response) => {
   try {
     const order = await OrderService.cancelOrder(String(req.params.id));
 
