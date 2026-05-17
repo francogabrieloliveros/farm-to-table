@@ -26,7 +26,7 @@ function InventoryPage() {
 
   return (
     <>
-      {showModal && (
+      {showModal ? (
         <ProductModal onClose={() => setShowModal(false)} item={modalItem} />
       )}
       
