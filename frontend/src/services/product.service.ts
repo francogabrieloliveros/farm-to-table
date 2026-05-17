@@ -10,11 +10,13 @@ export const productService = {
   getProducts: async ({
     sortBy,
     productType,
+    search,
     limit = 10,
     offset = 0,
   }: {
     sortBy: "price_asc" | "price_desc" | "name" | "quantity" | null;
     productType: "1" | "2" | null;
+    search?: string;
     limit?: number;
     offset?: number;
   }): Promise<{ data: Product[]; total: number }> => {
@@ -36,17 +38,13 @@ export const productService = {
       sortOrder,
     };
 
-    const {
-      data: { data },
-    } = await api.get("/api/products", { params });
+    if (productType !== null) params.type = productType;
+    if (search) params.search = search;
 
-    if (productType !== null) {
-      const fixedData = data.filter(
-        (product) => product.type === parseInt(productType),
-      );
-      return { data: fixedData, total: data.length };
-    }
-    return { data, total: data.length };
+    const {
+      data: { data, total },
+    } = await api.get("/api/products", { params });
+    return { data, total: total ?? data.length };
   },
 
   addProduct: async (data: AddProductFormData): Promise<ProductResponse> => {

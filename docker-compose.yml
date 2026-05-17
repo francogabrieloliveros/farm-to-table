@@ -1,4 +1,3 @@
-version: '3.8'
 services:
   backend:
     build: ./backend
@@ -10,6 +9,12 @@ services:
       - ./backend:/app
       - /app/node_modules
     command: npm run dev
+    healthcheck:
+      test: [ "CMD-SHELL", "node -e \"const http = require('http'); const req = http.request({hostname:'localhost',port:5000,path:'/',method:'GET'}, res => { process.exit(res.statusCode === 200 ? 0 : 1) }); req.on('error', () => process.exit(1)); req.end();\"" ]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 10s
 
   frontend:
     build: ./frontend
@@ -22,4 +27,5 @@ services:
       - /app/node_modules
     command: npm run dev -- --host
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
