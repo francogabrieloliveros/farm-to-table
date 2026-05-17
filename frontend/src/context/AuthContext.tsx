@@ -1,6 +1,7 @@
 import { createContext, useState, type ReactNode, useEffect } from "react";
 import { authService } from "@/services/auth.service.ts";
 import { setLogoutCallback } from "@/lib/api";
+import { jwtDecode } from "jwt-decode";
 import {
   type AuthUser,
   type AuthContextValue,
@@ -13,9 +14,18 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<AuthUser | null>(() => {
     try {
       const stored = localStorage.getItem("auth_user");
-      return stored ? JSON.parse(stored) : null;
+      if (!stored) return null;
+
+      const parsed = JSON.parse(stored);
+
+      const decoded: any = jwtDecode(parsed.token);
+      if (decoded.exp < Date.now() / 1000) {
+        localStorage.removeItem("auth_user");
+        return null;
+      }
+
+      return parsed;
     } catch (error) {
-      console.error("Failed to parse stored user:", error);
       return null;
     }
   });
@@ -34,7 +44,9 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       setUser(data);
       return data;
     } catch (error: any) {
-      const message = error.response?.data?.message || "Login failed. Please check your credentials.";
+      const message =
+        error.response?.data?.message ||
+        "Login failed. Please check your credentials.";
       toast.error(message);
       throw error;
     }
@@ -53,7 +65,8 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       setUser(data);
       return data;
     } catch (error: any) {
-      const message = error.response?.data?.message || "Signup failed. Please try again.";
+      const message =
+        error.response?.data?.message || "Signup failed. Please try again.";
       toast.error(message);
       throw error;
     }
@@ -81,6 +94,30 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     setUser(null);
   }
 
+  function userType() {
+    if (!user?.token) return null;
+    try {
+      const decoded: any = jwtDecode(user.token);
+      return decoded.userType;
+    } catch {
+      return null;
+    }
+  }
+
+  function isTokenExpired() {
+    if (!user?.token) return true;
+    try {
+      const decoded: any = jwtDecode(user.token);
+      const currentTime = Date.now() / 1000;
+
+      return decoded.exp < currentTime;
+    } catch {
+      return true;
+    }
+  }
+
+  const authenticated = !!user && !isTokenExpired();
+
   return (
     <AuthContext.Provider
       value={{
@@ -89,8 +126,9 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
         signup,
         logout,
         updateStoredUser,
-        isAuthenticated: !!user,
-        userType: user?.userType,
+        isAuthenticated: authenticated,
+        userType,
+        isTokenExpired,
       }}
     >
       {children}

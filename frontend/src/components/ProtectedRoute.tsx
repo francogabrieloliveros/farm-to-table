@@ -9,10 +9,10 @@ const ProtectedRoute = ({
   type: string;
   element: ReactElement;
 }) => {
-  const { isAuthenticated, userType } = useAuth();
+  const { isAuthenticated, userType, isTokenExpired } = useAuth();
 
   // Redirect to login if not authenticated
-  if (!isAuthenticated || userType !== type) {
+  if (!isAuthenticated || userType() !== type || isTokenExpired()) {
     return <Navigate to="/login" replace />;
   }
 
