@@ -17,7 +17,12 @@ function InventoryPage() {
 
   useEffect(() => {
     productService
-      .getProducts({ sortBy: "price_asc", productType: null, offset, limit: 10 })
+      .getProducts({
+        sortBy: "price_asc",
+        productType: null,
+        offset,
+        limit: 10,
+      })
       .then((res) => {
         setProducts(searchInventory(search, res.data));
         setTotal(res.total);
@@ -28,16 +33,20 @@ function InventoryPage() {
     <>
       {showModal ? (
         <ProductModal onClose={() => setShowModal(false)} item={modalItem} />
-      )}
-      
+      ) : undefined}
+
       <div className="p-6 md:p-10 space-y-8">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div>
-            <h1 className="text-3xl font-black text-[#1C4419] tracking-tight manrope">Inventory Management</h1>
-            <p className="text-sm text-[#6B7280] font-medium">Track and manage your product stock levels.</p>
+            <h1 className="text-3xl font-black text-[#1C4419] tracking-tight manrope">
+              Inventory Management
+            </h1>
+            <p className="text-sm text-[#6B7280] font-medium">
+              Track and manage your product stock levels.
+            </p>
           </div>
-          
+
           <button
             onClick={() => {
               setModalItem(null);
@@ -86,7 +95,9 @@ function InventoryPage() {
                     <td colSpan={5} className="px-8 py-12 text-center">
                       <div className="flex flex-col items-center gap-2 text-gray-400">
                         <PackageIcon size={40} className="opacity-20" />
-                        <p className="font-medium">No products found in inventory.</p>
+                        <p className="font-medium">
+                          No products found in inventory.
+                        </p>
                       </div>
                     </td>
                   </tr>
@@ -108,7 +119,11 @@ function InventoryPage() {
           {/* Pagination */}
           <div className="px-8 py-4 bg-[#FCFBF9] border-t border-[#F4F3F1] flex items-center justify-between">
             <p className="text-xs font-bold text-[#6B7280]">
-              Showing <span className="text-[#1C4419]">{offset + 1}</span> to <span className="text-[#1C4419]">{Math.min(offset + products.length, total)}</span> of <span className="text-[#1C4419]">{total}</span> items
+              Showing <span className="text-[#1C4419]">{offset + 1}</span> to{" "}
+              <span className="text-[#1C4419]">
+                {Math.min(offset + products.length, total)}
+              </span>{" "}
+              of <span className="text-[#1C4419]">{total}</span> items
             </p>
             <div className="flex items-center gap-2">
               <button
@@ -116,7 +131,8 @@ function InventoryPage() {
                 onClick={() => setOffset(Math.max(0, offset - 10))}
                 className="p-2 rounded-lg border border-[#E8E7E4] bg-white text-[#1C4419] disabled:opacity-30 disabled:cursor-not-allowed hover:bg-[#F4F3F1] transition-colors"
               >
-                <Plus size={16} className="rotate-45" /> {/* Using rotate-45 as a crude arrow */}
+                <Plus size={16} className="rotate-45" />{" "}
+                {/* Using rotate-45 as a crude arrow */}
               </button>
               <button
                 disabled={offset + 10 >= total}

@@ -43,7 +43,8 @@ const ConsumerHeader = () => {
     } catch (error: any) {
       console.error("Checkout error:", error);
       toast.error(
-        error.response?.data?.message || "Failed to place orders. Please try again.",
+        error.response?.data?.message ||
+          "Failed to place orders. Please try again.",
         { id: loadingToast },
       );
     }
@@ -51,7 +52,10 @@ const ConsumerHeader = () => {
 
   const cartItemsDisplay = Object.values(cartItems).map(
     ({ product, quantity }, ind) => (
-      <div className="flex justify-between gap-4 p-4 bg-background border border-border/50 rounded-2xl shadow-sm group hover:border-primary/30 transition-all" key={ind}>
+      <div
+        className="flex justify-between gap-4 p-4 bg-background border border-border/50 rounded-2xl shadow-sm group hover:border-primary/30 transition-all"
+        key={ind}
+      >
         <div className="h-20 w-20 shrink-0 rounded-xl overflow-hidden shadow-sm">
           <img
             src={product.imageUrl}
@@ -63,11 +67,14 @@ const ConsumerHeader = () => {
             <p className="manrope text-foreground font-bold text-sm line-clamp-2 leading-tight">
               {product.name}
             </p>
-            <button onClick={() => deleteItem(product)} className="text-muted-foreground hover:text-destructive transition-colors bg-muted/50 p-1.5 rounded-lg shrink-0">
+            <button
+              onClick={() => deleteItem(product)}
+              className="text-muted-foreground hover:text-destructive transition-colors bg-muted/50 p-1.5 rounded-lg shrink-0"
+            >
               <Trash size={16} />
             </button>
           </div>
-          
+
           <div className="flex justify-between items-end mt-2">
             <div className="bg-muted flex justify-between rounded-lg px-2 py-1 inter items-center text-foreground border border-border/50">
               <button
@@ -112,25 +119,28 @@ const ConsumerHeader = () => {
           </h2>
         </Link>
         <div className="flex gap-4 sm:gap-6 items-center">
-          <button className="p-2 rounded-full hover:bg-muted text-muted-foreground hover:text-foreground transition-colors">
-            <Search size={22} />
-          </button>
-          <button className="relative p-2 rounded-full hover:bg-muted text-muted-foreground hover:text-foreground transition-colors" onClick={() => {
-            if (!isAuthenticated) {
-              toast.error("Please log in to view your cart.");
-              navigate("/login");
-              return;
-            }
-            setShowCart(!showCart);
-          }}>
+          <button
+            className="relative p-2 rounded-full hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
+            onClick={() => {
+              if (!isAuthenticated) {
+                toast.error("Please log in to view your cart.");
+                navigate("/login");
+                return;
+              }
+              setShowCart(!showCart);
+            }}
+          >
             <ShoppingCart size={22} />
             {cartCount > 0 && (
               <span className="absolute 0 right-0 bg-destructive text-destructive-foreground text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center animate-in zoom-in">
-                {cartCount > 9 ? '9+' : cartCount}
+                {cartCount > 9 ? "9+" : cartCount}
               </span>
             )}
           </button>
-          <Link to={isAuthenticated ? "/profile" : "/login"} className="p-2 rounded-full hover:bg-muted text-muted-foreground hover:text-foreground transition-colors">
+          <Link
+            to={isAuthenticated ? "/profile" : "/login"}
+            className="p-2 rounded-full hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
+          >
             <User size={22} />
           </Link>
         </div>
@@ -151,11 +161,14 @@ const ConsumerHeader = () => {
                 Your Basket
               </h3>
             </div>
-            <button className="p-2 hover:bg-muted rounded-full transition-colors text-muted-foreground hover:text-foreground" onClick={() => setShowCart(false)}>
+            <button
+              className="p-2 hover:bg-muted rounded-full transition-colors text-muted-foreground hover:text-foreground"
+              onClick={() => setShowCart(false)}
+            >
               <X size={20} />
             </button>
           </div>
-          
+
           {Object.values(cartItems).length > 0 ? (
             <>
               <div className="flex-1 overflow-y-auto p-6 flex flex-col gap-4 bg-muted/10">
@@ -178,7 +191,7 @@ const ConsumerHeader = () => {
                     Cash on Delivery active
                   </p>
                 </div>
-                <Button 
+                <Button
                   className="w-full rounded-xl manrope font-bold text-lg py-7 bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg hover:shadow-primary/25 hover:-translate-y-0.5 transition-all mt-2"
                   onClick={handleCheckout}
                 >
@@ -195,7 +208,8 @@ const ConsumerHeader = () => {
                 Your basket is empty
               </p>
               <p className="inter text-base text-muted-foreground max-w-[250px]">
-                Looks like you haven't added any fresh produce to your basket yet.
+                Looks like you haven't added any fresh produce to your basket
+                yet.
               </p>
               <Link to="/shop" className="mt-8 w-full">
                 <Button

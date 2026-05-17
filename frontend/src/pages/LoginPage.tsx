@@ -4,6 +4,7 @@ import { Leaf, ArrowLeft } from "lucide-react";
 import InputField from "@/components/InputField";
 import useAuth from "@/hooks/useAuth";
 import toast from "react-hot-toast";
+import { jwtDecode } from "jwt-decode";
 
 const LoginPage = () => {
   const { login } = useAuth();
@@ -18,8 +19,14 @@ const LoginPage = () => {
 
     try {
       const data = await login({ email, password });
+      const parsedToken = jwtDecode(data.token);
       toast.success("Logged in successfully");
-      navigate(data.userType === "Admin" ? "/admin/dashboard" : "/shop");
+
+      if (parsedToken.userType === "Admin") {
+        navigate("/admin/dashboard");
+      } else {
+        navigate("/shop");
+      }
     } catch (err: any) {
       toast.error(err?.response?.data?.message ?? "Something went wrong.");
     }
@@ -28,8 +35,11 @@ const LoginPage = () => {
   return (
     <main className="w-dvw h-dvh flex justify-center items-center relative overflow-hidden">
       <div className="fixed inset-0 -z-10 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/10 via-background to-background"></div>
-      
-      <Link to="/" className="absolute top-6 sm:top-10 left-6 sm:left-10 flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors font-medium inter bg-background/50 backdrop-blur-md px-4 py-2 rounded-full border border-border/50 shadow-sm">
+
+      <Link
+        to="/"
+        className="absolute top-6 sm:top-10 left-6 sm:left-10 flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors font-medium inter bg-background/50 backdrop-blur-md px-4 py-2 rounded-full border border-border/50 shadow-sm"
+      >
         <ArrowLeft size={18} />
         <span>Back to Home</span>
       </Link>
