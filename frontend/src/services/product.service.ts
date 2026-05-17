@@ -29,12 +29,6 @@ export const productService = {
     } else if (sortBy === "price_desc") {
       sortField = "price";
       sortOrder = "desc";
-    } else if (sortBy === "name") {
-      sortField = "name";
-      sortOrder = "asc";
-    } else if (sortBy === "quantity") {
-      sortField = "quantity";
-      sortOrder = "asc";
     }
 
     const params: Record<string, string | number> = {
