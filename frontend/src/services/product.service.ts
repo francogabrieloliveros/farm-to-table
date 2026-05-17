@@ -10,11 +10,13 @@ export const productService = {
   getProducts: async ({
     sortBy,
     productType,
+    search,
     limit = 10,
     offset = 0,
   }: {
     sortBy: "price_asc" | "price_desc" | "name" | "quantity" | null;
     productType: "1" | "2" | null;
+    search?: string;
     limit?: number;
     offset?: number;
   }): Promise<{ data: Product[]; total: number }> => {
@@ -43,11 +45,12 @@ export const productService = {
     };
 
     if (productType !== null) params.type = productType;
+    if (search) params.search = search;
 
     const {
-      data: { data },
+      data: { data, total },
     } = await api.get("/api/products", { params });
-    return { data, total: data.length };
+    return { data, total: total ?? data.length };
   },
 
   addProduct: async (data: AddProductFormData): Promise<ProductResponse> => {

@@ -1,17 +1,27 @@
-import type { fixedOrder } from "@/types/Order";
+import type { Order } from "@/types/Order";
 
-function searchOrders(query: string, orders: fixedOrder[]): fixedOrder[] {
+function searchOrders(query: string, orders: Order[]): Order[] {
+  if (!query) return orders;
+  
+  const formatQ = query.toLowerCase();
+  
   return orders.filter((order) => {
-    const formatQ = query.toLowerCase();
+    const customerMatch = 
+      order.userId.email.toLowerCase().includes(formatQ) ||
+      order.userId.firstName.toLowerCase().includes(formatQ) ||
+      order.userId.lastName.toLowerCase().includes(formatQ);
+      
+    const productMatch = order.items.some(item => 
+      item.productId.name.toLowerCase().includes(formatQ)
+    );
+    
+    const statusStr = order.status === 0 ? "pending" : order.status === 1 ? "completed" : "cancelled";
+    
     return (
-      order.productName.toLowerCase().includes(formatQ) ||
-      order.productPrice.toString().includes(formatQ) ||
-      order.quantity.toString().includes(formatQ) ||
-      order.userEmail.toLowerCase().includes(formatQ) ||
-      order.dateOrdered.toLowerCase().includes(formatQ) ||
-      `${order.status === 0 ? "pending" : order.status === 1 ? "completed" : "cancelled"}`.includes(
-        formatQ,
-      )
+      customerMatch ||
+      productMatch ||
+      order._id.toLowerCase().includes(formatQ) ||
+      statusStr.includes(formatQ)
     );
   });
 }

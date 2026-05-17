@@ -9,7 +9,9 @@ import productRoutes from './routes/product.routes.js';
 import orderRoutes from './routes/order.routes.js';
 import cartRoutes from './routes/cart.routes.js';
 import reportRoutes from './routes/report.routes.js';
+import dashboardRoutes from './routes/dashboard.routes.js';
 import { seedAdmin } from './utils/seedAdmin.js';
+import { seedProducts } from './utils/seedProducts.js';
 
 
 
@@ -30,6 +32,7 @@ app.use('/api/products', productRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/cart', cartRoutes);
 app.use('/api/reports', reportRoutes);
+app.use('/api/dashboard', dashboardRoutes);
 
 app.get("/", (req: Request, res: Response) => {
   res.send("API is running...");
@@ -43,9 +46,10 @@ const startServer = async () => {
   try {
     await connectDB();
     await seedAdmin();
+    await seedProducts();
     
-    app.listen(PORT, () => {
-      console.log(`Server is running at http://localhost:${PORT}`);
+    app.listen(Number(PORT), '0.0.0.0', () => {
+      console.log(`Server is running at http://0.0.0.0:${PORT}`);
     });
   } catch (error) {
     console.error("Failed to start server:", error);
