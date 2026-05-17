@@ -1,6 +1,6 @@
 # Farm-to-Table E-Commerce Platform
 
-This project is a web application for the Department of Agriculture (DA) designed to bridge the gap between farmers and consumers, allowing for direct agricultural commerce.
+This project is a web application for the Department of Agriculture (DA) designed to act as a central merchant, offering an online public market catalog for customers to buy agricultural products directly.
 
 ## Prerequisites
 

@@ -1,50 +1,44 @@
-const OrderStatus = {
+export const OrderStatus = {
   Pending: 0,
   Completed: 1,
   Cancelled: 2,
 } as const;
 
-type OrderStatus = (typeof OrderStatus)[keyof typeof OrderStatus];
+export type OrderStatusType = (typeof OrderStatus)[keyof typeof OrderStatus];
 
-type Order = {
-  _id: string;
-  productId: string;
+export interface OrderItem {
+  productId: {
+    _id: string;
+    name: string;
+    imageUrl: string;
+  };
   quantity: number;
-  status: OrderStatus;
-  userEmail: string;
+  priceAtPurchase: number;
+}
+
+export interface Order {
+  _id: string;
+  userId: {
+    _id: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+  };
+  items: OrderItem[];
+  totalAmount: number;
+  status: OrderStatusType;
   dateOrdered: string;
-  createdAt?: string;
-  updatedAt?: string;
-};
+  createdAt: string;
+  updatedAt: string;
+}
 
-type fixedOrder = Order & {
-  productName: string;
-  productPrice: number;
-};
-
-type OrderResponse = {
-  success: boolean;
-  message: string;
-  data: Order | Order[];
-};
-
-type OrdersResponse = {
+export interface OrdersResponse {
   success: boolean;
   data: Order[];
-};
+}
 
-type CancelOrderResponse = {
+export interface CancelOrderResponse {
   success: boolean;
   message: string;
   data: Order;
-};
-
-export {
-  type OrderResponse,
-  type Order,
-  type OrdersResponse,
-  type CancelOrderResponse,
-  OrderStatus,
-  type fixedOrder,
-};
-;
+}

@@ -112,42 +112,42 @@ const AccountSettings = () => {
   };
 
   const inputClass =
-    "w-full bg-[#e4e6e2] rounded-sm px-4 py-2.5 inter text-sm text-gray-700 outline-none disabled:opacity-70";
+    "w-full bg-background border border-border rounded-xl px-4 py-3 inter text-sm text-foreground outline-none focus:ring-2 focus:ring-primary/20 hover:border-primary/50 transition-all disabled:opacity-50 disabled:cursor-not-allowed";
 
-  const errorClass = "inter text-xs text-[#7E2700] mt-1";
+  const errorClass = "inter text-xs text-destructive mt-1.5 font-medium";
 
   return (
     <div className="w-full">
-      <div className="mb-6 max-sm:px-5">
-        <h2 className="manrope font-bold text-2xl text-[#1C4419]">
+      <div className="mb-6 px-2">
+        <h2 className="manrope font-extrabold text-3xl text-foreground">
           Account Settings
         </h2>
-        <p className="inter text-sm text-[#42493E] mt-1">
+        <p className="inter text-sm text-muted-foreground mt-1">
           Manage your personal details and preferences.
         </p>
       </div>
 
-      <div className="flex flex-col gap-5">
+      <div className="flex flex-col gap-6">
         <form
           onSubmit={profileForm.handleSubmit(handleUpdateInfo)}
-          className="bg-white sm:rounded-sm p-5 sm:p-6"
+          className="bg-card shadow-sm border border-border/50 rounded-3xl p-6 sm:p-8"
         >
-          <div className="flex justify-between items-center mb-5">
-            <h3 className="manrope font-bold text-[#1C4419] text-lg">
+          <div className="flex justify-between items-center mb-6">
+            <h3 className="manrope font-bold text-foreground text-xl">
               Personal Information
             </h3>
             <button
               type="button"
               onClick={() => setIsEditingInfo((prev) => !prev)}
-              className="text-gray-400 hover:text-[#1C4419] transition-colors"
+              className="text-muted-foreground hover:text-primary transition-colors p-2 hover:bg-muted rounded-full"
             >
-              <Pencil size={18} color="#42493E" />
+              <Pencil size={18} />
             </button>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="inter text-xs text-[#42493E] mb-1 block">
+              <label className="inter text-xs font-semibold text-muted-foreground mb-1.5 block tracking-wide uppercase">
                 First Name
               </label>
               <input
@@ -164,7 +164,7 @@ const AccountSettings = () => {
             </div>
 
             <div>
-              <label className="inter text-xs text-[#42493E] mb-1 block">
+              <label className="inter text-xs font-semibold text-muted-foreground mb-1.5 block tracking-wide uppercase">
                 Middle Name (Optional)
               </label>
               <input
@@ -176,7 +176,7 @@ const AccountSettings = () => {
             </div>
 
             <div className="sm:col-span-2">
-              <label className="inter text-xs text-[#42493E] mb-1 block">
+              <label className="inter text-xs font-semibold text-muted-foreground mb-1.5 block tracking-wide uppercase">
                 Last Name
               </label>
               <input
@@ -193,7 +193,7 @@ const AccountSettings = () => {
             </div>
 
             <div className="sm:col-span-2">
-              <label className="inter text-xs text-[#42493E] mb-1 block">
+              <label className="inter text-xs font-semibold text-muted-foreground mb-1.5 block tracking-wide uppercase">
                 Email Address
               </label>
               <div className="relative">
@@ -211,11 +211,11 @@ const AccountSettings = () => {
           </div>
 
           {isEditingInfo && (
-            <div className="flex justify-end mt-5">
+            <div className="flex justify-end mt-6">
               <button
                 type="submit"
                 disabled={isUpdatingProfile}
-                className="bg-[#1C4419] text-white manrope font-semibold text-sm px-5 py-2.5 rounded-sm transition-colors disabled:opacity-70"
+                className="bg-primary text-primary-foreground manrope font-bold text-sm px-6 py-3 rounded-xl transition-all hover:bg-primary/90 hover:shadow-md disabled:opacity-70"
               >
                 {isUpdatingProfile
                   ? "Updating..."
@@ -227,18 +227,20 @@ const AccountSettings = () => {
 
         <form
           onSubmit={passwordForm.handleSubmit(handleUpdatePassword)}
-          className="bg-white sm:rounded-sm p-5 sm:p-6"
+          className="bg-card shadow-sm border border-border/50 rounded-3xl p-6 sm:p-8"
         >
-          <div className="flex justify-between items-center mb-5">
-            <h3 className="manrope font-bold text-[#1C4419] text-lg">
+          <div className="flex justify-between items-center mb-6">
+            <h3 className="manrope font-bold text-foreground text-xl">
               Security
             </h3>
-            <Lock size={18} color="#42493E" />
+            <div className="p-2 bg-muted rounded-full">
+              <Lock size={18} className="text-muted-foreground" />
+            </div>
           </div>
 
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-5">
             <div>
-              <label className="inter text-xs text-[#42493E] mb-1 block">
+              <label className="inter text-xs font-semibold text-muted-foreground mb-1.5 block tracking-wide uppercase">
                 Current Password
               </label>
               <input
@@ -250,7 +252,7 @@ const AccountSettings = () => {
             </div>
 
             <div>
-              <label className="inter text-xs text-[#42493E] mb-1 block">
+              <label className="inter text-xs font-semibold text-muted-foreground mb-1.5 block tracking-wide uppercase">
                 New Password
               </label>
               <input
@@ -267,7 +269,7 @@ const AccountSettings = () => {
             </div>
 
             <div>
-              <label className="inter text-xs text-[#42493E] mb-1 block">
+              <label className="inter text-xs font-semibold text-muted-foreground mb-1.5 block tracking-wide uppercase">
                 Confirm New Password
               </label>
               <input
@@ -283,11 +285,11 @@ const AccountSettings = () => {
               )}
             </div>
 
-            <div className="flex justify-end">
+            <div className="flex justify-end mt-2">
               <button
                 type="submit"
                 disabled={isUpdatingPassword}
-                className="bg-[#1C4419] text-white manrope font-semibold text-sm px-5 py-2.5 rounded-sm transition-colors disabled:opacity-70"
+                className="bg-primary text-primary-foreground manrope font-bold text-sm px-6 py-3 rounded-xl transition-all hover:bg-primary/90 hover:shadow-md disabled:opacity-70"
               >
                 {isUpdatingPassword
                   ? "Updating..."
@@ -297,10 +299,10 @@ const AccountSettings = () => {
           </div>
         </form>
 
-        <div className="flex justify-end max-sm:p-5">
+        <div className="flex justify-end px-2 sm:px-0">
           <button
             onClick={logout}
-            className="flex items-center gap-2 bg-[#7E2700] text-white manrope font-semibold text-sm px-5 py-2.5 rounded-sm transition-colors cursor-pointer"
+            className="flex items-center justify-center gap-2 w-full sm:w-auto bg-destructive text-destructive-foreground manrope font-bold text-sm px-6 py-3 rounded-xl transition-all hover:bg-destructive/90 hover:shadow-md cursor-pointer"
           >
             <LogOut size={16} />
             Logout

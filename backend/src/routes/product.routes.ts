@@ -11,10 +11,7 @@ import {
 
 const router = Router();
 
-// all product routes require authentication
-router.use(verifyToken);
-
-// customer + admin: browse catalog
+// customer + admin + guest: browse catalog
 router.get('/', getProducts);
 router.get('/:id', getProductById);
 
