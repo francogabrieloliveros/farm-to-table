@@ -35,7 +35,7 @@ export default function AdminLayout({ children }: { children: ReactElement }) {
     },
     {
       id: "users",
-      label: "Citizens",
+      label: "Users",
       icon: <Users size={20} />,
       path: "/admin/users",
     },

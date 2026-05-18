@@ -1,6 +1,14 @@
-import { ChevronLeft, ChevronRight, Search, Users as UsersIcon } from "lucide-react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  Search,
+  Users as UsersIcon,
+} from "lucide-react";
 import { useEffect, useState } from "react";
-import { userService, type RegisteredUsersResponse } from "@/services/user.service";
+import {
+  userService,
+  type RegisteredUsersResponse,
+} from "@/services/user.service";
 import { type User } from "@/types/User";
 
 const ITEMS_PER_PAGE = 10;
@@ -59,8 +67,9 @@ export default function UsersPage() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
-          <h1 className="text-3xl font-black text-[#1C4419] tracking-tight manrope">Citizen Management</h1>
-          <p className="text-sm text-[#6B7280] font-medium">Review and manage registered users of the platform.</p>
+          <h1 className="text-3xl font-black text-[#1C4419] tracking-tight manrope">
+            User Management
+          </h1>
         </div>
 
         <div className="relative w-full max-w-xs group">
@@ -84,7 +93,9 @@ export default function UsersPage() {
           <UsersIcon size={24} />
         </div>
         <div>
-          <p className="text-[10px] font-black text-[#9CA3AF] uppercase tracking-widest">Total Registered</p>
+          <p className="text-[10px] font-black text-[#9CA3AF] uppercase tracking-widest">
+            Total Registered
+          </p>
           <p className="text-2xl font-black text-[#1C4419] manrope">{total}</p>
         </div>
       </div>
@@ -103,29 +114,44 @@ export default function UsersPage() {
             </thead>
             <tbody className="divide-y divide-[#F4F3F1]">
               {isLoading ? (
-                Array(5).fill(0).map((_, i) => (
-                  <tr key={i} className="animate-pulse">
-                    <td colSpan={4} className="px-8 py-5"><div className="h-4 bg-gray-100 rounded w-full"></div></td>
-                  </tr>
-                ))
+                Array(5)
+                  .fill(0)
+                  .map((_, i) => (
+                    <tr key={i} className="animate-pulse">
+                      <td colSpan={4} className="px-8 py-5">
+                        <div className="h-4 bg-gray-100 rounded w-full"></div>
+                      </td>
+                    </tr>
+                  ))
               ) : paginatedUsers.length === 0 ? (
                 <tr>
-                  <td colSpan={4} className="px-8 py-12 text-center text-gray-400 font-medium">
+                  <td
+                    colSpan={4}
+                    className="px-8 py-12 text-center text-gray-400 font-medium"
+                  >
                     No citizens found matching your criteria.
                   </td>
                 </tr>
               ) : (
                 paginatedUsers.map((user: User) => (
-                  <tr key={user.email} className="hover:bg-[#FCFBF9] transition-colors group">
+                  <tr
+                    key={user.email}
+                    className="hover:bg-[#FCFBF9] transition-colors group"
+                  >
                     <td className="px-8 py-5">
                       <div className="flex items-center gap-3">
                         <div className="w-8 h-8 rounded-full bg-[#E8F5E2] flex items-center justify-center text-[#1C4419] font-bold text-xs">
-                          {user.firstName[0]}{user.lastName[0]}
+                          {user.firstName[0]}
+                          {user.lastName[0]}
                         </div>
-                        <span className="font-bold text-[#42493E]">{user.firstName} {user.lastName}</span>
+                        <span className="font-bold text-[#42493E]">
+                          {user.firstName} {user.lastName}
+                        </span>
                       </div>
                     </td>
-                    <td className="px-4 py-5 text-gray-500 font-medium">{user.email}</td>
+                    <td className="px-4 py-5 text-gray-500 font-medium">
+                      {user.email}
+                    </td>
                     <td className="px-4 py-5">
                       <span className="text-[10px] px-2 py-1 rounded-lg font-black border uppercase tracking-wider bg-gray-50 text-gray-600 border-gray-100">
                         {user.userType}
@@ -145,7 +171,16 @@ export default function UsersPage() {
         {!isLoading && filtered.length > 0 && (
           <div className="px-8 py-4 bg-[#FCFBF9] border-t border-[#F4F3F1] flex items-center justify-between">
             <p className="text-xs font-bold text-[#6B7280]">
-              Showing <span className="text-[#1C4419]">{page * ITEMS_PER_PAGE + 1}</span> to <span className="text-[#1C4419]">{Math.min((page + 1) * ITEMS_PER_PAGE, filtered.length)}</span> of <span className="text-[#1C4419]">{filtered.length}</span> citizens
+              Showing{" "}
+              <span className="text-[#1C4419]">
+                {page * ITEMS_PER_PAGE + 1}
+              </span>{" "}
+              to{" "}
+              <span className="text-[#1C4419]">
+                {Math.min((page + 1) * ITEMS_PER_PAGE, filtered.length)}
+              </span>{" "}
+              of <span className="text-[#1C4419]">{filtered.length}</span>{" "}
+              citizens
             </p>
             <div className="flex items-center gap-2">
               <button

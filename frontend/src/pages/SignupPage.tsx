@@ -59,7 +59,7 @@ const SignupPage = () => {
             Create Account
           </h1>
           <p className="inter text-muted-foreground text-sm text-center">
-            Join Farm-to-Table to access fresh local produce.
+            Join Farm-to-Table to access fresh local products.
           </p>
         </div>
 

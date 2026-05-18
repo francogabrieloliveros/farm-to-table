@@ -42,9 +42,6 @@ function InventoryPage() {
             <h1 className="text-3xl font-black text-[#1C4419] tracking-tight manrope">
               Inventory Management
             </h1>
-            <p className="text-sm text-[#6B7280] font-medium">
-              Track and manage your product stock levels.
-            </p>
           </div>
 
           <button

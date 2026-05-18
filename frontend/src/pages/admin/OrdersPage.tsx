@@ -34,16 +34,21 @@ function OrdersPage() {
         setOrders(searchOrders(search, data));
         setIsLoading(false);
       })
-      .catch(err => {
+      .catch((err) => {
         console.error(err);
         setIsLoading(false);
       });
   }, [dummy, search]);
 
-  const handleStatusUpdate = async (id: string, action: 'confirm' | 'cancel') => {
-    const loadingToast = toast.loading(`${action === 'confirm' ? 'Confirming' : 'Cancelling'} order...`);
+  const handleStatusUpdate = async (
+    id: string,
+    action: "confirm" | "cancel",
+  ) => {
+    const loadingToast = toast.loading(
+      `${action === "confirm" ? "Confirming" : "Cancelling"} order...`,
+    );
     try {
-      if (action === 'confirm') {
+      if (action === "confirm") {
         await orderService.confirmOrder(id);
         toast.success("Order confirmed successfully", { id: loadingToast });
       } else {
@@ -52,7 +57,9 @@ function OrdersPage() {
       }
       setDummy((prev) => !prev);
     } catch (err: any) {
-      toast.error(err?.response?.data?.message ?? "Something went wrong.", { id: loadingToast });
+      toast.error(err?.response?.data?.message ?? "Something went wrong.", {
+        id: loadingToast,
+      });
     }
   };
 
@@ -61,13 +68,14 @@ function OrdersPage() {
       {showModal && modalItem && (
         <OrderModal onClose={() => setShowModal(false)} order={modalItem} />
       )}
-      
+
       <div className="p-6 md:p-10 space-y-8">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div>
-            <h1 className="text-3xl font-black text-[#1C4419] tracking-tight manrope">Order Management</h1>
-            <p className="text-sm text-[#6B7280] font-medium">Review and fulfill citizen marketplace orders.</p>
+            <h1 className="text-3xl font-black text-[#1C4419] tracking-tight manrope">
+              Order Management
+            </h1>
           </div>
 
           <div className="relative w-full max-w-xs group">
@@ -101,11 +109,15 @@ function OrdersPage() {
               </thead>
               <tbody className="divide-y divide-[#F4F3F1]">
                 {isLoading ? (
-                  Array(5).fill(0).map((_, i) => (
-                    <tr key={i} className="animate-pulse">
-                      <td colSpan={6} className="px-8 py-5"><div className="h-4 bg-gray-100 rounded w-full"></div></td>
-                    </tr>
-                  ))
+                  Array(5)
+                    .fill(0)
+                    .map((_, i) => (
+                      <tr key={i} className="animate-pulse">
+                        <td colSpan={6} className="px-8 py-5">
+                          <div className="h-4 bg-gray-100 rounded w-full"></div>
+                        </td>
+                      </tr>
+                    ))
                 ) : orders.length === 0 ? (
                   <tr>
                     <td colSpan={6} className="px-8 py-12 text-center">
@@ -117,33 +129,50 @@ function OrdersPage() {
                   </tr>
                 ) : (
                   orders.map((order) => {
-                    const statusMap = { 0: "Pending", 1: "Completed", 2: "Cancelled" };
-                    const orderStatus = statusMap[order.status as keyof typeof statusMap];
-                    
-                    const itemSummary = order.items.length > 0 
-                      ? `${order.items[0].productId.name}${order.items.length > 1 ? ` + ${order.items.length - 1} more` : ''}`
-                      : 'No items';
+                    const statusMap = {
+                      0: "Pending",
+                      1: "Completed",
+                      2: "Cancelled",
+                    };
+                    const orderStatus =
+                      statusMap[order.status as keyof typeof statusMap];
+
+                    const itemSummary =
+                      order.items.length > 0
+                        ? `${order.items[0].productId.name}${order.items.length > 1 ? ` + ${order.items.length - 1} more` : ""}`
+                        : "No items";
 
                     return (
-                      <tr key={order._id} className="hover:bg-[#FCFBF9] transition-colors group">
+                      <tr
+                        key={order._id}
+                        className="hover:bg-[#FCFBF9] transition-colors group"
+                      >
                         <td className="px-8 py-5 text-xs font-mono font-bold text-[#1C4419]">
                           #{order._id.slice(-8).toUpperCase()}
                         </td>
                         <td className="px-4 py-5">
                           <div className="flex flex-col">
                             <span className="font-bold text-[#1C4419]">
-                              {order.userId ? `${order.userId.firstName} ${order.userId.lastName}` : 'Unknown User'}
+                              {order.userId
+                                ? `${order.userId.firstName} ${order.userId.lastName}`
+                                : "Unknown User"}
                             </span>
                             <span className="text-[10px] text-[#6B7280]">
-                              {order.userId?.email || 'No email available'}
+                              {order.userId?.email || "No email available"}
                             </span>
                           </div>
                         </td>
                         <td className="px-4 py-5">
                           <div className="flex flex-col">
-                            <span className="font-medium text-[#42493E] line-clamp-1">{itemSummary}</span>
+                            <span className="font-medium text-[#42493E] line-clamp-1">
+                              {itemSummary}
+                            </span>
                             <span className="text-[10px] text-gray-400 font-medium">
-                              {order.items.reduce((acc, item) => acc + item.quantity, 0)} items total
+                              {order.items.reduce(
+                                (acc, item) => acc + item.quantity,
+                                0,
+                              )}{" "}
+                              items total
                             </span>
                           </div>
                         </td>
@@ -151,7 +180,9 @@ function OrdersPage() {
                           {formatCurrency(order.totalAmount)}
                         </td>
                         <td className="px-4 py-5">
-                          <span className={`text-[10px] px-2.5 py-1 rounded-lg font-black border uppercase tracking-wider ${statusStyles[orderStatus]}`}>
+                          <span
+                            className={`text-[10px] px-2.5 py-1 rounded-lg font-black border uppercase tracking-wider ${statusStyles[orderStatus]}`}
+                          >
                             {orderStatus}
                           </span>
                         </td>
@@ -160,14 +191,18 @@ function OrdersPage() {
                             {order.status === 0 ? (
                               <>
                                 <button
-                                  onClick={() => handleStatusUpdate(order._id, 'confirm')}
+                                  onClick={() =>
+                                    handleStatusUpdate(order._id, "confirm")
+                                  }
                                   className="p-2 rounded-lg text-emerald-600 hover:bg-emerald-50 transition-all"
                                   title="Confirm Order"
                                 >
                                   <Check size={18} />
                                 </button>
                                 <button
-                                  onClick={() => handleStatusUpdate(order._id, 'cancel')}
+                                  onClick={() =>
+                                    handleStatusUpdate(order._id, "cancel")
+                                  }
                                   className="p-2 rounded-lg text-rose-600 hover:bg-rose-50 transition-all"
                                   title="Cancel Order"
                                 >

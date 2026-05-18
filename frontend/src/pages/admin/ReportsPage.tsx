@@ -117,9 +117,6 @@ export default function ReportsPage() {
           <h1 className="text-3xl font-bold text-gray-800 mb-1">
             Sales Reports
           </h1>
-          <p className="text-sm text-gray-400">
-            Comprehensive review of market performance and revenue.
-          </p>
         </div>
 
         <div className="flex items-center gap-3">
@@ -136,10 +133,11 @@ export default function ReportsPage() {
               <button
                 key={p.value}
                 onClick={() => setPeriod(p)}
-                className={`px-4 py-1.5 text-sm rounded-md font-medium ${period.value === p.value
+                className={`px-4 py-1.5 text-sm rounded-md font-medium ${
+                  period.value === p.value
                     ? "bg-[#1C4419] text-white"
                     : "text-gray-500"
-                  }`}
+                }`}
               >
                 {p.label}
               </button>

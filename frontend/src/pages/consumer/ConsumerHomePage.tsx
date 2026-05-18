@@ -34,7 +34,10 @@ const ConsumerHomePage = () => {
       })
       .catch((err) => {
         console.error("Failed to fetch products:", err);
-        setError(err.response?.data?.message || "An unexpected error occurred while fetching products.");
+        setError(
+          err.response?.data?.message ||
+            "An unexpected error occurred while fetching products.",
+        );
       })
       .finally(() => {
         setLoading(false);
@@ -60,10 +63,14 @@ const ConsumerHomePage = () => {
             Marketplace Catalog
           </div>
           <h1 className="font-extrabold text-4xl md:text-5xl text-foreground manrope tracking-tight leading-tight">
-            Welcome to <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-emerald-600">Farm-to-Table</span>
+            Welcome to{" "}
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-emerald-600">
+              Farm-to-Table
+            </span>
           </h1>
           <p className="mt-3 text-lg text-muted-foreground inter">
-            Discover fresh, high-quality agricultural products directly from the official catalog.
+            Discover fresh, high-quality agricultural products directly from
+            local farmers.
           </p>
         </div>
 
@@ -81,7 +88,7 @@ const ConsumerHomePage = () => {
 
           <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
             <div className="relative w-full sm:w-48">
-              <select 
+              <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value as any)}
                 className="w-full pl-4 pr-10 py-3.5 inter bg-background border border-border rounded-xl outline-none text-foreground font-medium shadow-sm hover:border-primary/50 transition-colors focus:ring-2 focus:ring-primary/20 appearance-none cursor-pointer"
@@ -92,23 +99,47 @@ const ConsumerHomePage = () => {
                 <option value="quantity">Quantity (Low–High)</option>
               </select>
               <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-muted-foreground">
-                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+                <svg
+                  className="h-4 w-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M19 9l-7 7-7-7"
+                  ></path>
+                </svg>
               </div>
             </div>
 
-          <div className="relative w-full sm:w-40">
-            <select 
-              value={productType}
-              onChange={(e) => setProductType(e.target.value as any)}
-              className="w-full pl-4 pr-10 py-3.5 inter bg-background border border-border rounded-xl outline-none text-foreground font-medium shadow-sm hover:border-primary/50 transition-colors focus:ring-2 focus:ring-primary/20 appearance-none cursor-pointer"
-            >
-              <option value="">All Types</option>
-              <option value="1">Crop</option>
-              <option value="2">Poultry</option>
-            </select>
-            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-muted-foreground">
-              <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
-            </div>
+            <div className="relative w-full sm:w-40">
+              <select
+                value={productType}
+                onChange={(e) => setProductType(e.target.value as any)}
+                className="w-full pl-4 pr-10 py-3.5 inter bg-background border border-border rounded-xl outline-none text-foreground font-medium shadow-sm hover:border-primary/50 transition-colors focus:ring-2 focus:ring-primary/20 appearance-none cursor-pointer"
+              >
+                <option value="">All Types</option>
+                <option value="1">Crop</option>
+                <option value="2">Poultry</option>
+              </select>
+              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-muted-foreground">
+                <svg
+                  className="h-4 w-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M19 9l-7 7-7-7"
+                  ></path>
+                </svg>
+              </div>
             </div>
           </div>
         </div>
@@ -116,11 +147,15 @@ const ConsumerHomePage = () => {
 
       {loading ? (
         <div className="flex justify-center items-center py-20">
-          <p className="text-[#1C4419] font-medium animate-pulse text-lg">Loading products...</p>
+          <p className="text-[#1C4419] font-medium animate-pulse text-lg">
+            Loading products...
+          </p>
         </div>
       ) : error ? (
         <div className="flex flex-col items-center justify-center py-20 bg-rose-50 rounded-3xl border-2 border-dashed border-rose-200">
-          <p className="text-rose-700 font-bold text-xl manrope mb-2">Failed to load products</p>
+          <p className="text-rose-700 font-bold text-xl manrope mb-2">
+            Failed to load products
+          </p>
           <p className="text-rose-600 text-sm inter">{error}</p>
         </div>
       ) : products.length > 0 ? (
@@ -129,8 +164,12 @@ const ConsumerHomePage = () => {
         </div>
       ) : (
         <div className="flex flex-col items-center justify-center py-20 bg-muted/30 rounded-3xl border-2 border-dashed border-primary/20">
-          <p className="text-primary font-bold text-xl manrope mb-2">No products found</p>
-          <p className="text-muted-foreground text-sm inter">Try adjusting your filters or check back later.</p>
+          <p className="text-primary font-bold text-xl manrope mb-2">
+            No products found
+          </p>
+          <p className="text-muted-foreground text-sm inter">
+            Try adjusting your filters or check back later.
+          </p>
         </div>
       )}
 

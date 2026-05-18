@@ -13,8 +13,9 @@ const ProfilePage = () => {
         <aside className="w-full md:w-64 shrink-0">
           <div className="bg-card rounded-3xl p-4 shadow-sm border border-border/50 sticky top-24">
             <div className="px-4 pb-4 mb-4 border-b border-border/50">
-              <h2 className="manrope font-extrabold text-xl text-foreground">My Account</h2>
-              <p className="inter text-xs text-muted-foreground mt-1">Manage your experience</p>
+              <h2 className="manrope font-extrabold text-xl text-foreground">
+                My Account
+              </h2>
             </div>
             <nav className="flex flex-row md:flex-col gap-2 overflow-x-auto no-scrollbar">
               <button
@@ -43,7 +44,10 @@ const ProfilePage = () => {
               </button>
             </nav>
             <div className="mt-6 pt-6 border-t border-border/50">
-              <Link to="/shop" className="flex items-center justify-center gap-2 px-4 py-3 rounded-2xl text-sm inter font-bold transition-all w-full text-center bg-muted/50 hover:bg-muted text-muted-foreground hover:text-foreground">
+              <Link
+                to="/shop"
+                className="flex items-center justify-center gap-2 px-4 py-3 rounded-2xl text-sm inter font-bold transition-all w-full text-center bg-muted/50 hover:bg-muted text-muted-foreground hover:text-foreground"
+              >
                 <ArrowLeft size={16} />
                 Back to Shop
               </Link>

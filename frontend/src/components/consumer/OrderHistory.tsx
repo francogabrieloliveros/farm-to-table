@@ -48,9 +48,11 @@ const OrderHistory = () => {
   return (
     <div className="w-full">
       <div className="mb-6 px-2">
-        <h2 className="manrope font-extrabold text-3xl text-foreground">My Orders</h2>
+        <h2 className="manrope font-extrabold text-3xl text-foreground">
+          My Orders
+        </h2>
         <p className="inter text-sm text-muted-foreground mt-1">
-          Review your recent purchases from our curated farms.
+          Review your recent purchases from our platform.
         </p>
       </div>
 
@@ -68,8 +70,12 @@ const OrderHistory = () => {
 
       {!isLoading && !isError && orders.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-20 bg-card rounded-3xl border border-border/50 shadow-sm">
-          <p className="text-foreground font-bold text-xl manrope mb-2">No orders yet</p>
-          <p className="text-muted-foreground text-sm inter">When you make a purchase, it will appear here.</p>
+          <p className="text-foreground font-bold text-xl manrope mb-2">
+            No orders yet
+          </p>
+          <p className="text-muted-foreground text-sm inter">
+            When you make a purchase, it will appear here.
+          </p>
         </div>
       ) : (
         <div className="flex flex-col gap-4">
