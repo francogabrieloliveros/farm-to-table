@@ -15,16 +15,22 @@ function InventoryPage() {
   const [offset, setOffset] = useState(0);
   const [total, setTotal] = useState(0);
 
+  // Reset offset to 0 when search term changes
+  useEffect(() => {
+    setOffset(0);
+  }, [search]);
+
   useEffect(() => {
     productService
       .getProducts({
         sortBy: "price_asc",
         productType: null,
+        search,
         offset,
         limit: 10,
       })
       .then((res) => {
-        setProducts(searchInventory(search, res.data));
+        setProducts(res.data);
         setTotal(res.total);
       });
   }, [showModal, dummy, search, offset]);
