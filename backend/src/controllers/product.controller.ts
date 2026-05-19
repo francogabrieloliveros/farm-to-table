@@ -83,11 +83,16 @@ export const getProducts = async (req: Request, res: Response) => {
   }
 
   try {
+    const type = req.query.type ? parseInt(String(req.query.type), 10) : undefined;
+    const search = req.query.search ? String(req.query.search) : undefined;
+
     const result = await ProductService.getProducts({
       limit,
       offset,
       sortBy: rawSortBy,
       sortOrder: rawSortOrder,
+      type: isNaN(type!) ? undefined : type,
+      search,
     });
 
     return res.status(200).json({

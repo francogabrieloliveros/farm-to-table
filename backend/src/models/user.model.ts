@@ -42,7 +42,7 @@ const userSchema = new Schema<IUser>(
     },
     userType: {
       type: String,
-      enum: ['Admin', 'Farmer', 'Consumer'],
+      enum: ['Admin', 'Consumer'],
       default: 'Consumer',
       required: true,
     },

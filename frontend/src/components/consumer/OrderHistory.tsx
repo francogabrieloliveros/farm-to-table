@@ -47,28 +47,35 @@ const OrderHistory = () => {
 
   return (
     <div className="w-full">
-      <div className="mb-6 max-sm:px-5">
-        <h2 className="manrope font-bold text-2xl text-[#1C4419]">My Orders</h2>
-        <p className="inter text-sm text-[#42493E] mt-1">
-          Review your recent purchases from our curated farms.
+      <div className="mb-6 px-2">
+        <h2 className="manrope font-extrabold text-3xl text-foreground">
+          My Orders
+        </h2>
+        <p className="inter text-sm text-muted-foreground mt-1">
+          Review your recent purchases from our platform.
         </p>
       </div>
 
       {isLoading && (
-        <div className="text-center py-16 text-[#42493E] inter text-sm">
+        <div className="text-center py-16 text-muted-foreground inter text-sm bg-card rounded-3xl border border-border/50 animate-pulse">
           Loading orders...
         </div>
       )}
 
       {isError && (
-        <div className="text-center py-16 text-[#7E2700] inter text-sm">
+        <div className="text-center py-16 text-destructive inter text-sm bg-card rounded-3xl border border-border/50">
           Failed to load your orders.
         </div>
       )}
 
       {!isLoading && !isError && orders.length === 0 ? (
-        <div className="text-center py-16 text-[#42493E] inter text-sm">
-          No orders yet.
+        <div className="flex flex-col items-center justify-center py-20 bg-card rounded-3xl border border-border/50 shadow-sm">
+          <p className="text-foreground font-bold text-xl manrope mb-2">
+            No orders yet
+          </p>
+          <p className="text-muted-foreground text-sm inter">
+            When you make a purchase, it will appear here.
+          </p>
         </div>
       ) : (
         <div className="flex flex-col gap-4">

@@ -1,4 +1,4 @@
-import mongoose, { Schema } from 'mongoose';
+import mongoose, { Schema, Document } from 'mongoose';
 
 // Enum for order status (matches project spec values)
 export enum OrderStatus {
@@ -7,45 +7,69 @@ export enum OrderStatus {
   Canceled = 2,
 }
 
+// Interface for items within an order
+export interface IOrderItem {
+  productId: mongoose.Types.ObjectId;
+  quantity: number;
+  priceAtPurchase: number; // Snapshot of price when ordered
+}
+
 // TypeScript interface for an Order document
-export interface IOrder {
-  productId: string;      
-  quantity: number;       
-  status: OrderStatus;    
-  userEmail: string;      
-  dateOrdered: Date;      
+export interface IOrder extends Document {
+  userId: mongoose.Types.ObjectId;
+  items: IOrderItem[];
+  totalAmount: number;
+  status: OrderStatus;
+  dateOrdered: Date;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 // Mongoose schema definition
 const orderSchema = new Schema<IOrder>(
   {
-    productId: {
-      type: String,
+    userId: {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
       required: true,
     },
-    quantity: {
+    items: [
+      {
+        productId: {
+          type: Schema.Types.ObjectId,
+          ref: 'Product',
+          required: true,
+        },
+        quantity: {
+          type: Number,
+          required: true,
+          min: 1,
+        },
+        priceAtPurchase: {
+          type: Number,
+          required: true,
+        },
+      },
+    ],
+    totalAmount: {
       type: Number,
       required: true,
-      min: 1, // must order at least 1 item
+      min: 0,
     },
     status: {
       type: Number,
-      enum: [0, 1, 2], // restricts values to OrderStatus enum
-      default: OrderStatus.Pending, // new orders start as pending
-    },
-    userEmail: {
-      type: String,
-      required: true,
+      enum: [0, 1, 2],
+      default: OrderStatus.Pending,
     },
     dateOrdered: {
       type: Date,
-      default: Date.now, // auto-set when order is created
+      default: Date.now,
     },
   },
   {
-    timestamps: true, // adds createdAt and updatedAt automatically
+    timestamps: true,
   }
 );
 
-// Export the Order model for use in services/controllers
+// Export the Order model
 export const Order = mongoose.model<IOrder>('Order', orderSchema);

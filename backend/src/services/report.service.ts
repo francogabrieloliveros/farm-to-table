@@ -9,29 +9,27 @@ export enum ReportInterval {
 }
 
 export class ReportService {
-  // Generates a financial report grouped by the specified interval.
-  // Calculates total sales and income per product.
-  // Filters calculations to only include completed orders.
+  /**
+   * Generates a financial report grouped by the specified interval.
+   * Unwinds multi-item orders to calculate per-product sales and income.
+   */
   static async generateFinancialReport(interval: ReportInterval) {
     let dateGroupFormat: any;
 
     switch (interval) {
       case ReportInterval.Weekly:
-        // group by ISO week year and ISO week
         dateGroupFormat = {
           year: { $isoWeekYear: '$dateOrdered' },
           week: { $isoWeek: '$dateOrdered' },
         };
         break;
       case ReportInterval.Monthly:
-        // group by year and month
         dateGroupFormat = {
           year: { $year: '$dateOrdered' },
           month: { $month: '$dateOrdered' },
         };
         break;
       case ReportInterval.Annual:
-        // Group by year
         dateGroupFormat = {
           year: { $year: '$dateOrdered' },
         };
@@ -42,45 +40,38 @@ export class ReportService {
 
     const pipeline: mongoose.PipelineStage[] = [
       // filter only completed orders
-      {
-        $match: {
-          status: OrderStatus.Completed,
-        },
-      },
-      // convert productId (string) to objectId to join with Products collection
-      {
-        $addFields: {
-          productObjId: { $toObjectId: '$productId' },
-        },
-      },
-      // lookup product details to access price for income calculation
+      { $match: { status: OrderStatus.Completed } },
+      
+      // Unwind items array to process each product sale individually
+      { $unwind: '$items' },
+
+      // Lookup product details
       {
         $lookup: {
-          from: 'products', // The collection name for Product model
-          localField: 'productObjId',
+          from: 'products',
+          localField: 'items.productId',
           foreignField: '_id',
           as: 'productDetails',
         },
       },
-      // unwind the productDetails array to a single object
-      {
-        $unwind: '$productDetails',
-      },
-      // group by time interval and product
+      { $unwind: '$productDetails' },
+
+      // Group by time interval and product
       {
         $group: {
           _id: {
             interval: dateGroupFormat,
-            productId: '$productId',
+            productId: '$items.productId',
           },
-          totalSales: { $sum: '$quantity' },
+          totalSales: { $sum: '$items.quantity' },
           income: {
-            $sum: { $multiply: ['$quantity', '$productDetails.price'] },
+            $sum: { $multiply: ['$items.quantity', '$items.priceAtPurchase'] },
           },
           productName: { $first: '$productDetails.name' },
         },
       },
-      // group by time interval to gather all products and sum total income
+
+      // Group by time interval to gather all products
       {
         $group: {
           _id: '$_id.interval',
@@ -95,7 +86,8 @@ export class ReportService {
           totalIntervalIncome: { $sum: '$income' },
         },
       },
-      // sort by newest first
+
+      // Sort by newest first
       {
         $sort: {
           '_id.year': -1,
@@ -108,35 +100,26 @@ export class ReportService {
     return await Order.aggregate(pipeline).exec();
   }
 
-  // Counts all orders that are still pending
   static async getTotalPendingOrders(): Promise<number> {
     return Order.countDocuments({ status: OrderStatus.Pending }).exec();
   }
 
-  // Generates a CSV formatted string for all completed sales
+  /**
+   * Generates a CSV formatted string for all completed sales
+   */
   static async exportSalesData(): Promise<string> {
     const pipeline: mongoose.PipelineStage[] = [
-      {
-        $match: {
-          status: OrderStatus.Completed,
-        },
-      },
-      {
-        $addFields: {
-          productObjId: { $toObjectId: '$productId' },
-        },
-      },
+      { $match: { status: OrderStatus.Completed } },
+      { $unwind: '$items' },
       {
         $lookup: {
           from: 'products',
-          localField: 'productObjId',
+          localField: 'items.productId',
           foreignField: '_id',
           as: 'productDetails',
         },
       },
-      {
-        $unwind: '$productDetails',
-      },
+      { $unwind: '$productDetails' },
       {
         $project: {
           productName: '$productDetails.name',
@@ -147,14 +130,12 @@ export class ReportService {
               else: 'Poultry'
             }
           },
-          quantitySold: '$quantity',
-          income: { $multiply: ['$quantity', '$productDetails.price'] },
+          quantitySold: '$items.quantity',
+          income: { $multiply: ['$items.quantity', '$items.priceAtPurchase'] },
           date: { $dateToString: { format: '%Y-%m-%d', date: '$dateOrdered' } }
         }
       },
-      {
-        $sort: { date: -1 }
-      }
+      { $sort: { date: -1 } }
     ];
 
     const results = await Order.aggregate(pipeline).exec();
