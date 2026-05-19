@@ -107,9 +107,6 @@ const SignupPage = () => {
           <Button className="rounded-xl bg-primary text-primary-foreground py-6 manrope text-lg font-semibold hover:bg-primary/90 transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5">
             Sign up
           </Button>
-          <Button className="rounded-xl bg-background text-foreground py-6 manrope text-lg font-semibold border border-border hover:bg-muted transition-all shadow-sm">
-            Continue with Google
-          </Button>
         </div>
 
         <p className="inter text-sm text-center text-muted-foreground mt-2">

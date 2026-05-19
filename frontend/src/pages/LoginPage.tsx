@@ -84,12 +84,6 @@ const LoginPage = () => {
           >
             Log In
           </Button>
-          <Button
-            className="rounded-xl bg-background text-foreground py-6 manrope text-lg font-semibold border border-border hover:bg-muted transition-all shadow-sm"
-            type="button"
-          >
-            Continue with Google
-          </Button>
         </div>
 
         <p className="inter text-sm text-center text-muted-foreground">
