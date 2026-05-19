@@ -19,6 +19,12 @@ const SignupPage = () => {
     const lname = formData.get("lnameInput") as string;
     const email = formData.get("emailInput") as string;
     const password = formData.get("passwordInput") as string;
+    const confirmPassword = formData.get("confirmPasswordInput") as string;
+
+    if (password != confirmPassword) {
+      toast.error("Passwords do not match.");
+      return;
+    }
 
     try {
       const data = await signup({ fname, mname, lname, email, password });
@@ -99,6 +105,13 @@ const SignupPage = () => {
             type="password"
             placeholder="••••••••"
             label="Password"
+            required={true}
+          />
+          <InputField
+            id="confirmPasswordInput"
+            type="password"
+            placeholder="••••••••"
+            label="Confirm Password"
             required={true}
           />
         </div>
