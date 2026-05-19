@@ -111,6 +111,8 @@ The main shopping interface where customers browse all available agricultural pr
 
 <img alt="Shop and Products" src="https://github.com/user-attachments/assets/8cb9a248-3a4a-46bc-9a6b-3a9757f9a579" />
 
+---
+
 ### Customer — Shopping Cart & Checkout
 
 A slide-out cart drawer accessible from the header on any shop page.
@@ -123,6 +125,8 @@ A slide-out cart drawer accessible from the header on any shop page.
 **Screenshot:**
 
 <img alt="Shopping Cart" src="https://github.com/user-attachments/assets/6a4ee4f5-dabc-4586-b39d-324338014fc9" />
+
+---
 
 ### Customer — Order History
 
