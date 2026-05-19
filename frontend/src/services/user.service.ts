@@ -42,4 +42,9 @@ export const userService = {
     const { data: res } = await api.get(`/api/users/${id}`);
     return res;
   },
+
+  deleteCustomer: async (id: string) => {
+    const { data } = await api.delete(`/api/users/${id}`);
+    return data;
+  },
 };

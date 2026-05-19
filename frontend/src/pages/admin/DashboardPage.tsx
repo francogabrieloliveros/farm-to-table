@@ -29,6 +29,7 @@ type DashboardStats = {
   totalProducts: number;
   totalRevenue: number;
   recentOrders: RecentOrder[];
+  revenueTrend?: number[];
 };
 
 const statusStyles: Record<string, string> = {
@@ -217,24 +218,41 @@ export default function DashboardPage() {
           </div>
 
           <div className="flex-1 flex items-end justify-between gap-2 h-40 mb-6">
-            {[40, 70, 45, 90, 65, 80, 55].map((height, i) => (
-              <div
-                key={i}
-                className="flex flex-col items-center gap-2 group w-full"
-              >
-                <div
-                  className="w-full bg-[#E8F5E2] rounded-t-lg transition-all duration-300 group-hover:bg-[#1C4419] relative"
-                  style={{ height: `${height}%` }}
-                >
-                  <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-[#1C4419] text-white text-[10px] px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity">
-                    {height}%
+            {(() => {
+              const trend = stats?.revenueTrend || [0, 0, 0, 0, 0, 0, 0];
+              const maxVal = Math.max(...trend, 1); // prevent division by zero
+              
+              // Generate labels for the past 7 days (ending in 'Today')
+              const labels = Array.from({ length: 7 }, (_, i) => {
+                if (i === 6) return "Today";
+                if (i === 5) return "Yday";
+                const d = new Date();
+                d.setDate(d.getDate() - (6 - i));
+                return d.toLocaleDateString("en-US", { weekday: "short" });
+              });
+
+              return trend.map((val, i) => {
+                const height = (val / maxVal) * 100;
+                return (
+                  <div
+                    key={i}
+                    className="flex flex-col items-center gap-2 group w-full"
+                  >
+                    <div
+                      className="w-full bg-[#E8F5E2] rounded-t-lg transition-all duration-300 group-hover:bg-[#1C4419] relative"
+                      style={{ height: `${Math.max(height, 2)}%` }}
+                    >
+                      <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-[#1C4419] text-white text-[10px] px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-20">
+                        {formatCurrency(val)}
+                      </div>
+                    </div>
+                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">
+                      {labels[i]}
+                    </span>
                   </div>
-                </div>
-                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">
-                  Day {i + 1}
-                </span>
-              </div>
-            ))}
+                );
+              });
+            })()}
           </div>
         </div>
       </div>

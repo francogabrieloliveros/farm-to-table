@@ -1,4 +1,6 @@
 import User, { type IUser } from "../models/user.model.js";
+import { Cart } from "../models/cart.model.js";
+import { Order } from "../models/order.model.js";
 
 export interface UpdateUserData {
   firstName?: string;
@@ -38,4 +40,23 @@ export const getConsumerUsers = async (): Promise<IUser[]> => {
 // get specific user
 export const getUserById = (id: string): Promise<IUser | null> => {
   return User.findById(id).exec();
+};
+
+// delete user and related data
+export const deleteUserById = async (id: string): Promise<boolean> => {
+  const user = await User.findById(id);
+  if (!user) {
+    return false;
+  }
+
+  // delete cart
+  await Cart.deleteOne({ userId: id });
+  
+  // delete orders
+  await Order.deleteMany({ userId: id });
+  
+  // delete user
+  await User.findByIdAndDelete(id);
+  
+  return true;
 };

@@ -10,7 +10,7 @@ export class DashboardController {
    */
   static async getStats(_req: Request, res: Response) {
     try {
-      const [totalUsers, totalPendingOrders, totalProducts, revenueResult, recentOrdersRaw] =
+      const [totalUsers, totalPendingOrders, totalProducts, revenueResult, recentOrdersRaw, revenueTrendRaw] =
         await Promise.all([
           // count registered consumer users
           User.countDocuments({ userType: 'Consumer' }).exec(),
@@ -39,6 +39,40 @@ export class DashboardController {
             .populate('userId', 'firstName lastName email')
             .populate('items.productId', 'name price')
             .exec(),
+
+          // calculate 7-day revenue trend
+          (async () => {
+            const sevenDaysAgo = new Date();
+            sevenDaysAgo.setHours(0, 0, 0, 0);
+            sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 6);
+
+            const trend = await Order.aggregate([
+              { 
+                $match: { 
+                  status: OrderStatus.Completed,
+                  dateOrdered: { $gte: sevenDaysAgo }
+                }
+              },
+              {
+                $group: {
+                  _id: { $dateToString: { format: "%Y-%m-%d", date: "$dateOrdered" } },
+                  dailyRevenue: { $sum: '$totalAmount' }
+                }
+              },
+              { $sort: { _id: 1 } }
+            ]).exec();
+
+            // Fill in the missing days with 0 revenue
+            const revenueTrend = [];
+            for (let i = 0; i < 7; i++) {
+              const d = new Date(sevenDaysAgo);
+              d.setDate(d.getDate() + i);
+              const dateStr = d.toISOString().split('T')[0];
+              const found = trend.find((t: any) => t._id === dateStr);
+              revenueTrend.push(found ? found.dailyRevenue : 0);
+            }
+            return revenueTrend;
+          })()
         ]);
 
       const totalRevenue = revenueResult.length > 0 ? revenueResult[0].totalRevenue : 0;
@@ -69,6 +103,7 @@ export class DashboardController {
           totalProducts,
           totalRevenue,
           recentOrders,
+          revenueTrend: revenueTrendRaw || Array(7).fill(0),
         },
       });
     } catch (error: any) {

@@ -1,4 +1,4 @@
-import { Search, ShoppingCart, User, X, Trash, Leaf } from "lucide-react";
+import { ShoppingCart, User, X, Trash, Leaf } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "../ui/button";
 import useCart from "@/hooks/useCart";

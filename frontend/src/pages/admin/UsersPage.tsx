@@ -3,6 +3,9 @@ import {
   ChevronRight,
   Search,
   Users as UsersIcon,
+  Trash2,
+  AlertTriangle,
+  X,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import {
@@ -18,22 +21,38 @@ export default function UsersPage() {
   const [data, setData] = useState<RegisteredUsersResponse | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [page, setPage] = useState(0);
+  const [userToDelete, setUserToDelete] = useState<User | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const fetchUsers = async () => {
+    try {
+      setIsLoading(true);
+      const result = await userService.getRegisteredCustomers();
+      setData(result);
+    } catch (error) {
+      console.error("Error fetching users:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        setIsLoading(true);
-        const result = await userService.getRegisteredCustomers();
-        setData(result);
-      } catch (error) {
-        console.error("Error fetching users:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
     fetchUsers();
   }, []);
+
+  const handleDelete = async () => {
+    if (!userToDelete) return;
+    try {
+      setIsDeleting(true);
+      await userService.deleteCustomer(userToDelete._id);
+      setUserToDelete(null);
+      fetchUsers(); // Refresh the list
+    } catch (error) {
+      console.error("Error deleting user:", error);
+    } finally {
+      setIsDeleting(false);
+    }
+  };
 
   const users = data?.data ?? [];
   const total = data?.total ?? 0;
@@ -109,7 +128,8 @@ export default function UsersPage() {
                 <th className="text-left px-8 py-5">Citizen Name</th>
                 <th className="text-left px-4 py-5">Email Address</th>
                 <th className="text-left px-4 py-5">Account Role</th>
-                <th className="text-right px-8 py-5">Joined Date</th>
+                <th className="text-left px-8 py-5">Joined Date</th>
+                <th className="text-right px-8 py-5">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[#F4F3F1]">
@@ -157,8 +177,17 @@ export default function UsersPage() {
                         {user.userType}
                       </span>
                     </td>
-                    <td className="px-8 py-5 text-right text-gray-400 text-xs font-medium italic">
+                    <td className="px-8 py-5 text-left text-gray-400 text-xs font-medium italic">
                       Active Account
+                    </td>
+                    <td className="px-8 py-5 text-right">
+                      <button
+                        onClick={() => setUserToDelete(user)}
+                        className="p-2 text-rose-500 hover:bg-rose-50 rounded-lg transition-colors"
+                        title="Delete User"
+                      >
+                        <Trash2 size={18} />
+                      </button>
                     </td>
                   </tr>
                 ))
@@ -204,6 +233,59 @@ export default function UsersPage() {
           </div>
         )}
       </div>
+
+      {/* Delete Confirmation Modal */}
+      {userToDelete && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm px-4">
+          <div className="bg-white rounded-3xl p-6 md:p-8 w-full max-w-md shadow-2xl relative animate-in fade-in zoom-in-95 duration-200">
+            <button
+              onClick={() => !isDeleting && setUserToDelete(null)}
+              disabled={isDeleting}
+              className="absolute top-4 right-4 p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-colors disabled:opacity-50"
+            >
+              <X size={20} />
+            </button>
+            
+            <div className="flex flex-col items-center text-center">
+              <div className="w-16 h-16 bg-rose-100 rounded-full flex items-center justify-center text-rose-600 mb-6">
+                <AlertTriangle size={32} />
+              </div>
+              
+              <h3 className="text-2xl font-black text-gray-900 mb-2 manrope tracking-tight">
+                Delete Citizen?
+              </h3>
+              
+              <p className="text-sm text-gray-500 mb-6 leading-relaxed">
+                Are you sure you want to delete <span className="font-bold text-gray-900">{userToDelete.firstName} {userToDelete.lastName}</span>? This action will permanently remove their account, cart, and order history. This cannot be undone.
+              </p>
+              
+              <div className="flex items-center gap-3 w-full">
+                <button
+                  onClick={() => setUserToDelete(null)}
+                  disabled={isDeleting}
+                  className="flex-1 py-3 px-4 rounded-xl font-bold text-gray-700 bg-gray-100 hover:bg-gray-200 transition-colors disabled:opacity-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleDelete}
+                  disabled={isDeleting}
+                  className="flex-1 py-3 px-4 rounded-xl font-bold text-white bg-rose-600 hover:bg-rose-700 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+                >
+                  {isDeleting ? (
+                    <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  ) : (
+                    <>
+                      <Trash2 size={18} />
+                      Delete
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

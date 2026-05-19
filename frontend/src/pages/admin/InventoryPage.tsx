@@ -3,7 +3,6 @@ import { useState, useEffect } from "react";
 import { productService } from "@/services/product.service";
 import InventoryProduct from "@/components/admin/InventoryProduct";
 import ProductModal from "@/components/admin/ProductModal";
-import { searchInventory } from "@/utils/searchInventory";
 import { type Product } from "@/types/Product";
 
 function InventoryPage() {

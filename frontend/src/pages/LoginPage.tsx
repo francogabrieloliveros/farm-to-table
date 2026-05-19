@@ -19,7 +19,7 @@ const LoginPage = () => {
 
     try {
       const data = await login({ email, password });
-      const parsedToken = jwtDecode(data.token);
+      const parsedToken = jwtDecode<{ userType: string }>(data.token);
       toast.success("Logged in successfully");
 
       if (parsedToken.userType === "Admin") {

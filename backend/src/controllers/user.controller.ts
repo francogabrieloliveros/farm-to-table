@@ -3,6 +3,7 @@ import {
   getConsumerUsers,
   updateUserProfile,
   getUserById,
+  deleteUserById,
 } from "../services/user.service.js";
 import { type AuthRequest } from "../middlewares/auth.middleware.js";
 
@@ -80,6 +81,32 @@ export const getUser = async (req: AuthRequest, res: Response) => {
     return res.status(500).json({
       success: false,
       message: error.message || "Error retrieving registered users",
+    });
+  }
+};
+
+export const deleteUser = async (req: AuthRequest, res: Response) => {
+  try {
+    const id = req.params.id;
+    
+    // Check if user is trying to delete themselves or a user
+    const deleted = await deleteUserById(id);
+    
+    if (!deleted) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "User and related data deleted successfully",
+    });
+  } catch (error: any) {
+    return res.status(500).json({
+      success: false,
+      message: error.message || "Error deleting user",
     });
   }
 };
