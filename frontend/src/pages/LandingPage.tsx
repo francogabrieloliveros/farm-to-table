@@ -58,14 +58,14 @@ export default function LandingPage() {
             </div>
 
             <h1 className="text-6xl md:text-8xl font-black tracking-tighter max-w-5xl text-[#1C4419] mb-8 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-100 manrope leading-tight">
-              Fresh harvest, <br className="hidden md:block"/>
+              Fresh harvest, <br className="hidden md:block" />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-lime-500">
                 straight to your table.
               </span>
             </h1>
 
             <p className="text-lg md:text-xl text-gray-500 max-w-2xl mb-12 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-200 inter font-medium leading-relaxed">
-              Connect directly with local farmers through our premium marketplace. 
+              Connect directly with local farmers through our premium marketplace.
               Support the community and enjoy the freshest, high-quality agricultural products.
             </p>
 
@@ -160,7 +160,7 @@ export default function LandingPage() {
                 <h2 className="text-4xl md:text-5xl font-black manrope text-[#1C4419] tracking-tight leading-tight">
                   From farm to your doorstep in 3 simple steps.
                 </h2>
-                
+
                 <div className="space-y-8">
                   {[
                     { title: "Browse Fresh Catalog", desc: "Explore a wide variety of crops and poultry directly from farmers." },
@@ -179,39 +179,111 @@ export default function LandingPage() {
                   ))}
                 </div>
               </div>
-              
+
               <div className="lg:w-1/2 w-full relative">
                 <div className="aspect-square rounded-[3rem] bg-gradient-to-tr from-emerald-100 to-lime-50 p-8 relative overflow-hidden">
-                   {/* Abstract representation of a farm/delivery */}
-                   <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
-                   
-                   {/* Floating cards animation */}
-                   <div className="absolute top-1/4 left-10 bg-white p-4 rounded-2xl shadow-xl shadow-green-900/10 flex items-center gap-4 animate-bounce duration-3000">
-                      <div className="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center">
-                        <ShoppingBag size={20} className="text-amber-600" />
-                      </div>
-                      <div>
-                        <p className="text-sm font-bold text-gray-900">Fresh Tomatoes</p>
-                        <p className="text-xs font-medium text-emerald-600">Added to cart</p>
-                      </div>
-                   </div>
+                  {/* Abstract representation of a farm/delivery */}
+                  <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
 
-                   <div className="absolute bottom-1/4 right-10 bg-white p-4 rounded-2xl shadow-xl shadow-green-900/10 flex items-center gap-4 animate-pulse duration-2000 delay-500">
-                      <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                        <Truck size={20} className="text-blue-600" />
-                      </div>
-                      <div>
-                        <p className="text-sm font-bold text-gray-900">Order #1024</p>
-                        <p className="text-xs font-medium text-blue-600">Out for delivery</p>
-                      </div>
-                   </div>
-                   
-                   <div className="w-full h-full flex items-center justify-center relative z-10">
-                      <div className="w-64 h-64 bg-emerald-500 rounded-full blur-3xl opacity-20 absolute"></div>
-                      <img src="https://api.dicebear.com/7.x/shapes/svg?seed=farm" alt="Farm abstract" className="w-3/4 h-3/4 object-contain" />
-                   </div>
+                  {/* Floating cards animation */}
+                  <div className="absolute top-1/4 left-10 bg-white p-4 rounded-2xl shadow-xl shadow-green-900/10 flex items-center gap-4 animate-bounce duration-3000">
+                    <div className="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center">
+                      <ShoppingBag size={20} className="text-amber-600" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-bold text-gray-900">Fresh Tomatoes</p>
+                      <p className="text-xs font-medium text-emerald-600">Added to cart</p>
+                    </div>
+                  </div>
+
+                  <div className="absolute bottom-1/4 right-10 bg-white p-4 rounded-2xl shadow-xl shadow-green-900/10 flex items-center gap-4 animate-pulse duration-2000 delay-500">
+                    <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                      <Truck size={20} className="text-blue-600" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-bold text-gray-900">Order #1024</p>
+                      <p className="text-xs font-medium text-blue-600">Out for delivery</p>
+                    </div>
+                  </div>
+
+                  <div className="w-full h-full flex items-center justify-center relative z-10">
+                    <div className="w-64 h-64 bg-emerald-500 rounded-full blur-3xl opacity-20 absolute"></div>
+                    <img src="https://api.dicebear.com/7.x/shapes/svg?seed=farm" alt="Farm abstract" className="w-3/4 h-3/4 object-contain" />
+                  </div>
                 </div>
               </div>
+            </div>
+          </div>
+        </section>
+
+        {/* About DA Initiative */}
+        <section id="about" className="px-6 lg:px-12 py-32 bg-[#FCFBF9]">
+          <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-center">
+            <div>
+              <div className="inline-block px-4 py-2 bg-emerald-50 text-emerald-700 rounded-full font-bold text-xs uppercase tracking-widest border border-emerald-100 mb-6">
+                About the Initiative
+              </div>
+
+              <h2 className="text-4xl md:text-5xl font-black manrope text-[#1C4419] tracking-tight leading-tight mb-6">
+                A digital marketplace built for local agriculture.
+              </h2>
+
+              <p className="text-gray-500 text-lg leading-relaxed inter font-medium mb-6">
+                Farm-to-Table is designed as a Department of Agriculture platform
+                that helps connect customers directly with local agricultural
+                products. Instead of relying on a generic online store model, the
+                system focuses on the actual needs of farm-based commerce:
+                product visibility, fair access, inventory monitoring, order
+                fulfillment, and sales reporting.
+              </p>
+
+              <p className="text-gray-500 text-lg leading-relaxed inter font-medium">
+                Through one integrated system, customers can browse fresh crops
+                and poultry products, place Cash-on-Delivery orders, and track
+                their purchases, while the DA can manage listings, monitor
+                customers and orders, and review sales performance through
+                reports and CSV exports.
+              </p>
+            </div>
+
+            <div className="grid sm:grid-cols-2 gap-5">
+              {[
+                {
+                  icon: <Users className="h-6 w-6 text-emerald-600" />,
+                  title: "Customer Access",
+                  desc: "Registered users can browse products, place orders, and manage their profiles.",
+                },
+                {
+                  icon: <ShoppingCart className="h-6 w-6 text-amber-600" />,
+                  title: "Simple COD Flow",
+                  desc: "Orders are handled through a clear Cash-on-Delivery process.",
+                },
+                {
+                  icon: <Sprout className="h-6 w-6 text-lime-600" />,
+                  title: "Product Oversight",
+                  desc: "The DA can manage agricultural listings and monitor product inventory.",
+                },
+                {
+                  icon: <ShieldCheck className="h-6 w-6 text-blue-600" />,
+                  title: "Admin Monitoring",
+                  desc: "Reports, order tracking, and CSV exports support better marketplace decisions.",
+                },
+              ].map((item, i) => (
+                <div
+                  key={i}
+                  className="bg-white p-6 rounded-2xl border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)]"
+                >
+                  <div className="w-12 h-12 rounded-xl bg-gray-50 flex items-center justify-center mb-5">
+                    {item.icon}
+                  </div>
+                  <h3 className="text-lg font-black text-[#1C4419] manrope mb-2">
+                    {item.title}
+                  </h3>
+                  <p className="text-sm text-gray-500 inter font-medium leading-relaxed">
+                    {item.desc}
+                  </p>
+                </div>
+              ))}
             </div>
           </div>
         </section>
@@ -221,7 +293,7 @@ export default function LandingPage() {
           <div className="max-w-6xl mx-auto bg-[#1C4419] rounded-[3rem] p-12 md:p-20 text-center relative overflow-hidden shadow-2xl shadow-green-900/20">
             <div className="absolute top-0 left-0 w-full h-full bg-[url('https://www.transparenttextures.com/patterns/noise-lines.png')] opacity-10 mix-blend-overlay"></div>
             <div className="absolute -top-24 -right-24 w-96 h-96 bg-emerald-500 rounded-full blur-3xl opacity-30"></div>
-            
+
             <div className="relative z-10">
               <h2 className="text-4xl md:text-6xl font-black text-white mb-8 manrope tracking-tight">
                 Ready to taste the difference?
@@ -256,7 +328,7 @@ export default function LandingPage() {
                 <CheckCircle2 size={16} className="text-emerald-500" /> DA Certified Platform
               </div>
             </div>
-            
+
             <div>
               <h4 className="font-black text-gray-900 mb-6 uppercase tracking-widest text-sm">Platform</h4>
               <ul className="space-y-4">
@@ -265,7 +337,7 @@ export default function LandingPage() {
                 <li><a href="#" className="text-gray-500 hover:text-[#1C4419] font-medium transition-colors">Pricing</a></li>
               </ul>
             </div>
-            
+
             <div>
               <h4 className="font-black text-gray-900 mb-6 uppercase tracking-widest text-sm">Support</h4>
               <ul className="space-y-4">
@@ -275,7 +347,7 @@ export default function LandingPage() {
               </ul>
             </div>
           </div>
-          
+
           <div className="pt-8 border-t border-gray-100 flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-sm font-bold text-gray-400 inter">
               © {new Date().getFullYear()} Farm-to-Table - Dept. of Agriculture. All rights reserved.
