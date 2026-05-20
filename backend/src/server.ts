@@ -10,8 +10,6 @@ import orderRoutes from './routes/order.routes.js';
 import cartRoutes from './routes/cart.routes.js';
 import reportRoutes from './routes/report.routes.js';
 import dashboardRoutes from './routes/dashboard.routes.js';
-import { seedAdmin } from './utils/seedAdmin.js';
-import { seedProducts } from './utils/seedProducts.js';
 
 
 
@@ -41,12 +39,10 @@ app.get("/", (req: Request, res: Response) => {
 // Error Handler
 app.use(errorHandler);
 
-// connect to database & seed admin
+// connect to database
 const startServer = async () => {
   try {
     await connectDB();
-    await seedAdmin();
-    await seedProducts();
     
     app.listen(Number(PORT), '0.0.0.0', () => {
       console.log(`Server is running at http://0.0.0.0:${PORT}`);
