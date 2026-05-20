@@ -110,6 +110,11 @@ export class ProductService {
 
   // delete a product by id
   static async deleteProduct(id: string): Promise<IProductDocument | null> {
-    return Product.findByIdAndDelete(id).exec();
+    const deletedProduct = await Product.findByIdAndDelete(id).exec();
+    if (deletedProduct) {
+      // Cascading clean up: remove references from all user carts
+      await Cart.updateMany({}, { $pull: { items: { productId: id } } });
+    }
+    return deletedProduct;
   }
 }
