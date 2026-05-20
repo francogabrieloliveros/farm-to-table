@@ -1,31 +1,126 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router';
-import { Toaster } from 'react-hot-toast';
-
-// Layout
-const Layout = ({ children }: { children: React.ReactNode }) => (
-  <div className="flex flex-col min-h-screen">
-    <header className="p-4 bg-green-600 text-white">Farm-to-Table</header>
-    <main className="flex-1 p-4">{children}</main>
-    <footer className="p-4 bg-gray-800 text-white text-center">© 2026 Department of Agriculture</footer>
-  </div>
-);
-
-// Pages placeholders
-const Home = () => <div>Welcome to Farm-to-Table E-Commerce Platform</div>;
-const Login = () => <div>Login Page</div>;
-const AdminDashboard = () => <div>Admin Dashboard</div>;
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { Toaster } from "react-hot-toast";
+import { AuthProvider } from "@/context/AuthContext";
+import SignupPage from "@/pages/SignupPage";
+import LoginPage from "@/pages/LoginPage";
+import ConsumerLayout from "@/components/consumer/ConsumerLayout";
+import ProtectedRoute from "@/components/ProtectedRoute";
+import PublicRoute from "@/components/PublicRoute";
+import ConsumerHomePage from "@/pages/consumer/ConsumerHomePage";
+import ProfilePage from "@/pages/consumer/ProfilePage";
+import LandingPage from "@/pages/LandingPage";
+import DashboardPage from "@/pages/admin/DashboardPage";
+import AdminLayout from "@/components/admin/AdminLayout";
+import UsersPage from "@/pages/admin/UsersPage";
+import InventoryPage from "@/pages/admin/InventoryPage";
+import OrdersPage from "@/pages/admin/OrdersPage";
+import ReportsPage from "@/pages/admin/ReportsPage";
+import NotFoundPage from "@/pages/NotFoundPage";
 
 function App() {
   return (
     <Router>
-      <Layout>
+      <AuthProvider>
         <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/admin/*" element={<AdminDashboard />} />
+          <Route
+            path="/login"
+            element={<PublicRoute element={<LoginPage />} />}
+          />
+          <Route
+            path="/signup"
+            element={<PublicRoute element={<SignupPage />} />}
+          />
+          <Route path="/" element={<LandingPage />} />
+          <Route
+            path="/shop"
+            element={
+              <ConsumerLayout>
+                <ConsumerHomePage />
+              </ConsumerLayout>
+            }
+          />
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute
+                type="Consumer"
+                element={
+                  <ConsumerLayout>
+                    <ProfilePage />
+                  </ConsumerLayout>
+                }
+              />
+            }
+          />
+          <Route
+            path="/admin/dashboard"
+            element={
+              <ProtectedRoute
+                type="Admin"
+                element={
+                  <AdminLayout>
+                    <DashboardPage />
+                  </AdminLayout>
+                }
+              />
+            }
+          />
+          <Route
+            path="/admin/users"
+            element={
+              <ProtectedRoute
+                type="Admin"
+                element={
+                  <AdminLayout>
+                    <UsersPage />
+                  </AdminLayout>
+                }
+              />
+            }
+          />
+          <Route
+            path="/admin/inventory"
+            element={
+              <ProtectedRoute
+                type="Admin"
+                element={
+                  <AdminLayout>
+                    <InventoryPage />
+                  </AdminLayout>
+                }
+              />
+            }
+          />
+          <Route
+            path="/admin/orders"
+            element={
+              <ProtectedRoute
+                type="Admin"
+                element={
+                  <AdminLayout>
+                    <OrdersPage />
+                  </AdminLayout>
+                }
+              />
+            }
+          />
+          <Route
+            path="/admin/reports"
+            element={
+              <ProtectedRoute
+                type="Admin"
+                element={
+                  <AdminLayout>
+                    <ReportsPage />
+                  </AdminLayout>
+                }
+              />
+            }
+          />
+          <Route path="*" element={<NotFoundPage />} />
         </Routes>
-      </Layout>
-      <Toaster />
+        <Toaster position="bottom-right" />
+      </AuthProvider>
     </Router>
   );
 }
