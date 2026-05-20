@@ -90,7 +90,7 @@ export const deleteUser = async (req: AuthRequest, res: Response) => {
     const id = req.params.id;
     
     // Check if user is trying to delete themselves or a user
-    const deleted = await deleteUserById(id);
+    const deleted = await deleteUserById(String(id));
     
     if (!deleted) {
       return res.status(404).json({

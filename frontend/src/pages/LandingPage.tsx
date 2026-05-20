@@ -70,10 +70,10 @@ export default function LandingPage() {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-5 w-full justify-center animate-in fade-in slide-in-from-bottom-8 duration-700 delay-300 inter">
-              <Link to="/login" className="inline-flex justify-center items-center gap-2 bg-[#1C4419] text-white px-8 py-4 rounded-full text-lg font-bold hover:bg-[#2D6A28] transition-all shadow-xl shadow-green-900/20 hover:shadow-2xl hover:shadow-green-900/30 hover:-translate-y-1">
+              <Link to="/shop" className="inline-flex justify-center items-center gap-2 bg-[#1C4419] text-white px-8 py-4 rounded-full text-lg font-bold hover:bg-[#2D6A28] transition-all shadow-xl shadow-green-900/20 hover:shadow-2xl hover:shadow-green-900/30 hover:-translate-y-1">
                 Start Shopping <ArrowRight className="h-5 w-5" />
               </Link>
-              <a href="#features" className="inline-flex justify-center items-center px-8 py-4 rounded-full text-lg font-bold text-[#1C4419] bg-white hover:bg-gray-50 transition-all border-2 border-[#1C4419]/10 hover:border-[#1C4419]/20 shadow-sm">
+              <a href="#how-it-works" className="inline-flex justify-center items-center px-8 py-4 rounded-full text-lg font-bold text-[#1C4419] bg-white hover:bg-gray-50 transition-all border-2 border-[#1C4419]/10 hover:border-[#1C4419]/20 shadow-sm">
                 How it works
               </a>
             </div>
@@ -216,8 +216,8 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* CTA Section */}
-        <section className="px-6 lg:px-12 py-32">
+        {/* CTA / About Section */}
+        <section id="about" className="px-6 lg:px-12 py-32">
           <div className="max-w-6xl mx-auto bg-[#1C4419] rounded-[3rem] p-12 md:p-20 text-center relative overflow-hidden shadow-2xl shadow-green-900/20">
             <div className="absolute top-0 left-0 w-full h-full bg-[url('https://www.transparenttextures.com/patterns/noise-lines.png')] opacity-10 mix-blend-overlay"></div>
             <div className="absolute -top-24 -right-24 w-96 h-96 bg-emerald-500 rounded-full blur-3xl opacity-30"></div>
