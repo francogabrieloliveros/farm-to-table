@@ -1,229 +1,195 @@
-# Farm-to-Table E-Commerce Platform
+# 🌾 Farm-to-Table E-Commerce Platform
 
-This project is a web application for the Department of Agriculture (DA) designed to act as a platform, offering an online public market catalog for Filipinos to buy local agricultural products directly from farmers.
+[![React](https://img.shields.io/badge/Frontend-React%20%7C%20TS%20%7C%20Vite-61dafb?style=for-the-badge&logo=react)](https://react.dev/)
+[![Node](https://img.shields.io/badge/Backend-Node.js%20%7C%20Express%20%7C%20TS-339933?style=for-the-badge&logo=nodedotjs)](https://nodejs.org/)
+[![MongoDB](https://img.shields.io/badge/Database-MongoDB%20%28Mongoose%29-47a248?style=for-the-badge&logo=mongodb)](https://www.mongodb.com/)
+[![Docker](https://img.shields.io/badge/Infrastructure-Docker%20Compose-2496ed?style=for-the-badge&logo=docker)](https://www.docker.com/)
 
-## Tech Stack
+A premium, enterprise-grade digital marketplace developed for the **Department of Agriculture (DA)**. This initiative bridges the gap between local Filipino agricultural producers and citizens, providing an elegant, transparent, and direct platform for farm-fresh commerce.
 
-- **Frontend**: React, TypeScript, Tailwind CSS, Shadcn UI, TanStack Query
-- **Backend**: Node.js, Express, TypeScript, Mongoose, JWT
-- **DevOps**: Docker, Docker Compose
+---
 
-## Prerequisites
+## 🏗️ System Architecture
+
+The application is structured as a decoupled client-server architecture with state-of-the-art security, asynchronous processing, and robust data persistence.
+
+```mermaid
+graph TD
+    subgraph Client [Frontend React SPA]
+        A[User Interface / React] --> B[Cart Context / React State]
+        A --> C[Auth Context / Session State]
+    end
+
+    subgraph Server [Backend Node.js & Express API]
+        D[Router Layer] --> E[VerifyToken / Auth Middleware]
+        E --> F[Controller Layer]
+        F --> G[Service Layer]
+    end
+
+    subgraph Persistence [Data & Asset Storage]
+        G --> H[(MongoDB Atlas)]
+        G --> I[Cloudinary API]
+    end
+
+    Client -- HTTPS Requests + JWT Bearer --> D
+    E -- 1. JWT Decode & Validation <br/> 2. DB User Presence Check --> H
+```
+
+---
+
+## 🚀 Key Features
+
+### 👤 Customer Experience
+*   **Animated Marketplace Landing:** A modern, animated landing page that details the initiative.
+*   **Secure Authentication:** State-persistent JWT authentication with protected client-side routes.
+*   **Smart Product Catalog:** Real-time search, category filtering (Crops vs. Poultry), and multi-criteria sorting.
+*   **Database-Backed Shopping Cart:** Contents are synced dynamically to the database, ensuring zero cart-loss across multiple sessions.
+*   **Real-time Stock Protection:** Strict checkout inventory checks to prevent stock over-purchasing.
+*   **Order Tracking:** Ability to view past orders and cancel pending ones.
+
+### 🛡️ Admin & Department of Agriculture Operations
+*   **Interactive Analytics Dashboard:** Real-time summary statistics, recent transactions stream, and a dynamic 7-day revenue trend chart.
+*   **Cascading User Management:** Ability to manage citizen accounts with full cascading deletion (cleaning up active carts and orders automatically).
+*   **Inventory & Catalog Control:** Complete CRUD actions for listing crops and poultry, including seamless remote image uploads handled via Cloudinary.
+*   **Intelligent Order Fulfillment:** Confirm pending orders to capture transaction revenue and auto-decrease inventory stock.
+*   **Sales Performance Reporting:** Weekly, monthly, and annual sales breakdowns with aggregate indicators and CSV export tools.
+
+---
+
+## 📂 Project Structure
+
+```text
+├── backend/
+│   ├── src/
+│   │   ├── config/          # Database & Cloudinary configurations
+│   │   ├── controllers/     # API route handlers & request parsing
+│   │   ├── middlewares/     # Auth, error handling, & session filters
+│   │   ├── models/          # Mongoose schemas & Mongo structures
+│   │   ├── routes/          # Express route mappings
+│   │   ├── services/        # Core business & database logic
+│   │   └── utils/           # Helper functions & CLI tools
+│   ├── package.json
+│   └── tsconfig.json
+├── frontend/
+│   ├── src/
+│   │   ├── components/      # Premium, reusable UI modules
+│   │   ├── context/         # Auth and Cart states (React Context)
+│   │   ├── hooks/           # State management hooks
+│   │   ├── pages/           # Landing, Consumer Shop, & Admin views
+│   │   └── services/        # HTTP API communications
+│   ├── package.json
+│   └── vite.config.ts
+└── docker-compose.yml
+```
+
+---
+
+## 🛠️ Getting Started
+
+### Prerequisites
 
 Ensure you have the following installed on your machine:
+*   [Node.js](https://nodejs.org/) (v18 or higher)
+*   [Docker Desktop](https://www.docker.com/products/docker-desktop/) (for containerized setup)
+*   A [MongoDB Atlas](https://www.mongodb.com/cloud/atlas) connection string
+*   A [Cloudinary](https://cloudinary.com/) account for image uploads
 
-- [Node.js](https://nodejs.org/) (v18 or higher)
-- [Docker Desktop](https://www.docker.com/products/docker-desktop/) (for containerized setup)
-- A [MongoDB Atlas](https://www.mongodb.com/cloud/atlas) connection string
-- A [Cloudinary](https://cloudinary.com/) account for image storage
+---
 
-## Configuration
+### Configuration
 
-Before running the application, you must set up your environment variables.
+Set up environment variables in both layers before launching the platform:
 
-### 1. Backend Environment (`backend/.env`)
-
-Copy the example file and fill in your credentials:
-
+#### 1. Backend Configuration (`backend/.env`)
+Copy the template and fill in your secure credentials:
 ```bash
 cp backend/.env.example backend/.env
 ```
+Ensure the following variables are configured:
+*   `MONGODB_URI`
+*   `JWT_SECRET`
+*   `CLOUDINARY_CLOUD_NAME`
+*   `CLOUDINARY_API_KEY`
+*   `CLOUDINARY_API_SECRET`
 
-### 2. Frontend Environment (`frontend/.env`)
-
-Copy the example file:
-
+#### 2. Frontend Configuration (`frontend/.env`)
+Copy the template:
 ```bash
 cp frontend/.env.example frontend/.env
 ```
 
-## How to Run
+---
 
-### Option A: Using Docker (Recommended)
+### Run Instructions
 
-Docker ensures that everyone runs the exact same environment.
+#### Option A: Running with Docker (Recommended)
+Docker automatically coordinates services, volumes, and ports. From the root directory:
+```bash
+docker compose up --build
+```
+*   **Frontend Access:** [http://localhost:5173](http://localhost:5173)
+*   **Backend Server:** [http://localhost:5000](http://localhost:5000)
 
-1.  From the root directory, run:
-    ```bash
-    docker-compose up --build
-    ```
-2.  **Frontend**: Open [http://localhost:5173](http://localhost:5173)
-3.  **Backend**: API runs on [http://localhost:5000](http://localhost:5000)
+#### Option B: Running Natively
+Open two separate terminal windows:
 
-### Option B: Running Natively (Without Docker)
-
-You will need two terminal windows open.
-
-#### Terminal 1: Backend
-
+##### Terminal 1: Backend Service
 ```bash
 cd backend
 npm install
 npm run dev
 ```
 
-#### Terminal 2: Frontend
-
+##### Terminal 2: Frontend Client
 ```bash
 cd frontend
 npm install
 npm run dev
 ```
 
-## Features
+---
 
-### Public Landing Page
+## 📸 Interface Preview
 
-A public-facing landing page that introduces the platform and the DA initiative. Visitors can navigate to login or register from here. The shop itself is accessible without login for browsing, but placing orders requires an account.
-
-**Screenshot:**
-
+### 📍 Landing Page
+Introduces the Dept. of Agriculture marketplace initiative with premium, animated components.
 <img alt="Landing Page" src="https://github.com/user-attachments/assets/9b0364dc-4932-46e2-af3a-7e55948fc91a" />
 
 ---
 
-### Authentication — Register & Login
-
-Users can sign up using a valid email-format address. No OTP or email verification is required. Upon registration, accounts are automatically assigned the **Customer** role. The DA administrator account is pre-seeded via environment variables and does not go through the registration flow.
-
-- JWT-based authentication with protected routes
-- Public routes are hidden from already-logged-in users
-- Admin-only routes are inaccessible to customer accounts
-
-**Screenshots:**
-
-| Sign Up                                                                                                          | Log In                                                                                                          |
-| ---------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+### 🔑 Authentication (Sign Up & Log In)
+Dual-role routing and state protection ensure seamless sessions.
+| Sign Up | Log In |
+|:---:|:---:|
 | <img alt="Sign Up" src="https://github.com/user-attachments/assets/e9b7269e-08fd-4424-8fe1-5457590b8034" /> | <img width="498" height="750" alt="Log In" src="https://github.com/user-attachments/assets/950e9c38-6bda-4128-a1c2-0ac79ebe17b6" /> |
 
 ---
 
-### Customer — Shop & Products
-
-The main shopping interface where customers browse all available agricultural products listed by the DA.
-
-- **Search** products by name in real time
-- **Filter** by product type: Crops or Poultry
-- **Sort** by price (ascending/descending), name (A–Z), or quantity (low–high)
-- Product cards show image, name, type, price, and available stock
-
-**Screenshot:**
-
-<img alt="Shop and Products" src="https://github.com/user-attachments/assets/8cb9a248-3a4a-46bc-9a6b-3a9757f9a579" />
+### 🛒 Consumer Marketplace
+Highly interactive product catalog with search, filter, and state-persistent drawers.
+| Shop & Products | Shopping Cart Drawer |
+|:---:|:---:|
+| <img alt="Shop and Products" src="https://github.com/user-attachments/assets/8cb9a248-3a4a-46bc-9a6b-3a9757f9a579" /> | <img alt="Shopping Cart" src="https://github.com/user-attachments/assets/6a4ee4f5-dabc-4586-b39d-324338014fc9" /> |
 
 ---
 
-### Customer — Shopping Cart & Checkout
-
-A slide-out cart drawer accessible from the header on any shop page.
-
-- Add, remove, or adjust quantities of items directly in the cart
-- Live subtotal calculation
-- **Data-persistent cart** — cart contents are saved to the database per user and restored across sessions _(+5 bonus points feature)_
-- One-click **Place Order** button to convert the cart into pending orders
-
-**Screenshot:**
-
-<img alt="Shopping Cart" src="https://github.com/user-attachments/assets/6a4ee4f5-dabc-4586-b39d-324338014fc9" />
+### 📦 Customer Profile & Orders
+Comprehensive user dashboard for managing credentials and monitoring order statuses.
+| Profile Settings | Order History |
+|:---:|:---:|
+| <img alt="Account Settings" src="https://github.com/user-attachments/assets/148b6c2a-77c8-4b69-8a2d-f37a34f5724d" /> | <img alt="Order History" src="https://github.com/user-attachments/assets/0d1f28fe-02a7-4dc1-8a19-30472a630bd2" /> |
 
 ---
 
-### Customer — Order History
-
-Customers can view and manage their placed orders from the **Profile** page.
-
-- Full order history with product name, quantity, date, and status
-- Orders have three statuses: **Pending**, **Completed**, or **Cancelled**
-- Customers may **cancel** a pending order before it is confirmed by the DA
-
-**Screenshot:**
-
-<img alt="Order History" src="https://github.com/user-attachments/assets/0d1f28fe-02a7-4dc1-8a19-30472a630bd2" />
-
----
-
-### Customer — Profile & Account Settings
-
-A dedicated profile page where customers can manage their account details. _(+5 bonus points feature)_
-
-- Edit **first name**, **middle name**, and **last name**
-- **Change password** with current password confirmation
-- Email address is displayed but not editable (used as the account identifier)
-- **Logout** button available directly from the profile page
-
-**Screenshot:**
-
-<img alt="Account Settings" src="https://github.com/user-attachments/assets/148b6c2a-77c8-4b69-8a2d-f37a34f5724d" />
-
----
-
-### Admin — Dashboard Overview
-
-The DA administrator's main landing page after login, providing a high-level summary of platform activity.
-
-- **Stat cards** for: Total Registered Citizens, Pending Orders, Total Revenue, and Product Catalog size
-- **Recent Transactions** table showing the latest orders with customer name, product, status badge, and total
-- **Revenue Trend** bar chart showing daily activity for the current period
-
-**Screenshot:**
-
-<img alt="Dashboard" src="https://github.com/user-attachments/assets/95233f0b-4787-4066-8147-eff831114eb8" />
-
----
-
-### Admin — User Management
-
-A full list of all registered customer accounts on the platform.
-
-- View all registered users and their details
-- Total user count reported at a glance
-
-**Screenshot:**
-
-<img alt="Users Management" src="https://github.com/user-attachments/assets/01fa2457-2ab0-4dd8-ad7d-f57b309c2a2d" />
-
----
-
-### Admin — Inventory
-
-The DA manages the entire product catalog from this page.
-
-- **Add** new products with name, description, type (Crop / Poultry), price, quantity, and an uploaded image (via Cloudinary)
-- **Edit** existing product details and inventory quantities
-- **Delete** products from the catalog
-
-**Screenshot:**
-
-<img alt="Inventory" src="https://github.com/user-attachments/assets/c507baae-15ed-4441-aed7-a530385c803c" />
-
----
-
-### Admin — Order Fulfillment
-
-The DA reviews and acts on incoming customer orders.
-
-- View all orders across all customers with product, quantity, customer info, date, and current status
-- **Confirm** a pending order to mark it as Completed — this simultaneously decreases the product's inventory quantity
-- **Cancel** a pending order to mark it as Cancelled - does not decrease the quantity of the product and does not go through with the order transaction
-- Confirmed orders are considered final and ready for delivery
-
-**Screenshot:**
-
-<img alt="Order Fulfillment" src="https://github.com/user-attachments/assets/80c867b8-9371-4dd6-8ce0-d3187799efdd" />
-
----
-
-### Admin — Sales Reports
-
-A detailed breakdown of sales performance, switchable between time periods.
-
-- Toggle between **Weekly**, **Monthly**, and **Annual** views
-- Per-product breakdown showing units sold and income generated
-- Aggregate total sales revenue for the selected period
-- Pending order count displayed for context
-
-**Screenshot:**
-
-<img alt="Sales Reports" src="https://github.com/user-attachments/assets/4d5378c9-6fc2-44e2-8d3d-39a68030898f" />
-
----
+### 📊 Admin Operations Center
+Complete visual indicators and controls designed for Department of Agriculture staff.
+*   **Overview Dashboard:**
+    <img alt="Dashboard" src="https://github.com/user-attachments/assets/95233f0b-4787-4066-8147-eff831114eb8" />
+*   **User Management:**
+    <img alt="Users Management" src="https://github.com/user-attachments/assets/01fa2457-2ab0-4dd8-ad7d-f57b309c2a2d" />
+*   **Inventory Panel:**
+    <img alt="Inventory" src="https://github.com/user-attachments/assets/c507baae-15ed-4441-aed7-a530385c803c" />
+*   **Order Fulfillment:**
+    <img alt="Order Fulfillment" src="https://github.com/user-attachments/assets/80c867b8-9371-4dd6-8ce0-d3187799efdd" />
+*   **Sales Reports:**
+    <img alt="Sales Reports" src="https://github.com/user-attachments/assets/4d5378c9-6fc2-44e2-8d3d-39a68030898f" />

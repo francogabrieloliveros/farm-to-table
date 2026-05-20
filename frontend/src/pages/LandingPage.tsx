@@ -70,10 +70,10 @@ export default function LandingPage() {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-5 w-full justify-center animate-in fade-in slide-in-from-bottom-8 duration-700 delay-300 inter">
-              <Link to="/login" className="inline-flex justify-center items-center gap-2 bg-[#1C4419] text-white px-8 py-4 rounded-full text-lg font-bold hover:bg-[#2D6A28] transition-all shadow-xl shadow-green-900/20 hover:shadow-2xl hover:shadow-green-900/30 hover:-translate-y-1">
+              <Link to="/shop" className="inline-flex justify-center items-center gap-2 bg-[#1C4419] text-white px-8 py-4 rounded-full text-lg font-bold hover:bg-[#2D6A28] transition-all shadow-xl shadow-green-900/20 hover:shadow-2xl hover:shadow-green-900/30 hover:-translate-y-1">
                 Start Shopping <ArrowRight className="h-5 w-5" />
               </Link>
-              <a href="#features" className="inline-flex justify-center items-center px-8 py-4 rounded-full text-lg font-bold text-[#1C4419] bg-white hover:bg-gray-50 transition-all border-2 border-[#1C4419]/10 hover:border-[#1C4419]/20 shadow-sm">
+              <a href="#how-it-works" className="inline-flex justify-center items-center px-8 py-4 rounded-full text-lg font-bold text-[#1C4419] bg-white hover:bg-gray-50 transition-all border-2 border-[#1C4419]/10 hover:border-[#1C4419]/20 shadow-sm">
                 How it works
               </a>
             </div>
