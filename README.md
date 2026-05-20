@@ -78,7 +78,7 @@ A public-facing landing page that introduces the platform and the DA initiative.
 
 **Screenshot:**
 
-<img alt="Landing Page" src="https://github.com/user-attachments/assets/dc26034d-441d-4c2b-b0d9-32d170cf60fc" />
+<img alt="Landing Page" src="https://github.com/user-attachments/assets/9b0364dc-4932-46e2-af3a-7e55948fc91a" />
 
 ---
 
@@ -94,7 +94,7 @@ Users can sign up using a valid email-format address. No OTP or email verificati
 
 | Sign Up                                                                                                          | Log In                                                                                                          |
 | ---------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
-| <img alt="Sign Up Page" src="https://github.com/user-attachments/assets/942815f8-f200-4ba1-9a39-55ae930f4501" /> | <img alt="Log In Page" src="https://github.com/user-attachments/assets/ebff3786-7870-4353-8380-94d1f314d91f" /> |
+| <img alt="Sign Up" src="https://github.com/user-attachments/assets/e9b7269e-08fd-4424-8fe1-5457590b8034" /> | <img width="498" height="750" alt="Log In" src="https://github.com/user-attachments/assets/950e9c38-6bda-4128-a1c2-0ac79ebe17b6" /> |
 
 ---
 
@@ -180,7 +180,7 @@ A full list of all registered customer accounts on the platform.
 
 **Screenshot:**
 
-<img alt="Users Management" src="https://github.com/user-attachments/assets/1e60627e-af04-4707-94dc-19cce530a95c" />
+<img alt="Users Management" src="https://github.com/user-attachments/assets/01fa2457-2ab0-4dd8-ad7d-f57b309c2a2d" />
 
 ---
 
