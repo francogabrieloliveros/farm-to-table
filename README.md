@@ -1,4 +1,4 @@
-# 🌾 Farm-to-Table E-Commerce Platform
+# Farm-to-Table E-Commerce Platform
 
 [![React](https://img.shields.io/badge/Frontend-React%20%7C%20TS%20%7C%20Vite-61dafb?style=for-the-badge&logo=react)](https://react.dev/)
 [![Node](https://img.shields.io/badge/Backend-Node.js%20%7C%20Express%20%7C%20TS-339933?style=for-the-badge&logo=nodedotjs)](https://nodejs.org/)
@@ -9,7 +9,7 @@ A premium, enterprise-grade digital marketplace developed for the **Department o
 
 ---
 
-## 🏗️ System Architecture
+## System Architecture
 
 The application is structured as a decoupled client-server architecture with state-of-the-art security, asynchronous processing, and robust data persistence.
 
@@ -37,9 +37,9 @@ graph TD
 
 ---
 
-## 🚀 Key Features
+## Key Features
 
-### 👤 Customer Experience
+### Customer Experience
 *   **Animated Marketplace Landing:** A modern, animated landing page that details the initiative.
 *   **Secure Authentication:** State-persistent JWT authentication with protected client-side routes.
 *   **Smart Product Catalog:** Real-time search, category filtering (Crops vs. Poultry), and multi-criteria sorting.
@@ -47,7 +47,7 @@ graph TD
 *   **Real-time Stock Protection:** Strict checkout inventory checks to prevent stock over-purchasing.
 *   **Order Tracking:** Ability to view past orders and cancel pending ones.
 
-### 🛡️ Admin & Department of Agriculture Operations
+### Admin & Department of Agriculture Operations
 *   **Interactive Analytics Dashboard:** Real-time summary statistics, recent transactions stream, and a dynamic 7-day revenue trend chart.
 *   **Cascading User Management:** Ability to manage citizen accounts with full cascading deletion (cleaning up active carts and orders automatically).
 *   **Inventory & Catalog Control:** Complete CRUD actions for listing crops and poultry, including seamless remote image uploads handled via Cloudinary.
@@ -56,7 +56,7 @@ graph TD
 
 ---
 
-## 📂 Project Structure
+## Project Structure
 
 ```text
 ├── backend/
@@ -84,7 +84,7 @@ graph TD
 
 ---
 
-## 🛠️ Getting Started
+## Getting Started
 
 ### Prerequisites
 
@@ -149,15 +149,15 @@ npm run dev
 
 ---
 
-## 📸 Interface Preview
+## Interface Preview
 
-### 📍 Landing Page
+### Landing Page
 Introduces the Dept. of Agriculture marketplace initiative with premium, animated components.
 <img alt="Landing Page" src="https://github.com/user-attachments/assets/9b0364dc-4932-46e2-af3a-7e55948fc91a" />
 
 ---
 
-### 🔑 Authentication (Sign Up & Log In)
+### Authentication (Sign Up & Log In)
 Dual-role routing and state protection ensure seamless sessions.
 | Sign Up | Log In |
 |:---:|:---:|
@@ -165,7 +165,7 @@ Dual-role routing and state protection ensure seamless sessions.
 
 ---
 
-### 🛒 Consumer Marketplace
+### Consumer Marketplace
 Highly interactive product catalog with search, filter, and state-persistent drawers.
 | Shop & Products | Shopping Cart Drawer |
 |:---:|:---:|
@@ -173,7 +173,7 @@ Highly interactive product catalog with search, filter, and state-persistent dra
 
 ---
 
-### 📦 Customer Profile & Orders
+### Customer Profile & Orders
 Comprehensive user dashboard for managing credentials and monitoring order statuses.
 | Profile Settings | Order History |
 |:---:|:---:|
@@ -181,7 +181,7 @@ Comprehensive user dashboard for managing credentials and monitoring order statu
 
 ---
 
-### 📊 Admin Operations Center
+### Admin Operations Center
 Complete visual indicators and controls designed for Department of Agriculture staff.
 *   **Overview Dashboard:**
     <img alt="Dashboard" src="https://github.com/user-attachments/assets/95233f0b-4787-4066-8147-eff831114eb8" />
